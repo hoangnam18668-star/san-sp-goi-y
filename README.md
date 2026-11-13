@@ -10,6 +10,6 @@ Chỉ chứa ý tưởng và link sản phẩm công khai, không có số liệ
 ## Web Điều Hành
 
 - `web/index.html`: bản web Điều Hành mới nhất (một file duy nhất).
-- `wrangler.jsonc`: cấu hình để Cloudflare tự đưa web lên `dieuhanh-congty` mỗi khi `web/` thay đổi.
+- `wrangler.jsonc`: cấu hình để Cloudflare tự đưa web lên `app` (app.nexa-commerce.workers.dev) mỗi khi `web/` thay đổi.
 
 Cloudflare tự đưa web lên khi kho thay đổi (đã nối 11/11/2026).

@@ -1,6 +1,6 @@
 {
-  // Cấu hình để Cloudflare tự đưa web Điều Hành lên mỗi khi thư mục web/ thay đổi.
-  "name": "dieuhanh-congty",
+  // Cấu hình để Cloudflare tự đưa web Nexa Commerce (app.nexa-commerce.workers.dev) lên mỗi khi thư mục web/ thay đổi.
+  "name": "app",
   "compatibility_date": "2026-10-01",
   "assets": { "directory": "./web" }
 }
