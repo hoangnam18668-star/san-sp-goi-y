@@ -51,7 +51,7 @@
   "niche": "tumbler 40oz",
   "note": "",
   "firstSeen": "2026-11-12",
-  "lastSeen": "2026-11-12"
+  "lastSeen": "2026-11-14"
  },
  {
   "name": "HydroJug",
@@ -60,7 +60,7 @@
   "niche": "tumbler 40oz",
   "note": "",
   "firstSeen": "2026-11-12",
-  "lastSeen": "2026-11-13"
+  "lastSeen": "2026-11-14"
  },
  {
   "name": "Beslip",
@@ -69,7 +69,7 @@
   "niche": "clog giá rẻ",
   "note": "",
   "firstSeen": "2026-11-12",
-  "lastSeen": "2026-11-12"
+  "lastSeen": "2026-11-14"
  },
  {
   "name": "GORILLA GRIP",
@@ -133,5 +133,59 @@
   "note": "",
   "firstSeen": "2026-11-13",
   "lastSeen": "2026-11-13"
+ },
+ {
+  "name": "Frost Buddy",
+  "platform": "TikTok Shop",
+  "link": "",
+  "niche": "tumbler giá rẻ",
+  "note": "4.428 cái T10/2026",
+  "firstSeen": "2026-11-14",
+  "lastSeen": "2026-11-14"
+ },
+ {
+  "name": "KitchenClouds",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B09CYDRFWQ",
+  "niche": "thảm bếp",
+  "note": "~10K/tháng",
+  "firstSeen": "2026-11-14",
+  "lastSeen": "2026-11-14"
+ },
+ {
+  "name": "WoodByStu",
+  "platform": "Etsy",
+  "link": "",
+  "niche": "thảm cửa in tên",
+  "note": "16.819 lượt bán",
+  "firstSeen": "2026-11-14",
+  "lastSeen": "2026-11-14"
+ },
+ {
+  "name": "Mibao",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B0CGTRPVRG",
+  "niche": "thảm cửa",
+  "note": "~3K/tháng",
+  "firstSeen": "2026-11-14",
+  "lastSeen": "2026-11-14"
+ },
+ {
+  "name": "ChayChax",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B097BYBT7V",
+  "niche": "dép clog đế rời",
+  "note": "22,6K đánh giá",
+  "firstSeen": "2026-11-14",
+  "lastSeen": "2026-11-14"
+ },
+ {
+  "name": "BEDELITE",
+  "platform": "TikTok Shop",
+  "link": "",
+  "niche": "chăn lông",
+  "note": "11.676 cái T10/2026",
+  "firstSeen": "2026-11-14",
+  "lastSeen": "2026-11-14"
  }
 ]
