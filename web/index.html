@@ -229,7 +229,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.16g", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.16h", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -415,7 +415,7 @@ window.APP_CONFIG = {
 <body>
 <section class="auth" id="auth">
   <div class="auth-card">
-    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 16/11g</p></div></div></div>
+    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 16/11h</p></div></div></div>
     <div id="authBox" hidden>
       <h2 id="authTitle">Đăng nhập</h2>
       <form id="authForm" class="auth-form">
@@ -2188,7 +2188,7 @@ function setPageTitle(list){const t=(list.find(x=>x[0]===S.tab)||[])[1]||"";cons
 /* 16-dropsheet.js · Đơn Drop: đọc thẳng bảng Google Sheets đơn dropship (chế độ "Ai có link đều xem được"),
    tự làm mới mỗi 10 phút khi đang mở trang. Không lưu dữ liệu đơn vào hệ thống, chỉ lưu link bảng (settings/dropSheet).
    Bỏ qua các cột thông tin khách (Buyer ID, Mail). Lợi nhuận tính lại từ: Vốn $ × tỉ giá mua − Doanh thu $ × tỉ giá về. */
-S.dsCfgDoc=null;S.ds={rows:[],orphans:[],at:0,err:"",busy:false,src:0};S.dsMonth="";S.dsShop="";S.dsSt="all";S.dsQ="";S.dsView="orders";
+S.dsCfgDoc=null;S.ds={rows:[],orphans:[],at:0,err:"",busy:false,src:0};S.dsPer="";S.dsFrom="";S.dsTo="";S.dsSeller="";S.dsShop="";S.dsSt="all";S.dsQ="";S.dsView="orders";
 const DS_DEF={rateCost:27000,rateRev:26000};
 const dsCfg=()=>({...DS_DEF,...(S.dsCfgDoc||{})});S.dsCk="all";
 const dsLinks=()=>String(dsCfg().links||"").split(/\s+/).map(s=>s.trim()).filter(s=>/docs\.google\.com\/spreadsheets\/d\//.test(s));
@@ -2280,17 +2280,31 @@ function dsAgg(rows){const o=new Set(rows.map(r=>r.order)),b=new Set(rows.filter
   const P=rows.filter(r=>r.pend),B=rows.filter(r=>r.bad);
   return{pend:new Set(P.map(r=>r.order)).size,pendRev:P.reduce((a,r)=>a+r.rev,0),pendProfit:P.reduce((a,r)=>a+r.profit,0),badRev:B.reduce((a,r)=>a+r.rev,0),doneCostV:sd("costV"),orders:o.size,bad:b.size,cost:s("cost"),rev:s("rev"),costV:s("costV"),revV:s("revV"),profit:s("profit"),notrack:new Set(rows.filter(r=>!r.bad&&!r.track).map(r=>r.order)).size}}
 const dsMonths=()=>[...new Set(S.ds.rows.map(r=>r.date.slice(0,7)))].sort().reverse();
+/* Khoảng thời gian: hôm nay, hôm qua, tuần này, tuần trước, 7/30 ngày, từng tháng, tuỳ chọn */
+const dsMon=d=>{const x=toD(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return ymd(x)};
+function dsPeriod(){const td=today(),months=dsMonths();let k=S.dsPer;
+  if(!k||(k.startsWith("m:")&&!months.includes(k.slice(2))))k=months.includes(curMonth())||!months.length?"m:"+curMonth():"m:"+months[0];
+  const opts=[["today","Hôm nay"],["yday","Hôm qua"],["week","Tuần này"],["lweek","Tuần trước"],["7d","7 ngày qua"],["30d","30 ngày qua"],...months.map(x=>["m:"+x,fmtM(x)]),["custom","Tuỳ chọn ngày…"]];
+  let f,t;if(k==="today")f=t=td;else if(k==="yday")f=t=addDays(td,-1);else if(k==="week"){f=dsMon(td);t=td}else if(k==="lweek"){f=addDays(dsMon(td),-7);t=addDays(f,6)}
+  else if(k==="7d"){f=addDays(td,-6);t=td}else if(k==="30d"){f=addDays(td,-29);t=td}else if(k==="custom"){f=S.dsFrom||addDays(td,-6);t=S.dsTo||td;if(f>t)[f,t]=[t,f]}
+  else{const m=k.slice(2);f=m+"-01";t=monthEnd(m)}
+  return{k,f,t,opts,label:k==="custom"||k==="week"||k==="lweek"||k.endsWith("d")?`${fmtD(f)} – ${fmtD(t)}`:f===t?fmtD(f):fmtM(f.slice(0,7)),in:d=>!!d&&d>=f&&d<=t}}
+const dsSellerId=shop=>{const id=(dsCfg().owners||{})[shop];return id&&V().staff.some(x=>x.id===id)?id:""};
+const dsSellerOk=shop=>!S.dsSeller||(S.dsSeller==="_none"?!dsSellerId(shop):dsSellerId(shop)===S.dsSeller);
+function dsGroupTable(groups,label,act){return`<div class="tbl"><table><thead><tr><th>${label}</th><th class="n">Đơn</th><th class="n">Hoàn/huỷ</th><th class="n">Doanh thu $</th><th class="n">Vốn $</th><th class="n">Lợi nhuận</th><th class="n">Lãi/doanh thu</th><th class="n">Thiếu tracking</th></tr></thead><tbody>
+  ${groups.map(x=>`<tr><td>${act?`<a href="#dondrop" data-act="${act}" data-id="${esc(x.id)}">${esc(x.name)}</a>`:esc(x.name)}${x.sub?`<span class="sub">${esc(x.sub)}</span>`:""}</td><td class="n">${x.orders}</td><td class="n ${x.bad?"dn":""}">${x.bad} (${pct(x.orders?x.bad/x.orders:NaN)})</td><td class="n">${usd(x.rev)}</td><td class="n">${usd(x.cost)}</td><td class="n ${x.profit<0?"dn":""}">${vnd(x.profit)}</td><td class="n">${pct(x.revV?x.profit/x.revV:NaN)}</td><td class="n">${x.notrack||"–"}</td></tr>`).join("")||'<tr><td colspan="8" class="empty">Chưa có đơn trong khoảng thời gian này.</td></tr>'}
+  ${groups.length>1?(()=>{const T=dsAgg(groups.flatMap(g=>g.rows));return`<tr style="font-weight:600"><td>Tổng</td><td class="n">${T.orders}</td><td class="n">${T.bad}</td><td class="n">${usd(T.rev)}</td><td class="n">${usd(T.cost)}</td><td class="n">${vnd(T.profit)}</td><td class="n">${pct(T.revV?T.profit/T.revV:NaN)}</td><td class="n">${T.notrack||"–"}</td></tr>`})():""}</tbody></table></div>`}
 function dsPill(r){const n=dsNorm(r.status);const c=r.bad?"p-bad":/deliver|da giao/.test(n)?"p-good":/track|ship|transit/.test(n)?"p-acc":/chua cap nhat|sold out|het hang/.test(n)?"p-warn":"p-mute";return`<span class="pill ${c}">${esc(r.status)}</span>`}
 const DS_CK={all:"Tất cả vấn đề",err:"Lỗi phải sửa",warn:"Cần xem lại"};
 const DS_CODE={dup:"Trùng dòng",oid:"Sai/thiếu mã đơn",shop:"Thiếu shop",nodate:"Thiếu/sai ngày",future:"Ngày tương lai",far:"Ngày lệch xa",ori:"Ngày khác kiểu",qty:"Thiếu số lượng",rate:"Tỉ giá bất thường",cost:"Chưa nhập vốn",rev:"Thiếu doanh thu",loss:"Đơn lỗ",big:"Doanh thu bất thường",dtrack:"Đã giao mà thiếu tracking",track:"Chậm tracking",status:"Chưa cập nhật trạng thái",soldout:"Hết hàng",badrev:"Hoàn/huỷ còn doanh thu",badprofit:"Hoàn/huỷ còn lãi"};
 function dsOwner(shop){const id=(dsCfg().owners||{})[shop];const st=id&&V().staff.find(x=>x.id===id);return st?st.name:""}
-function dsIssueRows(base,m){const ex=(S.ds.orphans||[]).filter(o=>!o.date||!m||o.date.startsWith(m)).filter(o=>!S.dsShop||o.shop===S.dsShop);
-  const far=S.ds.rows.filter(r=>r.far&&!base.includes(r)&&(!S.dsShop||r.shop===S.dsShop));
+function dsIssueRows(base,inP){const ex=(S.ds.orphans||[]).filter(o=>!o.date||!inP||inP(o.date)).filter(o=>(!S.dsShop||o.shop===S.dsShop)&&dsSellerOk(o.shop));
+  const far=S.ds.rows.filter(r=>r.far&&!base.includes(r)&&(!S.dsShop||r.shop===S.dsShop)&&dsSellerOk(r.shop));
   return[...base.filter(r=>r.issues?.length),...far,...ex].sort((a,b)=>a.src===b.src?a.line-b.line:a.src<b.src?-1:1)}
-function dsCheckView(base,m){const all=dsIssueRows(base,m),nErr=all.filter(r=>r.issues.some(i=>i[0]==="err")).length,nWarn=all.length-nErr,tot=base.length+(all.length-base.filter(r=>r.issues?.length).length);
+function dsCheckView(base,inP){const all=dsIssueRows(base,inP),nErr=all.filter(r=>r.issues.some(i=>i[0]==="err")).length,nWarn=all.length-nErr,tot=base.length+(all.length-base.filter(r=>r.issues?.length).length);
   const types=new Map();all.forEach(r=>new Set(r.issues.map(i=>i[2])).forEach(k=>types.set(k,(types.get(k)||0)+1)));
   let list=S.dsCk==="err"?all.filter(r=>r.issues.some(i=>i[0]==="err")):S.dsCk==="warn"?all.filter(r=>!r.issues.some(i=>i[0]==="err")):S.dsCk&&S.dsCk!=="all"?all.filter(r=>r.issues.some(i=>i[2]===S.dsCk)):all;
-  const who=new Map();for(const r of [...base,...(S.ds.orphans||[]).filter(o=>!o.date||!m||o.date.startsWith(m))]){const k=dsOwner(r.shop)||"(chưa gán) "+(r.shop||"không rõ shop");const w=who.get(k)||{k,shops:new Set(),n:0,err:0,warn:0};
+  const who=new Map();for(const r of [...base,...(S.ds.orphans||[]).filter(o=>(!o.date||inP(o.date))&&dsSellerOk(o.shop)&&(!S.dsShop||o.shop===S.dsShop))]){const k=dsOwner(r.shop)||"(chưa gán) "+(r.shop||"không rõ shop");const w=who.get(k)||{k,shops:new Set(),n:0,err:0,warn:0};
     w.shops.add(r.shop||"?");w.n++;if(r.issues?.some(i=>i[0]==="err"))w.err++;else if(r.issues?.length)w.warn++;who.set(k,w)}
   const W=[...who.values()].sort((a,b)=>b.err-a.err||b.warn-a.warn);
   return`<div class="kpis" style="margin:10px 0">
@@ -2311,29 +2325,34 @@ function pgDrop(){const links=dsLinks(),cfg=dsCfg();if(links.length&&!S.ds.at&&!
   const head=`<div class="sec-h"><div><h2>Đơn Drop</h2><p>Đọc trực tiếp bảng đơn dropship trên Google Sheets, tự làm mới 10 phút/lần khi đang mở trang. Không chép thông tin khách (Buyer ID, Mail) vào web.</p></div>
     <div class="actions">${links.length?`<button class="btn" data-act="dsNow" ${S.ds.busy?"disabled":""}>${S.ds.busy?"Đang đọc…":"Làm mới"}</button>`:""}<button class="btn ${links.length?"":"pri"}" data-act="dsCfg">${links.length?"Cài đặt bảng":"+ Kết nối bảng Google Sheets"}</button></div></div>`;
   if(!links.length)return head+`<div class="panel"><div class="empty" style="padding:28px 12px"><b>Chưa kết nối bảng đơn</b><p class="small muted" style="max-width:520px;margin:8px auto 0">Bấm “Kết nối bảng Google Sheets”, dán link bảng đơn drop (mỗi tab một link). Bảng cần để chế độ chia sẻ “Bất kỳ ai có đường liên kết – Người xem”.</p></div></div>`;
-  const all=S.ds.rows,months=dsMonths();if(S.dsMonth&&!months.includes(S.dsMonth))S.dsMonth="";const m=S.dsMonth||(months.includes(curMonth())?curMonth():months[0]||"");
-  let rows=all.filter(r=>!m||r.date.startsWith(m));const shops=[...new Set(rows.map(r=>r.shop))].sort((a,b)=>a.localeCompare(b,"vi",{numeric:true}));
+  const all=S.ds.rows,P=dsPeriod(),inP=P.in;
+  const sellers=[...new Map(Object.values(dsCfg().owners||{}).map(id=>V().staff.find(x=>x.id===id)).filter(Boolean).map(x=>[x.id,x.name])).entries()].sort((a,b)=>a[1].localeCompare(b[1],"vi"));
+  if(S.dsSeller&&S.dsSeller!=="_none"&&!sellers.some(x=>x[0]===S.dsSeller))S.dsSeller="";
+  let rows=all.filter(r=>inP(r.date)&&dsSellerOk(r.shop));const shops=[...new Set(rows.map(r=>r.shop))].sort((a,b)=>a.localeCompare(b,"vi",{numeric:true}));
   if(S.dsShop&&!shops.includes(S.dsShop))S.dsShop="";const base=S.dsShop?rows.filter(r=>r.shop===S.dsShop):rows;
   const A=dsAgg(base),stList=[...new Set(base.map(r=>r.status))];
   let list=S.dsSt==="all"?base:S.dsSt==="bad"?base.filter(r=>r.bad):S.dsSt==="notrack"?base.filter(r=>!r.bad&&!r.track):S.dsSt==="pend"?base.filter(r=>r.pend):base.filter(r=>r.status===S.dsSt);
   if(S.dsQ){const q=dsNorm(S.dsQ);list=list.filter(r=>dsNorm(r.order+" "+r.prod+" "+r.track+" "+r.shop+" "+r.note).includes(q))}
   const roi=A.doneCostV?A.profit/A.doneCostV:NaN,K=(ic,bg,fg,lb,v,s,cls="")=>`<div class="kpi"><div class="stat">${icon(ic,bg,fg)}<div><span class="lb">${lb}</span><div class="v ${cls}">${v}</div><span class="s">${s}</span></div></div></div>`;
-  const byShop=shops.map(sh=>({sh,...dsAgg(rows.filter(r=>r.shop===sh))})).sort((a,b)=>b.profit-a.profit);
-  const at=S.ds.at?new Date(S.ds.at):null,ckAll=dsIssueRows(base,m),ckErr=ckAll.filter(r=>r.issues.some(i=>i[0]==="err")).length;
+  const grp=(keyFn,nameFn,subFn)=>{const g=new Map();for(const r of base){const k=keyFn(r);(g.get(k)||g.set(k,[]).get(k)).push(r)}return[...g].map(([id,rs])=>({id,name:nameFn(id),sub:subFn?subFn(rs):"",rows:rs,...dsAgg(rs)}))};
+  const byShop=grp(r=>r.shop,x=>x,rs=>dsOwner(rs[0].shop)).sort((a,b)=>b.profit-a.profit);
+  const bySeller=grp(r=>dsSellerId(r.shop)||"_none",id=>id==="_none"?"(chưa gán seller)":(V().staff.find(x=>x.id===id)||{}).name||"?",rs=>[...new Set(rs.map(r=>r.shop))].join(", ")).sort((a,b)=>b.profit-a.profit);
+  const byDay=grp(r=>r.date,d=>`${WD[toD(d).getDay()]} ${fmtD(d)}`).sort((a,b)=>a.id<b.id?1:-1);
+  const at=S.ds.at?new Date(S.ds.at):null,ckAll=dsIssueRows(base,inP),ckErr=ckAll.filter(r=>r.issues.some(i=>i[0]==="err")).length;
   return head+`${S.ds.err?`<div class="notice"><span><b>Có bảng chưa đọc được</b><span class="small muted">${esc(S.ds.err)}</span></span><span class="pill p-warn">Kiểm tra</span></div>`:""}
   ${ckErr&&S.dsView!=="check"?`<a class="notice" href="#dondrop" data-act="dsView" data-id="check" style="text-decoration:none;color:inherit"><span><b>Bảng có ${ckErr} dòng nhân viên nhập sai/thiếu</b><span class="small muted">Bấm để xem từng dòng cần sửa trong Google Sheets</span></span><span class="pill p-bad">Kiểm tra bảng</span></a>`:""}
-  <div class="panel"><div class="actions" style="margin-bottom:10px"><select class="inp" id="dsMonth" style="width:auto">${months.map(x=>`<option value="${x}" ${x===m?"selected":""}>${fmtM(x)}</option>`).join("")||'<option>Chưa có dữ liệu</option>'}</select>
+  <div class="panel"><div class="actions" style="margin-bottom:10px"><select class="inp" id="dsPer" style="width:auto">${P.opts.map(([k,l])=>`<option value="${k}" ${k===P.k?"selected":""}>${esc(l)}</option>`).join("")}</select>
+      ${P.k==="custom"?`<input class="inp" type="date" id="dsFrom" value="${P.f}" style="width:auto"><input class="inp" type="date" id="dsTo" value="${P.t}" style="width:auto">`:""}
+      <select class="inp" id="dsSeller" style="width:auto"><option value="">Tất cả seller</option>${sellers.map(([id,n])=>`<option value="${esc(id)}" ${S.dsSeller===id?"selected":""}>${esc(n)}</option>`).join("")}<option value="_none" ${S.dsSeller==="_none"?"selected":""}>(Shop chưa gán seller)</option></select>
       <select class="inp" id="dsShop" style="width:auto"><option value="">Tất cả shop (${shops.length})</option>${shops.map(s=>`<option ${s===S.dsShop?"selected":""}>${esc(s)}</option>`).join("")}</select>
-      <span class="small muted">${at?`Cập nhật lúc ${pad(at.getHours())}:${pad(at.getMinutes())} · ${all.length} dòng đơn từ ${S.ds.src} bảng`:S.ds.busy?"Đang đọc bảng…":""}</span></div>
+      <span class="small muted"><b>${esc(P.label)}</b> · ${at?`Cập nhật lúc ${pad(at.getHours())}:${pad(at.getMinutes())} · ${all.length} dòng đơn từ ${S.ds.src} bảng`:S.ds.busy?"Đang đọc bảng…":""}</span></div>
     <div class="kpis">${K(IC.inbox,"var(--accent-soft)","var(--accent)","Số đơn",A.orders.toLocaleString("vi-VN"),`${A.bad} hoàn/huỷ (${pct(A.orders?A.bad/A.orders:NaN)})`)}
       ${K(IC.money,"var(--good-soft)","var(--good)","Doanh thu TikTok",usd(A.rev),vnd(A.revV)+(A.badRev?` · gồm ${usd(A.badRev)} đơn hoàn/huỷ`:""))}
       ${K(IC.money,"var(--sunk)","var(--muted)","Vốn mua hàng",usd(A.cost),vnd(A.costV))}
       ${K(IC.leaf,A.profit>=0?"var(--good-soft)":"var(--bad-soft)",A.profit>=0?"var(--good)":"var(--bad)","Lợi nhuận",vnd(A.profit),`Lãi / doanh thu: ${pct(A.revV?A.profit/A.revV:NaN)}${A.pend?` · trong đó ${vnd(A.pendProfit)} là lãi tạm của ${A.pend} đơn chưa nhập vốn`:""}`,A.profit<0?"dn":"")}
       ${K(IC.warn,"var(--warn-soft)","var(--warn)","Chưa có tracking",A.notrack,"Đơn chưa hoàn/huỷ mà thiếu mã vận đơn")}</div></div>
-  <div class="panel"><div class="subtabs">${[["orders","Danh sách đơn"],["shops","Theo shop"],["check",`Kiểm tra bảng${ckErr?` <b class="nav-badge">${ckErr}</b>`:""}`]].map(([k,l])=>`<button class="${S.dsView===k?"on":""}" data-act="dsView" data-id="${k}">${l}</button>`).join("")}</div>
-  ${S.dsView==="check"?`<div class="actions" style="margin-top:10px"><button class="btn" data-act="dsOwners">Gán người phụ trách shop</button><button class="btn" data-act="dsCkExport">Xuất Excel danh sách lỗi</button></div>${dsCheckView(base,m)}`:S.dsView==="shops"?`<div class="tbl"><table><thead><tr><th>Shop</th><th class="n">Đơn</th><th class="n">Hoàn/huỷ</th><th class="n">Doanh thu $</th><th class="n">Vốn $</th><th class="n">Lợi nhuận</th><th class="n">Lãi/doanh thu</th><th class="n">Thiếu tracking</th></tr></thead><tbody>
-    ${byShop.map(x=>`<tr><td><a href="#dondrop" data-act="dsPickShop" data-id="${esc(x.sh)}">${esc(x.sh)}</a></td><td class="n">${x.orders}</td><td class="n ${x.bad?"dn":""}">${x.bad} (${pct(x.orders?x.bad/x.orders:NaN)})</td><td class="n">${usd(x.rev)}</td><td class="n">${usd(x.cost)}</td><td class="n ${x.profit<0?"dn":""}">${vnd(x.profit)}</td><td class="n">${pct(x.revV?x.profit/x.revV:NaN)}</td><td class="n">${x.notrack||"–"}</td></tr>`).join("")||'<tr><td colspan="8" class="empty">Chưa có đơn trong tháng này.</td></tr>'}
-    </tbody></table></div>`:`<div class="chips">${[["all","Tất cả"],["bad","Hoàn / huỷ"],["notrack","Thiếu tracking"],["pend","Chưa nhập vốn"],...stList.filter(s=>!dsBad(s)).map(s=>[s,s])].map(([k,l])=>{const n=k==="all"?base.length:k==="bad"?base.filter(r=>r.bad).length:k==="notrack"?base.filter(r=>!r.bad&&!r.track).length:k==="pend"?base.filter(r=>r.pend).length:base.filter(r=>r.status===k).length;return`<button class="chip ${S.dsSt===k?"on":""}" data-act="dsSt" data-id="${esc(k)}">${esc(l)} <b>${n}</b></button>`}).join("")}</div>
+  <div class="panel"><div class="subtabs">${[["orders","Danh sách đơn"],["days","Theo ngày"],["sellers","Theo seller"],["shops","Theo shop"],["check",`Kiểm tra bảng${ckErr?` <b class="nav-badge">${ckErr}</b>`:""}`]].map(([k,l])=>`<button class="${S.dsView===k?"on":""}" data-act="dsView" data-id="${k}">${l}</button>`).join("")}</div>
+  ${S.dsView==="days"?dsGroupTable(byDay,"Ngày","dsPickDay"):S.dsView==="sellers"?`<div class="actions" style="margin-top:10px"><button class="btn" data-act="dsOwners">Gán seller cho shop</button></div>${dsGroupTable(bySeller,"Seller","dsPickSeller")}`:S.dsView==="check"?`<div class="actions" style="margin-top:10px"><button class="btn" data-act="dsOwners">Gán người phụ trách shop</button><button class="btn" data-act="dsCkExport">Xuất Excel danh sách lỗi</button></div>${dsCheckView(base,inP)}`:S.dsView==="shops"?dsGroupTable(byShop,"Shop","dsPickShop"):`<div class="chips">${[["all","Tất cả"],["bad","Hoàn / huỷ"],["notrack","Thiếu tracking"],["pend","Chưa nhập vốn"],...stList.filter(s=>!dsBad(s)).map(s=>[s,s])].map(([k,l])=>{const n=k==="all"?base.length:k==="bad"?base.filter(r=>r.bad).length:k==="notrack"?base.filter(r=>!r.bad&&!r.track).length:k==="pend"?base.filter(r=>r.pend).length:base.filter(r=>r.status===k).length;return`<button class="chip ${S.dsSt===k?"on":""}" data-act="dsSt" data-id="${esc(k)}">${esc(l)} <b>${n}</b></button>`}).join("")}</div>
     <div class="actions"><input class="inp" id="dsQ" placeholder="Tìm mã đơn, sản phẩm, tracking… (Enter)" value="${esc(S.dsQ)}" style="max-width:320px"></div>
     <div class="tbl"><table><thead><tr><th>Ngày</th><th>Shop</th><th>Mã đơn</th><th>Sản phẩm / phân loại</th><th class="n">SL</th><th class="n">Vốn $</th><th class="n">Doanh thu $</th><th class="n">Lợi nhuận</th><th>Trạng thái</th><th>Tracking</th></tr></thead><tbody>
     ${list.slice(0,500).map(r=>`<tr><td>${fmtD(r.date)}</td><td class="small">${esc(r.shop)}</td><td class="small">${esc(r.order)}</td><td class="small">${r.url?`<a href="${esc(r.url)}" target="_blank" rel="noopener">Mở sản phẩm ↗</a>`:esc(r.prod)}${r.note?`<span class="sub">${esc(r.note)}</span>`:""}</td><td class="n">${r.qty}</td><td class="n">${r.cost?usd(r.cost):"–"}</td><td class="n">${r.rev?usd(r.rev):"–"}</td><td class="n ${r.profit<0?"dn":""}">${vnd(r.profit)}${r.pend?'<span class="sub">tạm – chưa nhập vốn</span>':""}</td><td>${dsPill(r)}</td><td class="small">${esc(r.track)||"—"}</td></tr>`).join("")||'<tr><td colspan="10" class="empty">Không có đơn phù hợp.</td></tr>'}
@@ -2355,6 +2374,8 @@ Object.assign(ACT,{
     const rows=dsIssueRows(S.ds.rows,"");if(!rows.length)return toast("Không có dòng lỗi nào.");const wb=XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows.map(r=>({"Bảng":r.src,"Dòng":r.line,"Shop":r.shop,"Phụ trách":dsOwner(r.shop),"Mã đơn":r.order,"Ngày":r.date?fmtD(r.date):"","Mức":r.issues.some(i=>i[0]==="err")?"Lỗi":"Xem lại","Vấn đề":r.issues.map(i=>i[1]).join("; ")}))),"Loi bang don");
     XLSX.writeFile(wb,`kiem-tra-don-drop-${today()}.xlsx`)},
+  dsPickDay:v=>{S.dsPer="custom";S.dsFrom=S.dsTo=v;S.dsView="orders";render()},
+  dsPickSeller:v=>{S.dsSeller=v;S.dsView="orders";render()},
   dsPickShop:v=>{S.dsShop=v;S.dsView="orders";render()},
   dsCfg:()=>{const c=dsCfg();openForm({title:"Kết nối bảng đơn Drop",sub:"Dán link Google Sheets của từng tab đơn (mỗi dòng 1 link, link phải có #gid=… của tab). Bảng cần chia sẻ “Bất kỳ ai có đường liên kết – Người xem”.",
     fields:[{k:"links",label:"Link các tab đơn",type:"textarea",wide:true,hint:"Ví dụ: tab Order T11 và Order T10 – mỗi link một dòng"},{k:"rateCost",label:"Tỉ giá mua mặc định (VNĐ/USD)",type:"number"},{k:"rateRev",label:"Tỉ giá tiền về mặc định (VNĐ/USD)",type:"number"}],
@@ -2362,7 +2383,7 @@ Object.assign(ACT,{
     onSave:async o=>{const bad=String(o.links||"").split(/\s+/).filter(s=>s.trim()&&!dsParseLink(s));if(bad.length){toast("Có link không phải Google Sheets, kiểm tra lại.");return false}
       const doc={...(S.dsCfgDoc||{}),links:String(o.links||"").trim(),rateCost:+o.rateCost||DS_DEF.rateCost,rateRev:+o.rateRev||DS_DEF.rateRev};
       try{await S.db.doc("settings/dropSheet").set(doc);S.dsCfgDoc=doc;S.ds.at=0;toast("Đã lưu, đang đọc bảng…");render();dsLoad(true);return true}catch(e){toast("Không lưu được, thử lại.");return false}}})}});
-document.addEventListener("change",e=>{const t=e.target;if(t.id==="dsMonth"){S.dsMonth=t.value;render()}if(t.id==="dsShop"){S.dsShop=t.value;render()}});
+document.addEventListener("change",e=>{const t=e.target;if(t.id==="dsPer"){S.dsPer=t.value;render()}if(t.id==="dsFrom"){S.dsFrom=t.value;render()}if(t.id==="dsTo"){S.dsTo=t.value;render()}if(t.id==="dsSeller"){S.dsSeller=t.value;render()}if(t.id==="dsShop"){S.dsShop=t.value;render()}});
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="dsQ"){S.dsQ=e.target.value.trim();render()}});
 
 </script>
