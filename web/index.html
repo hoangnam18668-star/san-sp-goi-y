@@ -229,7 +229,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.13c", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.16", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -242,7 +242,7 @@ window.APP_CONFIG = {
   const cfg = window.APP_CONFIG || {};
   const $id = id => document.getElementById(id);
   const ready = cfg.supabaseUrl && cfg.supabaseAnonKey && !/DIEN_|YOUR_/.test(cfg.supabaseUrl + cfg.supabaseAnonKey);
-  const APP_SCRIPTS = ["01-config", "02-demo", "03-calc", "04-data", "05-pages", "06-kpi", "07-actions", "08-import", "09-staff", "11-backup", "12-web", "13-research", "14-attendance", "15-shell", "10-boot"];
+  const APP_SCRIPTS = ["01-config", "02-demo", "03-calc", "04-data", "05-pages", "06-kpi", "07-actions", "08-import", "09-staff", "11-backup", "12-web", "13-research", "14-attendance", "15-shell", "16-dropsheet", "10-boot"];
 
   /* ---------- Kho dữ liệu ---------- */
   function makeDb(sb) {
@@ -415,7 +415,7 @@ window.APP_CONFIG = {
 <body>
 <section class="auth" id="auth">
   <div class="auth-card">
-    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 13/11c</p></div></div></div>
+    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 16/11</p></div></div></div>
     <div id="authBox" hidden>
       <h2 id="authTitle">Đăng nhập</h2>
       <form id="authForm" class="auth-form">
@@ -465,7 +465,7 @@ window.APP_CONFIG = {
 <script type="text/plain" id="src-01-config">
 /* 01-config.js · Cấu hình chung: tab, vị trí & bộ KPI chuẩn, cấp thưởng seller, hạng mục, trạng thái và các hàm tiện ích */
 /* ============ Trạng thái & tiện ích ============ */
-const TABS=[["tongquan","Tổng quan"],["pheduyet","Phê duyệt"],["banhang","Bán hàng & Đơn"],["fulfill","Fulfillment"],["kho","Sản phẩm & Kho"],["sanpham","Săn sản phẩm"],["nhaphang","Nhập hàng"],["chiphi","Chi phí"],["dongtien","Dòng tiền"],["congviec","Công việc"],["kpi","Nhân sự & KPI"],["chamcong","Chấm công"],["tainguyen","Tài nguyên"],["caidat","Cài đặt"]];
+const TABS=[["tongquan","Tổng quan"],["pheduyet","Phê duyệt"],["banhang","Bán hàng & Đơn"],["dondrop","Đơn Drop (Sheets)"],["fulfill","Fulfillment"],["kho","Sản phẩm & Kho"],["sanpham","Săn sản phẩm"],["nhaphang","Nhập hàng"],["chiphi","Chi phí"],["dongtien","Dòng tiền"],["congviec","Công việc"],["kpi","Nhân sự & KPI"],["chamcong","Chấm công"],["tainguyen","Tài nguyên"],["caidat","Cài đặt"]];
 const isFF=()=>ST().model!=="stock";
 const tabList=()=>TABS.filter(([k])=>isFF()?k!=="nhaphang":k!=="fulfill").map(([k,l])=>[k,k==="kho"&&isFF()?"Sản phẩm & Giá vốn":l]);
 const ISSUE_T=["Gửi trễ / chưa gửi","Sai hàng / sai mẫu","Thiếu hàng","Hư hỏng / lỗi in","Mất hàng / thất lạc","Không có tracking","Đối tác hết hàng","Khác"];
@@ -2148,7 +2148,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="attQ"
 /* 15-shell.js · Khung giao diện: menu dọc bên trái chia nhóm (giống phần mềm nhân sự), tiêu đề trang, menu trượt trên điện thoại */
 const NAV_GROUPS=[
   ["Vận hành",["tongquan","pheduyet","congviec"]],
-  ["Bán hàng",["banhang","fulfill","nhaphang","kho","sanpham"]],
+  ["Bán hàng",["banhang","dondrop","fulfill","nhaphang","kho","sanpham"]],
   ["Tài chính",["chiphi","dongtien"]],
   ["Con người",["kpi","chamcong"]],
   ["Hệ thống",["tainguyen","caidat"]]];
@@ -2161,6 +2161,7 @@ const NAV_ICON={
   banhang:'<path d="M3 4h2l2.2 10.4a1.5 1.5 0 0 0 1.5 1.1h8.6a1.5 1.5 0 0 0 1.4-1l1.8-6H6.2"/><circle cx="9.5" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/>',
   fulfill:'<path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="1.6"/><circle cx="17.5" cy="18" r="1.6"/>',
   nhaphang:'<path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="1.6"/><circle cx="17.5" cy="18" r="1.6"/>',
+  dondrop:'<rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="M3.5 9.5h17M3.5 15h17M9 4v16"/>',
   kho:'<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/>',
   sanpham:'<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.4-4.4"/>',
   chiphi:'<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/>',
@@ -2183,6 +2184,110 @@ function setPageTitle(list){const t=(list.find(x=>x[0]===S.tab)||[])[1]||"";cons
   window.addEventListener("hashchange",close)})();
 
 </script>
+<script type="text/plain" id="src-16-dropsheet">
+/* 16-dropsheet.js · Đơn Drop: đọc thẳng bảng Google Sheets đơn dropship (chế độ "Ai có link đều xem được"),
+   tự làm mới mỗi 10 phút khi đang mở trang. Không lưu dữ liệu đơn vào hệ thống, chỉ lưu link bảng (settings/dropSheet).
+   Bỏ qua các cột thông tin khách (Buyer ID, Mail). Lợi nhuận tính lại từ: Vốn $ × tỉ giá mua − Doanh thu $ × tỉ giá về. */
+S.dsCfgDoc=null;S.ds={rows:[],at:0,err:"",busy:false,src:0};S.dsMonth="";S.dsShop="";S.dsSt="all";S.dsQ="";S.dsView="orders";
+const DS_DEF={rateCost:27000,rateRev:26000};
+const dsCfg=()=>({...DS_DEF,...(S.dsCfgDoc||{})});
+const dsLinks=()=>String(dsCfg().links||"").split(/\s+/).map(s=>s.trim()).filter(s=>/docs\.google\.com\/spreadsheets\/d\//.test(s));
+function dsParseLink(u){const id=(/\/d\/([\w-]{20,})/.exec(u)||[])[1];const gid=(/[#&?]gid=(\d+)/.exec(u)||[])[1]||"0";return id?{id,gid}:null}
+/* CSV chuẩn (có ngoặc kép, xuống dòng trong ô) */
+function dsCsv(t){const out=[];let row=[],f="",q=false;
+  for(let i=0;i<t.length;i++){const c=t[i];
+    if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+    else if(c==='"')q=true;else if(c===","){row.push(f);f=""}else if(c==="\n"||c==="\r"){if(c==="\r"&&t[i+1]==="\n")i++;row.push(f);out.push(row);row=[];f=""}else f+=c}
+  if(f!==""||row.length){row.push(f);out.push(row)}return out}
+const dsNum=v=>{const s=String(v??"").replace(/[^0-9.,-]/g,"");if(!s||s==="-")return null;
+  const n=/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)?+s.replace(/,/g,""):/^-?\d{1,3}(\.\d{3})+$/.test(s)?+s.replace(/\./g,""):+s.replace(/,/g,"");return isFinite(n)?n:null};
+const dsNorm=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/đ/gi,"d").toLowerCase().replace(/\s+/g," ").trim();
+/* Ngày "11/2" hay "07/11": chọn cách đọc ra ngày gần hôm nay nhất (không quá tương lai) */
+function dsDate(v){const s=String(v||"").trim();let m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s);if(m)return`${m[1]}-${pad(+m[2])}-${pad(+m[3])}`;
+  m=/^(\d{1,2})[\/.-](\d{1,2})(?:[\/.-](\d{2,4}))?/.exec(s);if(!m)return null;const a=+m[1],b=+m[2];let y=m[3]?+m[3]:null;if(y&&y<100)y+=2000;
+  const now=new Date(),lim=new Date(now.getTime()+7*864e5),c=[];
+  const mk=(mo,d)=>{if(mo<1||mo>12||d<1||d>31)return;let yy=y??now.getFullYear();let x=new Date(yy,mo-1,d);if(!y&&x>lim)x=new Date(yy-1,mo-1,d);if(x.getMonth()===mo-1)c.push(x)};
+  mk(a,b);mk(b,a);if(!c.length)return null;c.sort((p,q)=>Math.abs(now-p)-Math.abs(now-q));const x=c[0];return`${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(x.getDate())}`}
+const dsBad=st=>/return|refund|cancel|hoan|huy|tra hang/.test(dsNorm(st));
+/* Ghép cột theo tên tiêu đề, kiểm tra thêm bằng giá trị (cột tỉ giá phải nằm trong 15.000–40.000) */
+function dsMap(head,body){const H=head.map(dsNorm),find=(re,from=0)=>{for(let i=from;i<H.length;i++)if(re.test(H[i]))return i;return -1};
+  const isRate=i=>{if(i<0)return false;const v=body.map(r=>dsNum(r[i])).filter(x=>x!=null);return v.length>0&&v.filter(x=>x>=15000&&x<=40000).length/v.length>.6};
+  const mp={date:find(/^(date|ngay)/),shop:find(/^shop/),order:find(/order ?id|ma don/),link:find(/link|san pham|product/),qty:find(/^(qty|qtly|qtt|so luong|sl)\b/),
+    cost:find(/^total$/),rev:find(/doanh thu.*tiktok|^doanh thu$/),status:find(/^status|trang thai/),track:find(/^tracking/),note:find(/^note/)};
+  const rc=[...H.keys()].filter(i=>i>mp.cost&&isRate(i));mp.rateCost=rc[0]??-1;
+  const rvn=find(/rate thu ve/);mp.rateRev=isRate(rvn)?rvn:(rc.find(i=>i>Math.max(mp.rev,mp.track))??-1);
+  return mp}
+function dsRowsFrom(tab,label){const hi=tab.slice(0,8).findIndex(r=>r.some(c=>/order ?id/i.test(c)));if(hi<0)return{rows:[],err:`Không thấy cột "Order ID" trong ${label}`};
+  const head=tab[hi],body=tab.slice(hi+1).filter(r=>r.some(c=>String(c).trim())),mp=dsMap(head,body),cfg=dsCfg();
+  const g=(r,k)=>mp[k]>=0?String(r[mp[k]]??"").trim():"";let last=null;const rows=[];
+  for(const r of body){const order=g(r,"order").replace(/\.0+$/,"");if(!/\d{6,}/.test(order))continue;
+    const date=dsDate(g(r,"date"))||last;if(!date)continue;last=date;
+    const status=g(r,"status"),bad=dsBad(status),cost=dsNum(g(r,"cost"))||0,rev=bad?0:(dsNum(g(r,"rev"))||0);
+    const rC=dsNum(g(r,"rateCost"))||+cfg.rateCost,rR=dsNum(g(r,"rateRev"))||+cfg.rateRev;
+    const costV=cost*rC,revV=rev*rR;let prod=g(r,"link");const url=/^https?:\/\//.test(prod)?prod.split(/\s/)[0]:"";
+    rows.push({date,shop:g(r,"shop")||"(chưa ghi shop)",order,prod:prod.slice(0,160),url,qty:dsNum(g(r,"qty"))||1,cost,rev,costV,revV,profit:revV-costV,status:status||"Chưa cập nhật",bad,track:g(r,"track").slice(0,40),note:g(r,"note").slice(0,120),src:label})}
+  return{rows,err:""}}
+let dsTimer=0;
+async function dsLoad(force){const links=dsLinks();if(S.staff||!links.length||S.ds.busy)return;if(!force&&Date.now()-S.ds.at<5*60e3)return;
+  S.ds.busy=true;if(force)render();let all=[],errs=[];
+  for(const [i,u] of links.entries()){const p=dsParseLink(u);if(!p){errs.push(`Link ${i+1} không đúng dạng Google Sheets`);continue}
+    const tries=[`https://docs.google.com/spreadsheets/d/${p.id}/export?format=csv&gid=${p.gid}`,`https://docs.google.com/spreadsheets/d/${p.id}/gviz/tq?tqx=out:csv&headers=1&gid=${p.gid}`];
+    let ok=false;for(const url of tries){try{const r=await fetch(url,{cache:"no-store"});if(!r.ok)continue;const t=await r.text();if(/^\s*<(!doctype|html)/i.test(t))continue;
+      const res=dsRowsFrom(dsCsv(t),`bảng ${i+1}`);if(res.err){errs.push(res.err);ok=true;break}all=all.concat(res.rows);ok=true;break}catch(e){}}
+    if(!ok)errs.push(`Chưa đọc được bảng ${i+1}. Mở Google Sheets → Chia sẻ → "Bất kỳ ai có đường liên kết" → Người xem.`)}
+  const seen=new Set();all=all.filter(r=>{const k=r.order+"|"+r.prod+"|"+r.qty+"|"+r.cost;if(seen.has(k))return false;seen.add(k);return true}).sort((a,b)=>a.date<b.date?1:-1);
+  S.ds={rows:all,at:Date.now(),err:errs.join(" · "),busy:false,src:links.length};if(S.tab==="dondrop")render()}
+setInterval(()=>{if(S.tab==="dondrop"&&!document.hidden&&Date.now()-S.ds.at>10*60e3)dsLoad(true)},30e3);
+function dsAgg(rows){const o=new Set(rows.map(r=>r.order)),b=new Set(rows.filter(r=>r.bad).map(r=>r.order));
+  const s=k=>rows.reduce((a,r)=>a+(+r[k]||0),0);return{orders:o.size,bad:b.size,cost:s("cost"),rev:s("rev"),costV:s("costV"),revV:s("revV"),profit:s("profit"),notrack:new Set(rows.filter(r=>!r.bad&&!r.track).map(r=>r.order)).size}}
+const dsMonths=()=>[...new Set(S.ds.rows.map(r=>r.date.slice(0,7)))].sort().reverse();
+function dsPill(r){const n=dsNorm(r.status);const c=r.bad?"p-bad":/deliver|da giao/.test(n)?"p-good":/track|ship|transit/.test(n)?"p-acc":/chua cap nhat|sold out|het hang/.test(n)?"p-warn":"p-mute";return`<span class="pill ${c}">${esc(r.status)}</span>`}
+function pgDrop(){const links=dsLinks(),cfg=dsCfg();if(links.length&&!S.ds.at&&!S.ds.busy)setTimeout(()=>dsLoad(true),0);
+  const head=`<div class="sec-h"><div><h2>Đơn Drop (Google Sheets)</h2><p>Đọc trực tiếp bảng đơn dropship trên Google Sheets, tự làm mới 10 phút/lần khi đang mở trang. Không chép thông tin khách (Buyer ID, Mail) vào web.</p></div>
+    <div class="actions">${links.length?`<button class="btn" data-act="dsNow" ${S.ds.busy?"disabled":""}>${S.ds.busy?"Đang đọc…":"Làm mới"}</button>`:""}<button class="btn ${links.length?"":"pri"}" data-act="dsCfg">${links.length?"Cài đặt bảng":"+ Kết nối bảng Google Sheets"}</button></div></div>`;
+  if(!links.length)return head+`<div class="panel"><div class="empty" style="padding:28px 12px"><b>Chưa kết nối bảng đơn</b><p class="small muted" style="max-width:520px;margin:8px auto 0">Bấm “Kết nối bảng Google Sheets”, dán link bảng đơn drop (mỗi tab một link). Bảng cần để chế độ chia sẻ “Bất kỳ ai có đường liên kết – Người xem”.</p></div></div>`;
+  const all=S.ds.rows,months=dsMonths();if(S.dsMonth&&!months.includes(S.dsMonth))S.dsMonth="";const m=S.dsMonth||(months.includes(curMonth())?curMonth():months[0]||"");
+  let rows=all.filter(r=>!m||r.date.startsWith(m));const shops=[...new Set(rows.map(r=>r.shop))].sort((a,b)=>a.localeCompare(b,"vi",{numeric:true}));
+  if(S.dsShop&&!shops.includes(S.dsShop))S.dsShop="";const base=S.dsShop?rows.filter(r=>r.shop===S.dsShop):rows;
+  const A=dsAgg(base),stList=[...new Set(base.map(r=>r.status))];
+  let list=S.dsSt==="all"?base:S.dsSt==="bad"?base.filter(r=>r.bad):S.dsSt==="notrack"?base.filter(r=>!r.bad&&!r.track):base.filter(r=>r.status===S.dsSt);
+  if(S.dsQ){const q=dsNorm(S.dsQ);list=list.filter(r=>dsNorm(r.order+" "+r.prod+" "+r.track+" "+r.shop+" "+r.note).includes(q))}
+  const roi=A.costV?A.profit/A.costV:NaN,K=(ic,bg,fg,lb,v,s,cls="")=>`<div class="kpi"><div class="stat">${icon(ic,bg,fg)}<div><span class="lb">${lb}</span><div class="v ${cls}">${v}</div><span class="s">${s}</span></div></div></div>`;
+  const byShop=shops.map(sh=>({sh,...dsAgg(rows.filter(r=>r.shop===sh))})).sort((a,b)=>b.profit-a.profit);
+  const at=S.ds.at?new Date(S.ds.at):null;
+  return head+`${S.ds.err?`<div class="notice"><span><b>Có bảng chưa đọc được</b><span class="small muted">${esc(S.ds.err)}</span></span><span class="pill p-warn">Kiểm tra</span></div>`:""}
+  <div class="panel"><div class="actions" style="margin-bottom:10px"><select class="inp" id="dsMonth" style="width:auto">${months.map(x=>`<option value="${x}" ${x===m?"selected":""}>${fmtM(x)}</option>`).join("")||'<option>Chưa có dữ liệu</option>'}</select>
+      <select class="inp" id="dsShop" style="width:auto"><option value="">Tất cả shop (${shops.length})</option>${shops.map(s=>`<option ${s===S.dsShop?"selected":""}>${esc(s)}</option>`).join("")}</select>
+      <span class="small muted">${at?`Cập nhật lúc ${pad(at.getHours())}:${pad(at.getMinutes())} · ${all.length} dòng đơn từ ${S.ds.src} bảng`:S.ds.busy?"Đang đọc bảng…":""}</span></div>
+    <div class="kpis">${K(IC.inbox,"var(--accent-soft)","var(--accent)","Số đơn",A.orders.toLocaleString("vi-VN"),`${A.bad} hoàn/huỷ (${pct(A.orders?A.bad/A.orders:NaN)})`)}
+      ${K(IC.money,"var(--good-soft)","var(--good)","Doanh thu TikTok",usd(A.rev),vnd(A.revV))}
+      ${K(IC.money,"var(--sunk)","var(--muted)","Vốn mua hàng",usd(A.cost),vnd(A.costV))}
+      ${K(IC.leaf,A.profit>=0?"var(--good-soft)":"var(--bad-soft)",A.profit>=0?"var(--good)":"var(--bad)","Lợi nhuận",vnd(A.profit),`Lãi / vốn: ${pct(roi)}`,A.profit<0?"dn":"")}
+      ${K(IC.warn,"var(--warn-soft)","var(--warn)","Chưa có tracking",A.notrack,"Đơn chưa hoàn/huỷ mà thiếu mã vận đơn")}</div></div>
+  <div class="panel"><div class="subtabs">${[["orders","Danh sách đơn"],["shops","Theo shop"]].map(([k,l])=>`<button class="${S.dsView===k?"on":""}" data-act="dsView" data-id="${k}">${l}</button>`).join("")}</div>
+  ${S.dsView==="shops"?`<div class="tbl"><table><thead><tr><th>Shop</th><th class="n">Đơn</th><th class="n">Hoàn/huỷ</th><th class="n">Doanh thu $</th><th class="n">Vốn $</th><th class="n">Lợi nhuận</th><th class="n">Lãi/vốn</th><th class="n">Thiếu tracking</th></tr></thead><tbody>
+    ${byShop.map(x=>`<tr><td><a href="#dondrop" data-act="dsPickShop" data-id="${esc(x.sh)}">${esc(x.sh)}</a></td><td class="n">${x.orders}</td><td class="n ${x.bad?"dn":""}">${x.bad} (${pct(x.orders?x.bad/x.orders:NaN)})</td><td class="n">${usd(x.rev)}</td><td class="n">${usd(x.cost)}</td><td class="n ${x.profit<0?"dn":""}">${vnd(x.profit)}</td><td class="n">${pct(x.costV?x.profit/x.costV:NaN)}</td><td class="n">${x.notrack||"–"}</td></tr>`).join("")||'<tr><td colspan="8" class="empty">Chưa có đơn trong tháng này.</td></tr>'}
+    </tbody></table></div>`:`<div class="chips">${[["all","Tất cả"],["bad","Hoàn / huỷ"],["notrack","Thiếu tracking"],...stList.filter(s=>!dsBad(s)).map(s=>[s,s])].map(([k,l])=>{const n=k==="all"?base.length:k==="bad"?base.filter(r=>r.bad).length:k==="notrack"?base.filter(r=>!r.bad&&!r.track).length:base.filter(r=>r.status===k).length;return`<button class="chip ${S.dsSt===k?"on":""}" data-act="dsSt" data-id="${esc(k)}">${esc(l)} <b>${n}</b></button>`}).join("")}</div>
+    <div class="actions"><input class="inp" id="dsQ" placeholder="Tìm mã đơn, sản phẩm, tracking… (Enter)" value="${esc(S.dsQ)}" style="max-width:320px"></div>
+    <div class="tbl"><table><thead><tr><th>Ngày</th><th>Shop</th><th>Mã đơn</th><th>Sản phẩm / phân loại</th><th class="n">SL</th><th class="n">Vốn $</th><th class="n">Doanh thu $</th><th class="n">Lợi nhuận</th><th>Trạng thái</th><th>Tracking</th></tr></thead><tbody>
+    ${list.slice(0,500).map(r=>`<tr><td>${fmtD(r.date)}</td><td class="small">${esc(r.shop)}</td><td class="small">${esc(r.order)}</td><td class="small">${r.url?`<a href="${esc(r.url)}" target="_blank" rel="noopener">Mở sản phẩm ↗</a>`:esc(r.prod)}${r.note?`<span class="sub">${esc(r.note)}</span>`:""}</td><td class="n">${r.qty}</td><td class="n">${r.cost?usd(r.cost):"–"}</td><td class="n">${r.rev?usd(r.rev):"–"}</td><td class="n ${r.profit<0?"dn":""}">${vnd(r.profit)}</td><td>${dsPill(r)}</td><td class="small">${esc(r.track)||"—"}</td></tr>`).join("")||'<tr><td colspan="10" class="empty">Không có đơn phù hợp.</td></tr>'}
+    </tbody></table></div>${list.length>500?`<p class="hint">Đang hiện 500/${list.length} dòng, lọc theo shop để xem hết.</p>`:""}`}
+    <p class="hint">Lợi nhuận = Doanh thu $ × tỉ giá về − Vốn $ × tỉ giá mua (lấy theo từng dòng trong bảng; ô trống dùng mặc định ${cfg.rateCost.toLocaleString("vi-VN")} / ${cfg.rateRev.toLocaleString("vi-VN")}). Đơn hoàn/huỷ tính doanh thu 0, lỗ bằng vốn.</p></div>`}
+Object.assign(ACT,{
+  dsNow:()=>dsLoad(true),
+  dsView:v=>{S.dsView=v;render()},
+  dsSt:v=>{S.dsSt=v;render()},
+  dsPickShop:v=>{S.dsShop=v;S.dsView="orders";render()},
+  dsCfg:()=>{const c=dsCfg();openForm({title:"Kết nối bảng đơn Drop",sub:"Dán link Google Sheets của từng tab đơn (mỗi dòng 1 link, link phải có #gid=… của tab). Bảng cần chia sẻ “Bất kỳ ai có đường liên kết – Người xem”.",
+    fields:[{k:"links",label:"Link các tab đơn",type:"textarea",wide:true,hint:"Ví dụ: tab Order T11 và Order T10 – mỗi link một dòng"},{k:"rateCost",label:"Tỉ giá mua mặc định (VNĐ/USD)",type:"number"},{k:"rateRev",label:"Tỉ giá tiền về mặc định (VNĐ/USD)",type:"number"}],
+    data:{links:c.links||"",rateCost:c.rateCost,rateRev:c.rateRev},
+    onSave:async o=>{const bad=String(o.links||"").split(/\s+/).filter(s=>s.trim()&&!dsParseLink(s));if(bad.length){toast("Có link không phải Google Sheets, kiểm tra lại.");return false}
+      const doc={links:String(o.links||"").trim(),rateCost:+o.rateCost||DS_DEF.rateCost,rateRev:+o.rateRev||DS_DEF.rateRev};
+      try{await S.db.doc("settings/dropSheet").set(doc);S.dsCfgDoc=doc;S.ds.at=0;toast("Đã lưu, đang đọc bảng…");render();dsLoad(true);return true}catch(e){toast("Không lưu được, thử lại.");return false}}})}});
+document.addEventListener("change",e=>{const t=e.target;if(t.id==="dsMonth"){S.dsMonth=t.value;render()}if(t.id==="dsShop"){S.dsShop=t.value;render()}});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="dsQ"){S.dsQ=e.target.value.trim();render()}});
+
+</script>
 <script type="text/plain" id="src-10-boot">
 /* 10-boot.js · Vẽ trang, điều hướng tab và kết nối kho dữ liệu (giám đốc / nhân viên). Luôn tải file này cuối cùng */
 /* ============ Render ============ */
@@ -2199,7 +2304,7 @@ function doRender(){
     const g=staffGate();$("#main").innerHTML=g||({congviec:pgTasks,chamcong:pgStaffAtt,kpi:pgStaffKPI,nop:pgStaffSubmit,sanpham:pgResearch}[S.tab]||pgTasks)();
     const drop=$("#drop");if(drop){drop.ondragover=e=>{e.preventDefault();drop.classList.add("over")};drop.ondragleave=()=>drop.classList.remove("over");drop.ondrop=e=>{e.preventDefault();drop.classList.remove("over");handleFile(e.dataTransfer.files[0])}}
     return}
-  renderFilters();const pg={tongquan:pgOverview,banhang:pgSales,kho:pgStock,sanpham:pgResearch,fulfill:pgFulfill,nhaphang:pgPurch,chiphi:pgExp,dongtien:pgCash,congviec:pgTasks,kpi:pgKPI,chamcong:pgAttendance,pheduyet:pgApprovals,tainguyen:pgAssets,caidat:pgSettings}[S.tab]||pgOverview;
+  renderFilters();const pg={tongquan:pgOverview,banhang:pgSales,dondrop:pgDrop,kho:pgStock,sanpham:pgResearch,fulfill:pgFulfill,nhaphang:pgPurch,chiphi:pgExp,dongtien:pgCash,congviec:pgTasks,kpi:pgKPI,chamcong:pgAttendance,pheduyet:pgApprovals,tainguyen:pgAssets,caidat:pgSettings}[S.tab]||pgOverview;
   let banner="";
   if(S.demo)banner=`<div class="banner"><span><b>Đang xem dữ liệu mẫu.</b> ${S.db?"Số liệu trên là ví dụ để bạn hình dung. Bắt đầu bằng việc thêm shop trong Cài đặt, rồi nhập file đơn hàng TikTok.":S.connecting?"Đang kết nối kho dữ liệu…":"Chưa kết nối được máy chủ dữ liệu."}</span>${S.db?'<button class="btn sm" data-act="exitDemo">Bắt đầu với dữ liệu thật</button>':""}</div>`;
   else if(S.readonly)banner=`<div class="banner"><span><b>Chế độ chỉ xem.</b> Tài khoản này không có quyền nhập số liệu.</span></div>`;
@@ -2290,6 +2395,7 @@ async function publish(){if(pubBusy){schedulePublish();return}pubBusy=true;
   db.doc("settings/main").onSnapshot(snap=>{S.settingsDoc=snap.exists?snap.data():null;S.loaded.add("settings");done()},()=>{S.loaded.add("settings");done()});
   db.doc("ref/catalog").onSnapshot(s=>{S.catalog=s.exists?s.data():null},()=>{});
   db.doc("settings/attendance").onSnapshot(s=>{S.attCfgDoc=s.exists?s.data():null;schedulePublish();render()},()=>{});
+  db.doc("settings/dropSheet").onSnapshot(s=>{S.dsCfgDoc=s.exists?s.data():null;if(S.tab==="dondrop")render()},()=>{});
   S.rsSub=1;db.doc("settings/research").onSnapshot(s=>{S.rsCfgDoc=s.exists?s.data():null;schedulePublish();render()},()=>{});
   db.doc("settings/backup").onSnapshot(s=>{S.backupDoc=s.exists?s.data():null;render()},()=>{});
   db.collection("my").onSnapshot(s=>{S.myDocs=Object.fromEntries(s.docs.map(d=>[d.id,d.data()]))},()=>{});
