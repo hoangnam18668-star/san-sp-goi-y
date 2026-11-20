@@ -229,7 +229,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.16j", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.20a", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -415,7 +415,7 @@ window.APP_CONFIG = {
 <body>
 <section class="auth" id="auth">
   <div class="auth-card">
-    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 16/11j</p></div></div></div>
+    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 20/11a</p></div></div></div>
     <div id="authBox" hidden>
       <h2 id="authTitle">Đăng nhập</h2>
       <form id="authForm" class="auth-form">
@@ -2446,8 +2446,8 @@ function podPeriod(){const td=today(),months=Object.keys(S.podDoc?.months||{}).s
   else{const m=k.slice(2);f=m+"-01";t=monthEnd(m)}
   return{k,f,t,opts,label:k.startsWith("m:")?fmtM(f.slice(0,7)):f===t?fmtD(f):`${fmtD(f)} – ${fmtD(t)}`,in:d=>d>=f&&d<=t}}
 function podPanel(){if(S.staff)return"";const has=!!Object.keys(S.podDoc?.months||{}).length;
-  const head=`<div class="sec-h"><div><h2>Sản lượng POD (bảng Lark của bên fulfill)</h2><p>Số đơn và phí fulfill theo ngày, shop, seller – lấy từ bảng "FULLFILLMENT (THẢO)" trên Lark.</p></div>
-    <div class="actions"><label class="btn ${has?"":"pri"}" style="cursor:pointer">Nhập file Lark (.xlsx)<input type="file" id="podFile" accept=".xlsx,.xls,.csv" hidden></label></div></div>`;
+  const head=`<div class="sec-h"><div><h2>Sản lượng POD (bảng Lark của bên fulfill)</h2><p>Số đơn và phí fulfill theo ngày, shop, seller – lấy từ bảng "FULLFILLMENT (THẢO)" trên Lark, tự cập nhật mỗi khi mở web (30 phút/lần).</p>${S.podSync?.err?`<p class="small" style="color:#b42318;margin-top:4px">⚠ Chưa tự lấy được từ Lark: ${esc(S.podSync.err)}</p>`:""}</div>
+    <div class="actions"><button class="btn ${has?"":"pri"}" data-act="podSync" ${S.podSync?.busy?"disabled":""}>${S.podSync?.busy?"Đang lấy từ Lark…":"Lấy từ Lark ngay"}</button><label class="btn" style="cursor:pointer">Nhập file Lark (.xlsx)<input type="file" id="podFile" accept=".xlsx,.xls,.csv" hidden></label></div></div>`;
   if(!has)return head+`<div class="panel"><div class="empty" style="padding:22px 12px"><b>Chưa có dữ liệu từ Lark</b><p class="small muted" style="max-width:560px;margin:8px auto 0">Mở bảng Lark → ⋯ → Tải xuống dưới dạng → Excel, rồi bấm “Nhập file Lark”. Việc tự động hằng ngày cũng sẽ đổ dữ liệu vào đây.</p></div></div>`;
   const P=podPeriod(),all=podRows(),sellers=[...new Set(all.flatMap(r=>podPeople(r.seller)))].sort((a,b)=>a.localeCompare(b,"vi"));
   if(S.podSeller&&!sellers.includes(S.podSeller))S.podSeller="";
@@ -2476,7 +2476,22 @@ function podPanel(){if(S.staff)return"";const has=!!Object.keys(S.podDoc?.months
     :S.podView==="sellers"?tbl([["Seller"],["Shop phụ trách"],["Đơn",1],["Phí fulfill",1]],perList.map(x=>`<tr><td>${esc(x.name)}</td><td class="small">${esc([...x.shops].join(", "))}</td><td class="n">${+x.n.toFixed(1)}</td><td class="n">${usd(x.fee)}</td></tr>`).join(""))+`<p class="hint">Shop có 2 seller cùng phụ trách (VD "Hằng & Tiến") thì đơn và phí được chia đều cho mỗi người.</p>`
     :tbl([["Ngày"],["Đơn",1],["Phí fulfill (theo shop)",1],["Tổng phí ngày (Lark)",1],["Phát sinh",1],["Ghi chú"]],dayList.map(x=>`<tr><td>${WD[toD(x.d).getDay()]} ${fmtD(x.d)}</td><td class="n">${x.n||"–"}</td><td class="n">${x.fee?usd(x.fee):"–"}</td><td class="n">${x.m?.fee?usd(x.m.fee):"–"}</td><td class="n">${x.m?.extra?usd(x.m.extra):"–"}</td><td class="small">${esc(x.m?.note||"")}</td></tr>`).join(""))}
     ${S.podSeller?`<p class="hint">Đang lọc seller ${esc(S.podSeller)}: tính cả shop làm chung với người khác.</p>`:""}</div>`}
-Object.assign(ACT,{podView:v=>{S.podView=v;render()}});
+Object.assign(ACT,{podView:v=>{S.podView=v;render()},podSync:()=>podLarkSync(true),podSyncAll:()=>podLarkSync(true,true)});
+/* Tự lấy bảng Lark qua máy chủ Cloudflare (/api/pod-lark) – không cần máy giám đốc bật. Chạy khi mở web và 30 phút/lần. */
+S.podSync=S.podSync||{};
+async function podLarkSync(force,all){if(S.staff||window.APP_SESSION?.role!=="owner"||S.podSync.busy||!/pages\.dev$|^localhost$|^127\./.test(location.hostname))return;
+  const last=S.podSync.ok||0;if(!force&&Date.now()-last<30*60e3)return;
+  S.podSync={...S.podSync,busy:true,err:""};if(S.tab==="banhang")render();
+  try{const tok=(await window.APP_SESSION.sb.auth.getSession()).data.session?.access_token;
+    const r=await fetch("/api/pod-lark"+(all?"?all=1":""),{headers:{authorization:"Bearer "+tok}});
+    const j=await r.json().catch(()=>({error:"Máy chủ chưa có chức năng đồng bộ (đợi Cloudflare cập nhật)"}));
+    if(!r.ok||j.error)throw Object.assign(new Error(j.error||("Lỗi "+r.status)),{code:j.code});
+    if(!j.tabs?.length)throw new Error("Không thấy tab tháng nào (T"+(new Date().getMonth()+1)+"."+new Date().getFullYear()+") trong bảng Lark");
+    const msg=await podSave(j.tabs.map(t=>podParse(t.grid,t.tab)),"tự động từ Lark");
+    S.podSync={ok:Date.now(),msg};if(force)toast("Đã lấy từ Lark: "+msg)}
+  catch(e){S.podSync={err:e.message,code:e.code,ok:Date.now()-25*60e3};if(force)toast("Chưa lấy được từ Lark: "+e.message)}
+  if(S.tab==="banhang")render()}
+setTimeout(()=>podLarkSync(false),3000);setInterval(()=>podLarkSync(false),5*60e3);
 document.addEventListener("change",async e=>{const t=e.target;if(t.id==="podPer"){S.podPer=t.value;render()}if(t.id==="podFrom"){S.podFrom=t.value;render()}if(t.id==="podTo"){S.podTo=t.value;render()}if(t.id==="podSeller"){S.podSeller=t.value;render()}
   if(t.id==="podFile"&&t.files?.[0]){try{toast("Đang đọc file…");const msg=await podFile(t.files[0]);toast("Đã nhập: "+msg)}catch(err){toast("Không nhập được: "+err.message)}t.value=""}});
 
