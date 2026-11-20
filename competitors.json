@@ -6,7 +6,7 @@
   "niche": "thảm thấm nước",
   "note": "~10K/tháng (2/2026)",
   "firstSeen": "2026-11-11",
-  "lastSeen": "2026-11-12"
+  "lastSeen": "2026-11-20"
  },
  {
   "name": "OLANLY",
@@ -15,7 +15,7 @@
   "niche": "thảm cửa, thảm thú cưng, bathmat",
   "note": "nhiều mẫu top Amazon",
   "firstSeen": "2026-11-11",
-  "lastSeen": "2026-11-18"
+  "lastSeen": "2026-11-20"
  },
  {
   "name": "CoirCraft",
@@ -249,7 +249,7 @@
   "niche": "tumbler 40oz",
   "note": "Dreamy Field ~5K/tháng",
   "firstSeen": "2026-11-15",
-  "lastSeen": "2026-11-18"
+  "lastSeen": "2026-11-20"
  },
  {
   "name": "Ozark Trail",
@@ -565,5 +565,59 @@
   "note": "10K/tháng",
   "firstSeen": "2026-11-19",
   "lastSeen": "2026-11-19"
+ },
+ {
+  "name": "Yatzeegoods",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/1811779931",
+  "niche": "tất Noel",
+  "note": "~18K lượt bán",
+  "firstSeen": "2026-11-20",
+  "lastSeen": "2026-11-20"
+ },
+ {
+  "name": "KindredCraftGiftshop",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/4597255413",
+  "niche": "tất Noel",
+  "note": "892/tuần",
+  "firstSeen": "2026-11-20",
+  "lastSeen": "2026-11-20"
+ },
+ {
+  "name": "Evshine",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B08KXKFSJF",
+  "niche": "dép lông",
+  "note": "+40%",
+  "firstSeen": "2026-11-20",
+  "lastSeen": "2026-11-20"
+ },
+ {
+  "name": "Snug Leaves",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B08DXN4RR4",
+  "niche": "dép lông",
+  "note": "+50%",
+  "firstSeen": "2026-11-20",
+  "lastSeen": "2026-11-20"
+ },
+ {
+  "name": "EARTHALL",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B0B88Q9WNW",
+  "niche": "thảm câu vui",
+  "note": "2K/tháng",
+  "firstSeen": "2026-11-20",
+  "lastSeen": "2026-11-20"
+ },
+ {
+  "name": "RockDove",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B01MR34D28",
+  "niche": "dép nhà",
+  "note": "163K đánh giá",
+  "firstSeen": "2026-11-20",
+  "lastSeen": "2026-11-20"
  }
 ]
