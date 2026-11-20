@@ -229,7 +229,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.20a", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.20b", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -242,7 +242,7 @@ window.APP_CONFIG = {
   const cfg = window.APP_CONFIG || {};
   const $id = id => document.getElementById(id);
   const ready = cfg.supabaseUrl && cfg.supabaseAnonKey && !/DIEN_|YOUR_/.test(cfg.supabaseUrl + cfg.supabaseAnonKey);
-  const APP_SCRIPTS = ["01-config", "02-demo", "03-calc", "04-data", "05-pages", "06-kpi", "07-actions", "08-import", "09-staff", "11-backup", "12-web", "13-research", "14-attendance", "15-shell", "16-dropsheet", "17-podlark", "10-boot"];
+  const APP_SCRIPTS = ["01-config", "02-demo", "03-calc", "04-data", "05-pages", "06-kpi", "07-actions", "08-import", "09-staff", "11-backup", "12-web", "13-research", "14-attendance", "15-shell", "16-dropsheet", "17-podlark", "18-autolink", "10-boot"];
 
   /* ---------- Kho dữ liệu ---------- */
   function makeDb(sb) {
@@ -415,7 +415,7 @@ window.APP_CONFIG = {
 <body>
 <section class="auth" id="auth">
   <div class="auth-card">
-    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 20/11a</p></div></div></div>
+    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 20/11b</p></div></div></div>
     <div id="authBox" hidden>
       <h2 id="authTitle">Đăng nhập</h2>
       <form id="authForm" class="auth-form">
@@ -2496,6 +2496,85 @@ document.addEventListener("change",async e=>{const t=e.target;if(t.id==="podPer"
   if(t.id==="podFile"&&t.files?.[0]){try{toast("Đang đọc file…");const msg=await podFile(t.files[0]);toast("Đã nhập: "+msg)}catch(err){toast("Không nhập được: "+err.message)}t.value=""}});
 
 </script>
+<script type="text/plain" id="src-18-autolink">
+/* Tự động: lấy số từ bảng Đơn Drop (Google Sheets) và Sản lượng POD (Lark) đổ vào trang Fulfillment và Sản phẩm & Giá vốn.
+   Chỉ ĐỌC và tính toán khi mở trang – không ghi đè dữ liệu nhập tay. */
+const alK=(ic,bg,fg,lb,v,s)=>`<div class="kpi"><div class="stat">${icon(ic,bg,fg)}<div><span class="lb">${lb}</span><div class="v">${v}</div><span class="s">${s}</span></div></div></div>`;
+const alTbl=(cols,body,empty)=>`<div class="tbl"><table><thead><tr>${cols.map(([l,n])=>`<th${n?' class="n"':""}>${l}</th>`).join("")}</tr></thead><tbody>${body||`<tr><td colspan="${cols.length}" class="empty">${empty||"Không có dữ liệu trong khoảng này."}</td></tr>`}</tbody></table></div>`;
+/* Bảng Drop chỉ được tải khi mở trang Đơn Drop – các trang khác cũng tự tải khi cần */
+function alNeedDrop(){if(!S.staff&&dsLinks().length&&!S.ds.at&&!S.ds.busy)setTimeout(()=>dsLoad(true).then(()=>{if(["fulfill","kho"].includes(S.tab))render()}),0)}
+setInterval(()=>{if(["fulfill","kho"].includes(S.tab)&&!document.hidden&&dsLinks().length&&Date.now()-S.ds.at>10*60e3)dsLoad(true).then(()=>render())},30e3);
+const alDays=d=>Math.round((toD(today())-toD(d))/864e5);
+const alSrc=()=>{const at=S.ds.at?new Date(S.ds.at):null,pa=S.podDoc?.at?new Date(S.podDoc.at):null,t=x=>`${pad(x.getHours())}:${pad(x.getMinutes())} ${fmtD(ymd(x))}`;
+  return`<span class="small muted">Tự động từ: Google Sheets Đơn Drop${at?` (đọc lúc ${t(at)})`:S.ds.busy?" (đang đọc…)":dsLinks().length?"":" – chưa kết nối"} · Lark Sản lượng POD${pa?` (lấy lúc ${t(pa)})`:" – chưa có"}</span>`};
+
+/* ===== FULFILLMENT ===== */
+function ffAutoPanel(){if(S.staff)return"";alNeedDrop();const[f,t]=range(),inP=d=>d>=f&&d<=t;
+  const dr=(S.ds.rows||[]).filter(r=>inP(r.date)),A=dsAgg(dr);
+  const ordersOf=rs=>new Set(rs.map(r=>r.order)).size;
+  const live=dr.filter(r=>!r.bad),deliv=live.filter(r=>/deliver|da giao/.test(dsNorm(r.status))),noTr=live.filter(r=>!r.track);
+  const late=noTr.filter(r=>alDays(r.date)>=3).sort((a,b)=>a.date<b.date?-1:1);
+  const pr=podRows().filter(r=>inP(r.date)),pN=pr.reduce((a,r)=>a+r.n,0);
+  const dayMeta=Object.assign({},...Object.values(S.podDoc?.months||{}).map(p=>p.day||{}));
+  const ds=new Set(pr.map(r=>r.date));Object.keys(dayMeta).forEach(d=>{if(inP(d))ds.add(d)});
+  const pFee=[...ds].reduce((a,d)=>{const sf=pr.filter(r=>r.date===d).reduce((x,r)=>x+r.fee,0);return a+(sf||dayMeta[d]?.fee||0)},0);
+  const pExtra=[...ds].reduce((a,d)=>a+(+dayMeta[d]?.extra||0),0);
+  const noFeeDays=[...new Set(pr.filter(r=>r.n).map(r=>r.date))].filter(d=>!pr.filter(r=>r.date===d).some(r=>r.fee)&&!dayMeta[d]?.fee&&alDays(d)>=2);
+  const notes=Object.entries(dayMeta).filter(([d,m])=>inP(d)&&(m.note||m.extra)).sort((a,b)=>a[0]<b[0]?1:-1).slice(0,8);
+  const byStatus={};live.forEach(r=>{const k=r.status||"Chưa cập nhật";byStatus[k]=byStatus[k]||new Set();byStatus[k].add(r.order)});
+  const stRows=Object.entries(byStatus).map(([k,s])=>[k,s.size]).sort((a,b)=>b[1]-a[1]);
+  const lab=f===t?fmtD(f):`${fmtD(f)} – ${fmtD(t)}`;
+  return`<div class="sec-h"><div><h2>Đối tác đi đơn – tự động từ bảng</h2><p>Số liệu đọc thẳng từ bảng Đơn Drop (Google Sheets) và bảng POD (Lark), theo khoảng ${esc(lab)} ở góc trên.</p></div>
+    <div class="actions"><button class="btn" data-act="alRefresh" ${S.ds.busy||S.podSync?.busy?"disabled":""}>${S.ds.busy||S.podSync?.busy?"Đang lấy…":"Làm mới số liệu"}</button></div></div>
+  <div class="panel">${alSrc()}
+    <h3 style="margin:12px 0 8px">Dropship (bảng Hằng Drop)</h3>
+    <div class="kpis">${alK(IC.inbox,"var(--accent-soft)","var(--accent)","Đơn drop",A.orders,`${A.bad} đơn hoàn/huỷ`)}
+      ${alK(IC.leaf,"var(--good-soft)","var(--good)","Đã giao",ordersOf(deliv),`${A.orders?Math.round(ordersOf(deliv)/Math.max(1,A.orders-A.bad)*100):0}% đơn còn hiệu lực`)}
+      ${alK(IC.inbox,"var(--warn-soft)","var(--warn)","Chưa có tracking",ordersOf(noTr),`${ordersOf(late)} đơn quá 3 ngày`)}
+      ${alK(IC.money,"var(--warn-soft)","var(--warn)","Tiền hàng (vốn)",vnd(A.costV),`${usd(A.cost)} · ${A.pend} đơn chưa nhập vốn`)}</div>
+    ${stRows.length?`<p class="small" style="margin:8px 0">${stRows.map(([k,n])=>`<span class="pill p-mute" style="margin:2px">${esc(k)}: <b>${n}</b></span>`).join(" ")}</p>`:""}
+    ${late.length?`<p class="small" style="margin:10px 0 6px"><b>Đơn chưa có tracking quá 3 ngày</b> – cần nhắc bên drop gửi hàng:</p>`+alTbl([["Ngày đặt"],["Shop"],["Mã đơn"],["Trạng thái"],["Số ngày",1]],late.slice(0,30).map(r=>`<tr><td>${fmtD(r.date)}</td><td class="small">${esc(r.shop)}</td><td class="small">${esc(r.order)}</td><td>${dsPill(r)}</td><td class="n">${alDays(r.date)}</td></tr>`).join(""))+(late.length>30?`<p class="hint">Và ${late.length-30} dòng khác – xem đủ ở trang Đơn Drop › Kiểm tra bảng.</p>`:""):""}
+    <h3 style="margin:18px 0 8px">POD (bảng Lark FULLFILLMENT)</h3>
+    <div class="kpis">${alK(IC.inbox,"var(--accent-soft)","var(--accent)","Đơn POD",pN,`${new Set(pr.filter(r=>r.n).map(r=>r.date)).size} ngày có đơn`)}
+      ${alK(IC.money,"var(--warn-soft)","var(--warn)","Phí fulfill",usd(pFee),pN?`Bình quân ${usd(pFee/pN)}/đơn`:"–")}
+      ${alK(IC.money,"var(--warn-soft)","var(--warn)","Phát sinh",usd(pExtra),"Phí thêm ghi trong bảng Lark")}
+      ${alK(IC.leaf,noFeeDays.length?"var(--warn-soft)":"var(--good-soft)",noFeeDays.length?"var(--warn)":"var(--good)","Ngày chưa ghi phí",noFeeDays.length,noFeeDays.length?noFeeDays.slice(0,4).map(fmtD).join(", "):"Đã ghi đủ")}</div>
+    ${notes.length?alTbl([["Ngày"],["Phát sinh",1],["Ghi chú (Lark)"]],notes.map(([d,m])=>`<tr><td>${fmtD(d)}</td><td class="n">${m.extra?usd(m.extra):"–"}</td><td class="small">${esc(m.note||"")}</td></tr>`).join("")):""}
+    <p class="hint">Các số ở đây tự cập nhật khi bảng thay đổi. Phần quản lý đối tác, ví, sự cố nhập tay vẫn ở bên dưới như cũ.</p></div>`}
+
+/* ===== SẢN PHẨM & GIÁ VỐN ===== */
+function alProdName(p){if(!p)return"(chưa ghi sản phẩm)";if(!/^https?:/.test(p))return p;try{const u=new URL(p);const seg=u.pathname.split("/").filter(Boolean);
+  const nm=seg.find(s=>/[a-z].*-.*[a-z]/i.test(s)&&s.length>8);return u.hostname.replace(/^www\./,"")+(nm?" · "+decodeURIComponent(nm).replace(/[-_]+/g," ").slice(0,60):"")}catch(e){return p.slice(0,60)}}
+function prodAutoPanel(){if(S.staff)return"";alNeedDrop();const[f,t]=range(),inP=d=>d>=f&&d<=t;
+  const rows=(S.ds.rows||[]).filter(r=>inP(r.date));const g=new Map();
+  for(const r of rows){const k=(r.url||r.prod||"").toLowerCase()||"(trống)";const x=g.get(k)||{name:alProdName(r.prod),url:r.url,orders:new Set(),bad:new Set(),shops:new Set(),qty:0,cost:0,costV:0,rev:0,qCost:0,qRev:0,profit:0,last:""};
+    x.orders.add(r.order);x.shops.add(r.shop);if(r.bad)x.bad.add(r.order);
+    if(!r.bad){x.qty+=r.qty;if(r.cost){x.cost+=r.cost;x.costV+=r.costV;x.qCost+=r.qty}if(r.rev){x.rev+=r.rev;x.qRev+=r.qty}}x.profit+=r.profit;if(r.date>x.last)x.last=r.date;g.set(k,x)}
+  const list=[...g.values()].sort((a,b)=>b.orders.size-a.orders.size);const S2=S.alPS||"orders";
+  if(S2==="margin")list.sort((a,b)=>(a.rev?(a.rev-a.cost)/a.rev:9)-(b.rev?(b.rev-b.cost)/b.rev:9));if(S2==="profit")list.sort((a,b)=>b.profit-a.profit);
+  const pod=podRows().filter(r=>inP(r.date)),shopN=new Map();pod.forEach(r=>shopN.set(r.shop,(shopN.get(r.shop)||0)+r.n));
+  const podFee=pod.reduce((a,r)=>a+r.fee,0),podN=pod.filter(r=>r.fee).reduce((a,r)=>a+r.n,0);
+  const lab=f===t?fmtD(f):`${fmtD(f)} – ${fmtD(t)}`;
+  return`<div class="sec-h"><div><h2>Giá vốn thực tế – tự động từ bảng</h2><p>Tính từ các đơn đã đi trong khoảng ${esc(lab)}: giá vốn/cái, giá bán/cái và biên lãi của từng sản phẩm drop; phí fulfill/đơn của POD.</p></div>
+    <div class="actions"><select class="inp" id="alPS" style="width:auto"><option value="orders" ${S2==="orders"?"selected":""}>Xếp theo số đơn</option><option value="profit" ${S2==="profit"?"selected":""}>Xếp theo lãi</option><option value="margin" ${S2==="margin"?"selected":""}>Biên lãi thấp trước</option></select>
+    <button class="btn" data-act="alRefresh" ${S.ds.busy?"disabled":""}>${S.ds.busy?"Đang lấy…":"Làm mới"}</button></div></div>
+  <div class="panel">${alSrc()}
+    <h3 style="margin:12px 0 8px">Sản phẩm dropship (${list.length})</h3>
+    ${alTbl([["Sản phẩm"],["Shop",1],["Đơn",1],["Hoàn/huỷ",1],["SL",1],["Vốn/cái",1],["Giá bán/cái",1],["Biên lãi",1],["Lãi",1],["Đơn gần nhất"]],
+      list.slice(0,80).map(x=>{const uc=x.qCost?x.cost/x.qCost:0,ur=x.qRev?x.rev/x.qRev:0,m=ur&&uc?(ur-uc)/ur:null;
+        return`<tr><td class="small">${x.url?`<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name)}</a>`:esc(x.name)}</td><td class="n">${x.shops.size}</td><td class="n">${x.orders.size}</td><td class="n">${x.bad.size||"–"}</td><td class="n">${x.qty}</td>
+        <td class="n">${uc?usd(uc):"<span class='muted'>chưa nhập</span>"}</td><td class="n">${ur?usd(ur):"–"}</td><td class="n" style="color:${m==null?"":m<.2?"var(--bad)":m<.35?"var(--warn)":"var(--good)"}">${m==null?"–":Math.round(m*100)+"%"}</td><td class="n">${vnd(x.profit)}</td><td>${fmtD(x.last)}</td></tr>`}).join(""),
+      dsLinks().length?(S.ds.busy?"Đang đọc bảng Drop…":"Chưa có đơn drop trong khoảng này."):"Chưa kết nối bảng Đơn Drop (vào trang Đơn Drop → Kết nối bảng).")}
+    ${list.length>80?`<p class="hint">Đang hiện 80/${list.length} sản phẩm.</p>`:""}
+    <p class="hint">Vốn/cái = cột "Total" ($) chia số lượng; Giá bán/cái = "Doanh thu (theo TikTok)" chia số lượng; chỉ tính đơn không hoàn/huỷ. Biên lãi đỏ &lt; 20%, vàng &lt; 35%. Lãi lấy đúng cột "Lợi nhuận" (₫) của bảng.</p>
+    <h3 style="margin:18px 0 8px">POD – phí fulfill theo shop</h3>
+    ${alTbl([["Shop"],["Đơn",1],["Phí fulfill",1],["Phí/đơn (ngày có ghi phí)",1]],[...shopN.entries()].sort((a,b)=>b[1]-a[1]).map(([sh,n])=>{const rs=pod.filter(r=>r.shop===sh),fee=rs.reduce((a,r)=>a+r.fee,0),fn=rs.filter(r=>r.fee).reduce((a,r)=>a+r.n,0);return`<tr><td>${esc(sh)}</td><td class="n">${n}</td><td class="n">${fee?usd(fee):"–"}</td><td class="n">${fee&&fn?usd(fee/fn):"–"}</td></tr>`}).join(""),"Chưa có đơn POD trong khoảng này.")}
+    ${podN?`<p class="hint">Bình quân POD: ${usd(podFee/podN)}/đơn (chỉ tính ngày Lark có ghi phí theo shop). Bảng Lark chỉ ghi số đơn theo shop, chưa ghi tên mẫu nên chưa tính được giá vốn theo từng mẫu POD.</p>`:""}</div>`}
+
+Object.assign(ACT,{alRefresh:()=>{dsLoad(true).then(()=>render());if(typeof podLarkSync==="function")podLarkSync(true)}});
+document.addEventListener("change",e=>{if(e.target.id==="alPS"){S.alPS=e.target.value;render()}});
+
+</script>
 <script type="text/plain" id="src-10-boot">
 /* 10-boot.js · Vẽ trang, điều hướng tab và kết nối kho dữ liệu (giám đốc / nhân viên). Luôn tải file này cuối cùng */
 /* ============ Render ============ */
@@ -2512,7 +2591,7 @@ function doRender(){
     const g=staffGate();$("#main").innerHTML=g||({congviec:pgTasks,chamcong:pgStaffAtt,kpi:pgStaffKPI,nop:pgStaffSubmit,sanpham:pgResearch}[S.tab]||pgTasks)();
     const drop=$("#drop");if(drop){drop.ondragover=e=>{e.preventDefault();drop.classList.add("over")};drop.ondragleave=()=>drop.classList.remove("over");drop.ondrop=e=>{e.preventDefault();drop.classList.remove("over");handleFile(e.dataTransfer.files[0])}}
     return}
-  renderFilters();const pg={tongquan:pgOverview,banhang:()=>podPanel()+pgSales(),dondrop:pgDrop,kho:pgStock,sanpham:pgResearch,fulfill:pgFulfill,nhaphang:pgPurch,chiphi:pgExp,dongtien:pgCash,congviec:pgTasks,kpi:pgKPI,chamcong:pgAttendance,pheduyet:pgApprovals,tainguyen:pgAssets,caidat:pgSettings}[S.tab]||pgOverview;
+  renderFilters();const pg={tongquan:pgOverview,banhang:()=>podPanel()+pgSales(),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel():"")+pgStock(),sanpham:pgResearch,fulfill:()=>ffAutoPanel()+pgFulfill(),nhaphang:pgPurch,chiphi:pgExp,dongtien:pgCash,congviec:pgTasks,kpi:pgKPI,chamcong:pgAttendance,pheduyet:pgApprovals,tainguyen:pgAssets,caidat:pgSettings}[S.tab]||pgOverview;
   let banner="";
   if(S.demo)banner=`<div class="banner"><span><b>Đang xem dữ liệu mẫu.</b> ${S.db?"Số liệu trên là ví dụ để bạn hình dung. Bắt đầu bằng việc thêm shop trong Cài đặt, rồi nhập file đơn hàng TikTok.":S.connecting?"Đang kết nối kho dữ liệu…":"Chưa kết nối được máy chủ dữ liệu."}</span>${S.db?'<button class="btn sm" data-act="exitDemo">Bắt đầu với dữ liệu thật</button>':""}</div>`;
   else if(S.readonly)banner=`<div class="banner"><span><b>Chế độ chỉ xem.</b> Tài khoản này không có quyền nhập số liệu.</span></div>`;
