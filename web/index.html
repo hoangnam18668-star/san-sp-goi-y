@@ -2529,7 +2529,7 @@ function ffAutoPanel(){if(S.staff)return"";alNeedDrop();const[f,t]=range(),inP=d
   <div class="panel">${alSrc()}
     <h3 style="margin:12px 0 8px">Dropship (bảng Hằng Drop)</h3>
     <div class="kpis">${alK(IC.inbox,"var(--accent-soft)","var(--accent)","Đơn drop",A.orders,`${A.bad} đơn hoàn/huỷ`)}
-      ${alK(IC.leaf,"var(--good-soft)","var(--good)","Đã giao",ordersOf(deliv),`${A.orders?Math.round(ordersOf(deliv)/Math.max(1,A.orders-A.bad)*100):0}% đơn còn hiệu lực`)}
+      ${alK(IC.leaf,"var(--good-soft)","var(--good)","Đã giao",ordersOf(deliv),`${A.orders?Math.round(ordersOf(deliv)/Math.max(1,A.orders-A.bad)*100):0}% số đơn không hoàn/huỷ`)}
       ${alK(IC.inbox,"var(--warn-soft)","var(--warn)","Chưa có tracking",ordersOf(noTr),`${ordersOf(late)} đơn quá 3 ngày`)}
       ${alK(IC.money,"var(--warn-soft)","var(--warn)","Tiền hàng (vốn)",vnd(A.costV),`${usd(A.cost)} · ${A.pend} đơn chưa nhập vốn`)}</div>
     ${stRows.length?`<p class="small" style="margin:8px 0">${stRows.map(([k,n])=>`<span class="pill p-mute" style="margin:2px">${esc(k)}: <b>${n}</b></span>`).join(" ")}</p>`:""}
