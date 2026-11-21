@@ -60,7 +60,7 @@
   "niche": "tumbler 40oz",
   "note": "",
   "firstSeen": "2026-11-12",
-  "lastSeen": "2026-11-19"
+  "lastSeen": "2026-11-21"
  },
  {
   "name": "Beslip",
@@ -159,7 +159,7 @@
   "niche": "thảm cửa in tên",
   "note": "16.819 lượt bán",
   "firstSeen": "2026-11-14",
-  "lastSeen": "2026-11-14"
+  "lastSeen": "2026-11-21"
  },
  {
   "name": "Mibao",
@@ -375,7 +375,7 @@
   "niche": "tumbler theo nghề",
   "note": "Bestseller, 74,8K lượt bán",
   "firstSeen": "2026-11-17",
-  "lastSeen": "2026-11-17"
+  "lastSeen": "2026-11-21"
  },
  {
   "name": "CuteArtCustomDesign",
@@ -537,7 +537,7 @@
   "niche": "dép lông",
   "note": "+100%",
   "firstSeen": "2026-11-19",
-  "lastSeen": "2026-11-19"
+  "lastSeen": "2026-11-21"
  },
  {
   "name": "KIDMI",
@@ -619,5 +619,59 @@
   "note": "163K đánh giá",
   "firstSeen": "2026-11-20",
   "lastSeen": "2026-11-20"
+ },
+ {
+  "name": "Jin&Bao",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B0FCBWHPZX",
+  "niche": "thảm tủ bếp",
+  "note": "+42,9%",
+  "firstSeen": "2026-11-21",
+  "lastSeen": "2026-11-21"
+ },
+ {
+  "name": "AnitaDesignArt",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/4396288718",
+  "niche": "ornament chữ cái",
+  "note": "417/tuần",
+  "firstSeen": "2026-11-21",
+  "lastSeen": "2026-11-21"
+ },
+ {
+  "name": "KarenByWomack",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/4391366415",
+  "niche": "ornament chuông",
+  "note": "7K lượt bán",
+  "firstSeen": "2026-11-21",
+  "lastSeen": "2026-11-21"
+ },
+ {
+  "name": "justinxuhandknitted",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/1484859630",
+  "niche": "dép lông in tên",
+  "note": "76/tuần",
+  "firstSeen": "2026-11-21",
+  "lastSeen": "2026-11-21"
+ },
+ {
+  "name": "BeeryMellow",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/4452247526",
+  "niche": "dép lông in tên",
+  "note": "shop mới",
+  "firstSeen": "2026-11-21",
+  "lastSeen": "2026-11-21"
+ },
+ {
+  "name": "ShockTagon",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/1707172900",
+  "niche": "tumbler in tên",
+  "note": "3K lượt bán",
+  "firstSeen": "2026-11-21",
+  "lastSeen": "2026-11-21"
  }
 ]
