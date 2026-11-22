@@ -96,7 +96,7 @@
   "niche": "clog EVA",
   "note": "",
   "firstSeen": "2026-11-13",
-  "lastSeen": "2026-11-13"
+  "lastSeen": "2026-11-22"
  },
  {
   "name": "Caroline's Treasures",
@@ -564,7 +564,7 @@
   "niche": "tumbler 30oz",
   "note": "10K/tháng",
   "firstSeen": "2026-11-19",
-  "lastSeen": "2026-11-19"
+  "lastSeen": "2026-11-22"
  },
  {
   "name": "Yatzeegoods",
@@ -673,5 +673,77 @@
   "note": "3K lượt bán",
   "firstSeen": "2026-11-21",
   "lastSeen": "2026-11-21"
+ },
+ {
+  "name": "TheHelloBabyCo",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/1539519398",
+  "niche": "chăn in tên",
+  "note": "83K lượt bán",
+  "firstSeen": "2026-11-22",
+  "lastSeen": "2026-11-22"
+ },
+ {
+  "name": "TheCozyStudioCrafts",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/4423321121",
+  "niche": "túi in tên",
+  "note": "387/tuần",
+  "firstSeen": "2026-11-22",
+  "lastSeen": "2026-11-22"
+ },
+ {
+  "name": "BowlesDesigns",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/1736386788",
+  "niche": "cốc khắc tên",
+  "note": "34/tuần",
+  "firstSeen": "2026-11-22",
+  "lastSeen": "2026-11-22"
+ },
+ {
+  "name": "POWCAN",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B0D8J2ZB8P",
+  "niche": "bình giá rẻ",
+  "note": "7K/tháng",
+  "firstSeen": "2026-11-22",
+  "lastSeen": "2026-11-22"
+ },
+ {
+  "name": "Hargiis",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B0BHSFZNFY",
+  "niche": "thảm bồn tắm",
+  "note": "+33%",
+  "firstSeen": "2026-11-22",
+  "lastSeen": "2026-11-22"
+ },
+ {
+  "name": "MontVoo",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B09CTQF92M",
+  "niche": "thảm tắm",
+  "note": "+100%",
+  "firstSeen": "2026-11-22",
+  "lastSeen": "2026-11-22"
+ },
+ {
+  "name": "OTHWAY",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B0F6233N4X",
+  "niche": "thảm bồn tắm",
+  "note": "shop mới",
+  "firstSeen": "2026-11-22",
+  "lastSeen": "2026-11-22"
+ },
+ {
+  "name": "VeraCosy",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B0CLGK9159",
+  "niche": "dép nam",
+  "note": "3K/tháng",
+  "firstSeen": "2026-11-22",
+  "lastSeen": "2026-11-22"
  }
 ]
