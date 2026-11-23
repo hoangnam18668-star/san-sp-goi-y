@@ -114,7 +114,7 @@
   "niche": "thảm cửa",
   "note": "",
   "firstSeen": "2026-11-13",
-  "lastSeen": "2026-11-13"
+  "lastSeen": "2026-11-23"
  },
  {
   "name": "Boot-Tray",
@@ -168,7 +168,7 @@
   "niche": "thảm cửa",
   "note": "~3K/tháng",
   "firstSeen": "2026-11-14",
-  "lastSeen": "2026-11-14"
+  "lastSeen": "2026-11-23"
  },
  {
   "name": "ChayChax",
@@ -249,7 +249,7 @@
   "niche": "tumbler 40oz",
   "note": "Dreamy Field ~5K/tháng",
   "firstSeen": "2026-11-15",
-  "lastSeen": "2026-11-20"
+  "lastSeen": "2026-11-23"
  },
  {
   "name": "Ozark Trail",
@@ -745,5 +745,59 @@
   "note": "3K/tháng",
   "firstSeen": "2026-11-22",
   "lastSeen": "2026-11-22"
+ },
+ {
+  "name": "LuckFamilyCrafts",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/1764972006",
+  "niche": "tất Noel",
+  "note": "858/tuần",
+  "firstSeen": "2026-11-23",
+  "lastSeen": "2026-11-23"
+ },
+ {
+  "name": "TeeScapeApparel",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/1768742461",
+  "niche": "áo gia đình",
+  "note": "136/tuần",
+  "firstSeen": "2026-11-23",
+  "lastSeen": "2026-11-23"
+ },
+ {
+  "name": "InspireSleepRepeat",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/4387029420",
+  "niche": "áo nhóm",
+  "note": "82/tuần",
+  "firstSeen": "2026-11-23",
+  "lastSeen": "2026-11-23"
+ },
+ {
+  "name": "GaiaByDin",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/4426830555",
+  "niche": "gối ảnh thú cưng",
+  "note": "68/tuần",
+  "firstSeen": "2026-11-23",
+  "lastSeen": "2026-11-23"
+ },
+ {
+  "name": "SUNWILL",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B07MV6Z896",
+  "niche": "cốc cà phê",
+  "note": "+66,7%",
+  "firstSeen": "2026-11-23",
+  "lastSeen": "2026-11-23"
+ },
+ {
+  "name": "Project Cloud",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B0CZY26HD8",
+  "niche": "clog da",
+  "note": "700/tháng",
+  "firstSeen": "2026-11-23",
+  "lastSeen": "2026-11-23"
  }
 ]
