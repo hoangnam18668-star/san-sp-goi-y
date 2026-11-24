@@ -2622,6 +2622,7 @@ const TC_CATS=[["Quảng cáo",/\bads?\b|quang cao|gmv|tiktok ads|nap ads/],["Fu
   ["Văn phòng, ăn uống",/tien mang|mang viettel|hop dong mang|internet|wifi|camera|cham cong|lo vi song|ban phim|chieu|choi lau|den trang tri|tinh dau|\bke\b|highlands|bun |pho |lien hoan|com|tra |tra$|hoa qua|banh|do dung|van phong|dien|nuoc|nha |thue nha|in an|giay|muc|an trua|nuoc uong/]];
 function tcCat(dir,detail){const n=dsNorm(detail);
   if(/tien thua thang|so du thang|chuyen sang thang/.test(n))return"Số dư tháng trước";
+  if(dir<0&&/paypal/.test(n))return"Nạp PayPal";
   if(/nap pingpong|chuyen pingpong|doi tien|nap payoneer|rut ve tk|chuyen noi bo/.test(n)||/^mua ?[\d.,]+ ?(\$|usd|do\b)/.test(n))return"Chuyển nội bộ";
   if(dir>0){if(/tien ve shop|tiktok tra|rut tien shop/.test(n))return"Tiền TikTok về";if(/hoan/.test(n))return"Hoàn tiền";if(/sinh loi|lai/.test(n))return"Lãi, sinh lời";return"Góp vốn, thu khác"}
   for(const[c,re]of TC_CATS)if(re.test(n))return c;return"Khác"}
@@ -2682,10 +2683,10 @@ const tcMoney=(n,cur)=>cur==="U"?usd(n):vnd(n);
 const TC_SKIP=c=>c==="Số dư tháng trước"||c==="Chuyển nội bộ";
 const TC_DESC={"Fulfillment & tiền hàng":"Tiền đi đơn, mua hàng, phí ship","Mua shop, kênh, tài khoản":"Mua shop TikTok, kênh, acc","Lương, trợ cấp, thưởng":"Lương, thưởng, trợ cấp, công tác phí",
   "Phần mềm & công cụ":"Grok, ChatGPT, proxy, Veo3, app…","Quảng cáo":"Chạy ads","Văn phòng, ăn uống":"Điện nước, mạng, đồ dùng, ăn uống","Mẫu, KOC, livestream":"Gửi mẫu, KOC, live",
-  "Phí giao dịch, ngân hàng":"Phí chuyển tiền, phí ngân hàng","Khác":"Chưa rõ là gì – nên ghi rõ hơn ở cột “Cụ thể”"};
+  "Phí giao dịch, ngân hàng":"Phí chuyển tiền, phí ngân hàng","Nạp PayPal":"Mua $ vào PayPal – tiền này không vào sổ $ nên tính là đã chi","Khác":"Chưa rõ là gì – nên ghi rõ hơn ở cột “Cụ thể”"};
 /* Tỉ giá thật: lấy từ các dòng "Mua 500$" (số ₫ bỏ ra ÷ số $ mua được) của tháng đó; tháng không có thì lấy trung vị mọi tháng */
 function tcFxMap(){if(S._fxK===S.tcDoc?.at)return S._fx;const med=a=>{a=a.sort((x,y)=>x-y);return a.length?a[Math.floor(a.length/2)]:0};const by={},all=[];
-  tcRows().forEach(r=>{if(r.cur!=="V"||r.dir>0)return;const m=/^mua ?([\d.,]+) ?(\$|usd)/.exec(dsNorm(r.det));if(!m)return;const u=+m[1].replace(/,/g,"");const x=u?r.amt/u:0;if(x>20000&&x<32000){(by[r.month]=by[r.month]||[]).push(x);all.push(x)}});
+  tcRows().forEach(r=>{if(r.cur!=="V"||r.dir>0)return;const m=/^mua ?([\d.,]+) ?(\$|usd)/.exec(dsNorm(r.det));if(!m||/paypal/.test(dsNorm(r.det)))return;const u=+m[1].replace(/,/g,"");const x=u?r.amt/u:0;if(x>20000&&x<32000){(by[r.month]=by[r.month]||[]).push(x);all.push(x)}});
   const def=Math.round(med(all))||+ST().fx||26600,map={};Object.keys(S.tcDoc?.months||{}).forEach(m=>map[m]=Math.round(med(by[m]||[]))||def);map._def=def;S._fx=map;S._fxK=S.tcDoc?.at;return map}
 const tcFx=m=>{const f=tcFxMap();return f[m]||f._def};
 const tcQ=r=>r.cur==="U"?r.amt*tcFx(r.month):r.amt; // quy ra ₫
