@@ -2796,9 +2796,9 @@ function pnlPanel(){const all=tcRows(),po=poRows();if(!all.length)return"";
       ${tcBig("③ Tổng đã chi",tcTr(T),`${spent.length} khoản · gồm ${tcTr(inv)} mua shop/kênh`,"var(--warn)")}
       ${tcBig("= ①+②−③ Lãi / lỗ",(pl<0?"−":"+")+tcTr(Math.abs(pl)),word(pl)+(hasHold?"":" · chưa có ②"),col(pl))}</div>
     ${(()=>{const sh=holdShops(),pa=podActive(),rows=sh.map(k=>({k,t:shopType(k),h:H[k],n:pa[k]||0})).filter(r=>r.h!=null||r.n||r.t!=="–");
-      const sum=t=>rows.filter(r=>r.t.includes(t)&&r.h!=null).reduce((a,r)=>a+r.h,0),miss=t=>rows.filter(r=>r.t.includes(t)&&r.h==null).length;
+      const isT=(r,t)=>t==="POD"?r.t==="POD":r.t.includes("Drop"),sum=t=>rows.filter(r=>isT(r,t)&&r.h!=null).reduce((a,r)=>a+r.h,0),miss=t=>rows.filter(r=>isT(r,t)&&r.h==null).length;
       return`<h3 style="margin:16px 0 6px">Tiền còn trên từng shop</h3>
-      <p class="small" style="margin-bottom:6px">Drop: <b>${usd(sum("Drop"))}</b>${miss("Drop")?` (còn ${miss("Drop")} shop chưa nhập)`:""} · POD: <b>${usd(sum("POD"))}</b>${miss("POD")?` <span style="color:var(--bad)">(còn ${miss("POD")} shop POD chưa nhập)</span>`:""}</p>
+      <p class="small" style="margin-bottom:6px">Shop có Drop: <b>${usd(sum("Drop"))}</b>${miss("Drop")?` (còn ${miss("Drop")} shop chưa nhập)`:""} · Shop chỉ bán POD: <b>${usd(sum("POD"))}</b>${miss("POD")?` <span style="color:var(--bad)">(còn ${miss("POD")} shop POD chưa nhập)</span>`:""}</p>
       ${alTbl([["Shop"],["Loại"],["Đơn POD 2 tháng gần nhất",1],["Còn chờ trên shop",1]],rows.sort((a,b)=>(b.h??-1)-(a.h??-1)||b.n-a.n).map(r=>`<tr><td><b>${esc(r.k)}</b></td><td><span class="pill ${r.t==="Drop"?"p-acc":"p-mute"}">${r.t}</span></td><td class="n">${r.n||"–"}</td><td class="n">${r.h!=null?`<b>${usd(r.h)}</b>`:'<span class="muted">chưa nhập</span>'}</td></tr>`).join(""))}`})()}
     <p class="hint">Drop: số lấy từ Cotik › Finances › Overview (On hold). POD: các shop POD không có trên Cotik – mở TikTok Seller Center từng shop › Finance › On hold rồi bấm “Nhập tiền còn trên shop”.</p>
     <p class="hint">Vốn đã bỏ vào quỹ (tiền chị Hương, chị Thương… chuyển vào): <b>${tcTr(cap)}</b> – tạm coi là tiền túi chủ góp, không phải doanh thu. Quỹ còn lại cuối tháng là tiền vốn chưa tiêu hết, <b>không phải lãi</b>.</p></div>`}
