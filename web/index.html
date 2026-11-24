@@ -229,7 +229,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.20b", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.24a", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -415,7 +415,7 @@ window.APP_CONFIG = {
 <body>
 <section class="auth" id="auth">
   <div class="auth-card">
-    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 20/11b</p></div></div></div>
+    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 24/11a</p></div></div></div>
     <div id="authBox" hidden>
       <h2 id="authTitle">Đăng nhập</h2>
       <form id="authForm" class="auth-form">
@@ -2216,7 +2216,7 @@ const dsBad=st=>/return|refund|cancel|hoan|huy|tra hang/.test(dsNorm(st));
 function dsMap(head,body){const H=head.map(dsNorm),find=(re,from=0)=>{for(let i=from;i<H.length;i++)if(re.test(H[i]))return i;return -1};
   const isRate=i=>{if(i<0)return false;const v=body.map(r=>dsNum(r[i])).filter(x=>x!=null);return v.length>0&&v.filter(x=>x>=15000&&x<=40000).length/v.length>.6};
   const mp={date:find(/^(date|ngay)/),shop:find(/^shop/),order:find(/order ?id|ma don/),link:find(/link|san pham|product/),qty:find(/^(qty|qtly|qtt|so luong|sl)\b/),
-    cost:find(/^total$/),costV:find(/^cost$/),profitV:find(/^loi nhuan/),rev:find(/doanh thu.*tiktok|^doanh thu$/),status:find(/^status|trang thai/),track:find(/^tracking/),note:find(/^note/)};
+    cost:find(/^total$/),costV:find(/^cost$/),profitV:find(/^loi nhuan/),rev:find(/doanh thu.*tiktok|^doanh thu$/),status:find(/^status|trang thai/),track:find(/^tracking/),note:find(/^note/),img:find(/^(anh|hinh|image|img|picture|photo)/)};
   const rc=[...H.keys()].filter(i=>i>mp.cost&&isRate(i));mp.rateCost=rc[0]??-1;
   const rvn=find(/rate thu ve/);mp.rateRev=isRate(rvn)?rvn:(rc.find(i=>i>Math.max(mp.rev,mp.track))??-1);
   return mp}
@@ -2231,7 +2231,7 @@ function dsRowsFrom(tab,label){const hi=tab.slice(0,8).findIndex(r=>r.some(c=>/o
     const rC=dsNum(g(r,"rateCost"))||+cfg.rateCost,rR=dsNum(g(r,"rateRev"))||+cfg.rateRev;
     const sC=dsNum(g(r,"costV")),sP=dsNum(g(r,"profitV")),costV=sC??cost*rC,revV=rev*rR;let prod=g(r,"link");const url=/^https?:\/\//.test(prod)?prod.split(/\s/)[0]:"";
     rows.push({line,dRaw,dGuess:!dParsed,ori:dsDateOri(dRaw,dParsed),qRaw:g(r,"qty"),rcRaw:dsNum(g(r,"rateCost")),rrRaw:dsNum(g(r,"rateRev")),revRaw:g(r,"rev"),noShop:!g(r,"shop"),
-      date,shop:g(r,"shop")||"(chưa ghi shop)",order,prod:prod.slice(0,160),url,qty:dsNum(g(r,"qty"))||1,cost,rev,costV,revV,pend:!bad&&!cost&&rev>0,sheetP:sP!=null,profit:sP??(bad?-costV:revV-costV),status:status||"Chưa cập nhật",bad,track:g(r,"track").slice(0,40),note:g(r,"note").slice(0,120),src:label})}
+      date,shop:g(r,"shop")||"(chưa ghi shop)",order,prod:prod.slice(0,160),url,qty:dsNum(g(r,"qty"))||1,cost,rev,costV,revV,pend:!bad&&!cost&&rev>0,sheetP:sP!=null,profit:sP??(bad?-costV:revV-costV),status:status||"Chưa cập nhật",bad,track:g(r,"track").slice(0,40),note:g(r,"note").slice(0,120),img:(/^https?:\/\//.test(g(r,"img"))?g(r,"img").split(/\s/)[0]:""),src:label})}
   /* Kiểu ngày đa số trong bảng: dòng ghi khác kiểu thì cảnh báo dễ hiểu nhầm */
   const fx=rows.filter(x=>x.ori?.fixed),maj=fx.filter(x=>x.ori.ori==="dm").length>=fx.filter(x=>x.ori.ori==="md").length?"dm":"md";
   rows.forEach(x=>{x.majOri=fx.length?maj:null});
@@ -2543,34 +2543,68 @@ function ffAutoPanel(){if(S.staff)return"";alNeedDrop();const[f,t]=range(),inP=d
     <p class="hint">Các số ở đây tự cập nhật khi bảng thay đổi. Phần quản lý đối tác, ví, sự cố nhập tay vẫn ở bên dưới như cũ.</p></div>`}
 
 /* ===== SẢN PHẨM & GIÁ VỐN ===== */
-function alProdName(p){if(!p)return"(chưa ghi sản phẩm)";if(!/^https?:/.test(p))return p;try{const u=new URL(p);const seg=u.pathname.split("/").filter(Boolean);
-  const nm=seg.find(s=>/[a-z].*-.*[a-z]/i.test(s)&&s.length>8);return u.hostname.replace(/^www\./,"")+(nm?" · "+decodeURIComponent(nm).replace(/[-_]+/g," ").slice(0,60):"")}catch(e){return p.slice(0,60)}}
+/* Mã sản phẩm: lấy số sau "-p-" trong link SHEIN, hoặc ô chỉ ghi số */
+const alKey=r=>{const u=r.url||r.prod||"";const m=/-p-(\d{5,12})/.exec(u)||/^(\d{5,12})$/.exec(String(r.prod).trim());return m?"sh"+m[1]:(u||"(trống)").toLowerCase().slice(0,200)};
+function alClean(r){const u=r.url||"";if(!u){const p=String(r.prod||"").trim();return/^\d{5,12}$/.test(p)?{name:"Sản phẩm SHEIN mã "+p,src:"SHEIN"}:{name:p||"(chưa ghi sản phẩm)",src:""}}
+  try{const x=new URL(u),host=x.hostname.replace(/^(www|us|m)\./,"");const seg=decodeURIComponent(x.pathname.split("/").filter(Boolean).pop()||"").replace(/-p-\d+.*$/,"").replace(/\.html?$/,"");
+    let n=seg.replace(/[-_]+/g," ").replace(/\s+/g," ").trim();n=n.replace(/\b(SHEIN|Women s|Womens)\b/gi,m=>m.toLowerCase()==="women s"?"Women's":m);
+    return{name:n?n.charAt(0).toUpperCase()+n.slice(1):host,src:/shein/.test(host)?"SHEIN":/temu/.test(host)?"Temu":/amazon/.test(host)?"Amazon":/aliexpress/.test(host)?"AliExpress":host}}catch(e){return{name:u.slice(0,80),src:""}}}
+const alImgs=()=>S.dsCfgDoc?.imgs||{};
 function prodAutoPanel(){if(S.staff)return"";alNeedDrop();const[f,t]=range(),inP=d=>d>=f&&d<=t;
-  const rows=(S.ds.rows||[]).filter(r=>inP(r.date));const g=new Map();
-  for(const r of rows){const k=(r.url||r.prod||"").toLowerCase()||"(trống)";const x=g.get(k)||{name:alProdName(r.prod),url:r.url,orders:new Set(),bad:new Set(),shops:new Set(),qty:0,cost:0,costV:0,rev:0,qCost:0,qRev:0,profit:0,last:""};
-    x.orders.add(r.order);x.shops.add(r.shop);if(r.bad)x.bad.add(r.order);
-    if(!r.bad){x.qty+=r.qty;if(r.cost){x.cost+=r.cost;x.costV+=r.costV;x.qCost+=r.qty}if(r.rev){x.rev+=r.rev;x.qRev+=r.qty}}x.profit+=r.profit;if(r.date>x.last)x.last=r.date;g.set(k,x)}
-  const list=[...g.values()].sort((a,b)=>b.orders.size-a.orders.size);const S2=S.alPS||"orders";
-  if(S2==="margin")list.sort((a,b)=>(a.rev?(a.rev-a.cost)/a.rev:9)-(b.rev?(b.rev-b.cost)/b.rev:9));if(S2==="profit")list.sort((a,b)=>b.profit-a.profit);
+  const rows=(S.ds.rows||[]).filter(r=>inP(r.date));const g=new Map(),IM=alImgs();
+  for(const r of rows){const k=alKey(r);let x=g.get(k);if(!x){const c=alClean(r);x={k,name:c.name,src:c.src,url:r.url,img:"",orders:new Set(),bad:new Set(),shops:new Set(),vars:new Map(),qty:0,cost:0,rev:0,qCost:0,qRev:0,profit:0,last:""};g.set(k,x)}
+    if(r.img&&!x.img)x.img=r.img;if(!x.url&&r.url)x.url=r.url;
+    x.orders.add(r.order);x.shops.add(r.shop);if(r.bad)x.bad.add(r.order);if(r.note)x.vars.set(r.note,(x.vars.get(r.note)||0)+1);
+    if(!r.bad){x.qty+=r.qty;if(r.cost){x.cost+=r.cost;x.qCost+=r.qty}if(r.rev){x.rev+=r.rev;x.qRev+=r.qty}}x.profit+=r.profit;if(r.date>x.last)x.last=r.date}
+  let list=[...g.values()].map(x=>{const uc=x.qCost?x.cost/x.qCost:0,ur=x.qRev?x.rev/x.qRev:0;return{...x,img:IM[x.k]||x.img,uc,ur,lc:uc&&ur?ur-uc:null,m:uc&&ur?(ur-uc)/ur:null}});
+  const all=list.length,tot={orders:new Set(rows.map(r=>r.order)).size,profit:list.reduce((a,x)=>a+x.profit,0),low:list.filter(x=>x.m!=null&&x.m<.35).length,nocost:list.filter(x=>!x.uc&&x.qty).length,
+    rev:list.reduce((a,x)=>a+x.rev,0),cost:list.reduce((a,x)=>a+(x.qRev&&x.qCost?x.cost:0),0),revC:list.reduce((a,x)=>a+(x.qRev&&x.qCost?x.rev:0),0)};
+  const q=dsNorm(S.alQ||""),F=S.alF||"all";
+  if(q)list=list.filter(x=>dsNorm(x.name+" "+[...x.vars.keys()].join(" ")).includes(q));
+  if(F==="low")list=list.filter(x=>x.m!=null&&x.m<.35);if(F==="nocost")list=list.filter(x=>!x.uc&&x.qty);if(F==="noimg")list=list.filter(x=>!x.img);
+  const S2=S.alPS||"orders";list.sort((a,b)=>S2==="profit"?b.profit-a.profit:S2==="margin"?(a.m??9)-(b.m??9):S2==="recent"?(a.last<b.last?1:-1):b.orders.size-a.orders.size||b.profit-a.profit);
   const pod=podRows().filter(r=>inP(r.date)),shopN=new Map();pod.forEach(r=>shopN.set(r.shop,(shopN.get(r.shop)||0)+r.n));
-  const podFee=pod.reduce((a,r)=>a+r.fee,0),podN=pod.filter(r=>r.fee).reduce((a,r)=>a+r.n,0);
-  const lab=f===t?fmtD(f):`${fmtD(f)} – ${fmtD(t)}`;
-  return`<div class="sec-h"><div><h2>Giá vốn thực tế – tự động từ bảng</h2><p>Tính từ các đơn đã đi trong khoảng ${esc(lab)}: giá vốn/cái, giá bán/cái và biên lãi của từng sản phẩm drop; phí fulfill/đơn của POD.</p></div>
-    <div class="actions"><select class="inp" id="alPS" style="width:auto"><option value="orders" ${S2==="orders"?"selected":""}>Xếp theo số đơn</option><option value="profit" ${S2==="profit"?"selected":""}>Xếp theo lãi</option><option value="margin" ${S2==="margin"?"selected":""}>Biên lãi thấp trước</option></select>
-    <button class="btn" data-act="alRefresh" ${S.ds.busy?"disabled":""}>${S.ds.busy?"Đang lấy…":"Làm mới"}</button></div></div>
+  const podFee=pod.reduce((a,r)=>a+r.fee,0),podN=pod.filter(r=>r.fee).reduce((a,r)=>a+r.n,0),podAll=pod.reduce((a,r)=>a+r.n,0);
+  const lab=f===t?fmtD(f):`${fmtD(f)} – ${fmtD(t)}`,mc=m=>m==null?"var(--muted)":m<.2?"var(--bad)":m<.35?"var(--warn)":"var(--good)";
+  const thumb=x=>x.img?`<img src="${esc(x.img)}" alt="" loading="lazy" referrerpolicy="no-referrer" style="width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line);background:#fff" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'🖼',style:'display:inline-flex;width:56px;height:56px;align-items:center;justify-content:center;border-radius:8px;background:var(--line);font-size:22px'}))">`
+    :`<button class="btn" data-act="alImg" data-id="${esc(x.k)}" title="Dán link ảnh sản phẩm" style="width:56px;height:56px;padding:0;font-size:11px;line-height:1.2;border-style:dashed">＋ ảnh</button>`;
+  const chip=(k,l,n)=>`<button class="btn ${F===k?"pri":""}" data-act="alF" data-id="${k}" style="padding:4px 10px">${l}${n!=null?` (${n})`:""}</button>`;
+  const card=x=>{const vs=[...x.vars.entries()].sort((a,b)=>b[1]-a[1]);return`<tr>
+    <td style="width:64px">${thumb(x)}</td>
+    <td><div style="font-weight:600;line-height:1.35">${x.url?`<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name.slice(0,90))}${x.name.length>90?"…":""}</a>`:esc(x.name)}</div>
+      <div class="small muted" style="margin-top:3px">${x.src?`<span class="pill p-mute">${esc(x.src)}</span> `:""}${vs.slice(0,3).map(([v,n])=>`<span class="pill p-acc" style="margin-right:3px">${esc(v.slice(0,28))}${n>1?" ×"+n:""}</span>`).join("")}${vs.length>3?` +${vs.length-3} loại`:""}</div>
+      <div class="small muted" style="margin-top:2px">${x.shops.size} shop · gần nhất ${fmtD(x.last)}${x.img?` · <button data-act="alImg" data-id="${esc(x.k)}" style="border:0;background:none;padding:0;color:var(--accent);cursor:pointer;font:inherit;text-decoration:underline">đổi ảnh</button>`:""}</div></td>
+    <td class="n"><b>${x.orders.size}</b>${x.bad.size?`<div class="small" style="color:var(--bad)">${x.bad.size} hoàn/huỷ</div>`:""}<div class="small muted">${x.qty} cái</div></td>
+    <td class="n">${x.uc?usd(x.uc):x.qty?`<span class="pill p-warn">chưa nhập vốn</span>`:"–"}</td><td class="n">${x.ur?usd(x.ur):"–"}</td>
+    <td class="n">${x.lc!=null?`<b>${usd(x.lc)}</b><div class="small" style="color:${mc(x.m)}">biên ${Math.round(x.m*100)}%</div>`:"–"}</td>
+    <td class="n"><b style="color:${x.profit<0?"var(--bad)":""}">${vnd(x.profit)}</b></td></tr>`};
+  return`<div class="sec-h"><div><h2>Giá vốn thực tế – tự động từ bảng</h2><p>Khoảng ${esc(lab)} (đổi ở góc trên). Phần 1: từng sản phẩm Dropship (bảng Đơn Drop). Phần 2: POD (bảng Lark) – Lark chỉ ghi số đơn theo shop.</p></div>
+    <div class="actions"><button class="btn" data-act="alRefresh" ${S.ds.busy?"disabled":""}>${S.ds.busy?"Đang lấy…":"Làm mới"}</button></div></div>
   <div class="panel">${alSrc()}
-    <h3 style="margin:12px 0 8px">Sản phẩm dropship (${list.length})</h3>
-    ${alTbl([["Sản phẩm"],["Shop",1],["Đơn",1],["Hoàn/huỷ",1],["SL",1],["Vốn/cái",1],["Giá bán/cái",1],["Biên lãi",1],["Lãi",1],["Đơn gần nhất"]],
-      list.slice(0,80).map(x=>{const uc=x.qCost?x.cost/x.qCost:0,ur=x.qRev?x.rev/x.qRev:0,m=ur&&uc?(ur-uc)/ur:null;
-        return`<tr><td class="small">${x.url?`<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name)}</a>`:esc(x.name)}</td><td class="n">${x.shops.size}</td><td class="n">${x.orders.size}</td><td class="n">${x.bad.size||"–"}</td><td class="n">${x.qty}</td>
-        <td class="n">${uc?usd(uc):"<span class='muted'>chưa nhập</span>"}</td><td class="n">${ur?usd(ur):"–"}</td><td class="n" style="color:${m==null?"":m<.2?"var(--bad)":m<.35?"var(--warn)":"var(--good)"}">${m==null?"–":Math.round(m*100)+"%"}</td><td class="n">${vnd(x.profit)}</td><td>${fmtD(x.last)}</td></tr>`}).join(""),
-      dsLinks().length?(S.ds.busy?"Đang đọc bảng Drop…":"Chưa có đơn drop trong khoảng này."):"Chưa kết nối bảng Đơn Drop (vào trang Đơn Drop → Kết nối bảng).")}
-    ${list.length>80?`<p class="hint">Đang hiện 80/${list.length} sản phẩm.</p>`:""}
-    <p class="hint">Vốn/cái = cột "Total" ($) chia số lượng; Giá bán/cái = "Doanh thu (theo TikTok)" chia số lượng; chỉ tính đơn không hoàn/huỷ. Biên lãi đỏ &lt; 20%, vàng &lt; 35%. Lãi lấy đúng cột "Lợi nhuận" (₫) của bảng.</p>
-    <h3 style="margin:18px 0 8px">POD – phí fulfill theo shop</h3>
-    ${alTbl([["Shop"],["Đơn",1],["Phí fulfill",1],["Phí/đơn (ngày có ghi phí)",1]],[...shopN.entries()].sort((a,b)=>b[1]-a[1]).map(([sh,n])=>{const rs=pod.filter(r=>r.shop===sh),fee=rs.reduce((a,r)=>a+r.fee,0),fn=rs.filter(r=>r.fee).reduce((a,r)=>a+r.n,0);return`<tr><td>${esc(sh)}</td><td class="n">${n}</td><td class="n">${fee?usd(fee):"–"}</td><td class="n">${fee&&fn?usd(fee/fn):"–"}</td></tr>`}).join(""),"Chưa có đơn POD trong khoảng này.")}
-    ${podN?`<p class="hint">Bình quân POD: ${usd(podFee/podN)}/đơn (chỉ tính ngày Lark có ghi phí theo shop). Bảng Lark chỉ ghi số đơn theo shop, chưa ghi tên mẫu nên chưa tính được giá vốn theo từng mẫu POD.</p>`:""}</div>`}
-
+    <h3 style="margin:14px 0 8px">① Dropship – từng sản phẩm</h3>
+    <div class="kpis">${alK(IC.inbox,"var(--accent-soft)","var(--accent)","Sản phẩm đã bán",all,`${tot.orders} đơn`)}
+      ${alK(IC.money,"var(--good-soft)","var(--good)","Tổng lãi (theo bảng)",vnd(tot.profit),tot.revC?`Biên trung bình ${Math.round((tot.revC-tot.cost)/tot.revC*100)}%`:"–")}
+      ${alK(IC.leaf,tot.low?"var(--warn-soft)":"var(--good-soft)",tot.low?"var(--warn)":"var(--good)","Biên lãi thấp (<35%)",tot.low,"Nên xem lại giá bán / nguồn hàng")}
+      ${alK(IC.inbox,tot.nocost?"var(--warn-soft)":"var(--good-soft)",tot.nocost?"var(--warn)":"var(--good)","Chưa nhập vốn",tot.nocost,"Nhắc nhân viên điền cột Total")}</div>
+    <div class="actions" style="margin:12px 0 8px;flex-wrap:wrap;gap:6px"><input class="inp" id="alQ" placeholder="Tìm sản phẩm, màu, size…" value="${esc(S.alQ||"")}" style="width:220px">
+      ${chip("all","Tất cả",all)}${chip("low","Biên thấp",tot.low)}${chip("nocost","Chưa nhập vốn",tot.nocost)}${chip("noimg","Chưa có ảnh")}
+      <select class="inp" id="alPS" style="width:auto">${[["orders","Bán nhiều nhất"],["profit","Lãi nhiều nhất"],["margin","Biên lãi thấp trước"],["recent","Mới bán gần đây"]].map(([k,l])=>`<option value="${k}" ${S2===k?"selected":""}>${l}</option>`).join("")}</select></div>
+    ${alTbl([["Ảnh"],["Sản phẩm · phân loại khách mua"],["Đơn",1],["Vốn/cái",1],["Bán/cái",1],["Lãi/cái",1],["Tổng lãi",1]],list.slice(0,S.alMore?400:60).map(card).join(""),
+      dsLinks().length?(S.ds.busy?"Đang đọc bảng Drop…":q||F!=="all"?"Không có sản phẩm khớp bộ lọc.":"Chưa có đơn drop trong khoảng này."):"Chưa kết nối bảng Đơn Drop (vào trang Đơn Drop → Kết nối bảng).")}
+    ${list.length>60&&!S.alMore?`<p style="text-align:center;margin:8px 0"><button class="btn" data-act="alMore">Xem thêm ${list.length-60} sản phẩm</button></p>`:""}
+    <p class="hint"><b>Cách đọc:</b> Vốn/cái = cột "Total" ($) ÷ số lượng · Bán/cái = "Doanh thu (theo TikTok)" ÷ số lượng · Lãi/cái = Bán − Vốn (chưa trừ phí sàn) · Tổng lãi = cột "Lợi nhuận" (₫) của bảng, đã tính đơn hoàn/huỷ. Màu biên: <span style="color:var(--good)">xanh ≥ 35%</span>, <span style="color:var(--warn)">vàng 20–35%</span>, <span style="color:var(--bad)">đỏ &lt; 20%</span>.<br>
+    <b>Ảnh:</b> SHEIN chặn máy chủ đọc ảnh tự động, nên ảnh lấy từ cột "Ảnh" trong bảng Drop (nếu có) hoặc bấm "＋ ảnh" để dán link ảnh (chuột phải vào ảnh trên SHEIN → Sao chép địa chỉ hình ảnh). Ảnh dán 1 lần, lần sau tự hiện.</p>
+    <h3 style="margin:22px 0 8px">② POD – phí fulfill theo shop (bảng Lark)</h3>
+    <div class="kpis">${alK(IC.inbox,"var(--accent-soft)","var(--accent)","Đơn POD",podAll,`${shopN.size} shop`)}${alK(IC.money,"var(--warn-soft)","var(--warn)","Phí fulfill",usd(podFee),podN?`Bình quân ${usd(podFee/podN)}/đơn`:"–")}</div>
+    ${alTbl([["Shop"],["Đơn",1],["Phí fulfill",1],["Phí/đơn",1]],[...shopN.entries()].sort((a,b)=>b[1]-a[1]).map(([sh,n])=>{const rs=pod.filter(r=>r.shop===sh),fee=rs.reduce((a,r)=>a+r.fee,0),fn=rs.filter(r=>r.fee).reduce((a,r)=>a+r.n,0);return`<tr><td>${esc(sh)}</td><td class="n">${n}</td><td class="n">${fee?usd(fee):"–"}</td><td class="n">${fee&&fn?usd(fee/fn):"–"}</td></tr>`}).join(""),"Chưa có đơn POD trong khoảng này.")}
+    <p class="hint">Phí/đơn chỉ tính những ngày Lark có ghi phí theo shop. Muốn có giá vốn từng mẫu POD, bảng Lark cần thêm cột tên mẫu/SKU.</p></div>`}
+document.addEventListener("input",e=>{if(e.target.id==="alQ"){S.alQ=e.target.value;clearTimeout(S._alT);S._alT=setTimeout(()=>{const pos=e.target.selectionStart;render();const el=document.getElementById("alQ");if(el){el.focus();el.setSelectionRange(pos,pos)}},350)}});
+Object.assign(ACT,{alF:v=>{S.alF=v;render()},alMore:()=>{S.alMore=true;render()},
+  alImg:k=>{const cur=alImgs()[k]||"";openForm({title:"Ảnh sản phẩm",sub:"Mở sản phẩm trên SHEIN → chuột phải vào ảnh → “Sao chép địa chỉ hình ảnh” → dán vào đây. Để trống để xoá ảnh.",
+    fields:[{k:"img",label:"Link ảnh (https://…)",wide:true}],data:{img:cur},
+    onSave:async o=>{const u=String(o.img||"").trim();if(u&&!/^https:\/\/\S+$/.test(u)){toast("Link ảnh phải bắt đầu bằng https://");return false}
+      const imgs={...alImgs()};if(u)imgs[k]=u;else delete imgs[k];const doc={...(S.dsCfgDoc||{}),imgs};
+      try{await S.db.doc("settings/dropSheet").set(doc);S.dsCfgDoc=doc;toast(u?"Đã lưu ảnh":"Đã xoá ảnh");render();return true}catch(e){toast("Không lưu được, thử lại.");return false}}})}});
 Object.assign(ACT,{alRefresh:()=>{dsLoad(true).then(()=>render());if(typeof podLarkSync==="function")podLarkSync(true)}});
 document.addEventListener("change",e=>{if(e.target.id==="alPS"){S.alPS=e.target.value;render()}});
 
