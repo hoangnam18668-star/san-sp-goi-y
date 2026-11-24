@@ -2774,7 +2774,7 @@ const tcOld=(html,lb)=>(S.tcDoc?.months?`<details class="panel" style="margin-to
 /* Shop POD còn chạy: có đơn trong bảng POD (Lark) 2 tháng gần nhất */
 const podActive=()=>{const p=S.podDoc?.months||{},ks=Object.keys(p).sort().slice(-2),o={};ks.forEach(k=>Object.values(p[k].counts||{}).forEach(d=>Object.entries(d).forEach(([sh,n])=>{o[sh]=(o[sh]||0)+n})));return o};
 const DROP_SHOPS=["Shop 47","Shop 45","Shop 37","Shop cổ 3","Shop 13","Shop 12","Shop cổ 2"]; // 7 shop đang quản lý trên Cotik
-const shopType=sh=>{const d=DROP_SHOPS.includes(sh)||(S.hdDoc?.drop||[]).includes(sh),pa=podActive()[sh];return d&&pa?"Drop + POD":d?"Drop":pa?"POD":"–"};
+const shopType=sh=>{const d=DROP_SHOPS.includes(sh)||(S.hdDoc?.drop||[]).includes(sh),pa=podActive()[sh]||(S.hdDoc?.pod||[]).includes(sh);return d&&pa?"Drop + POD":d?"Drop":pa?"POD":"–"};
 const holdShops=()=>{const s=new Set((S.poDoc?.shops||[]).map(x=>x.shop));Object.keys(S.hdDoc?.shops||{}).forEach(k=>s.add(k));Object.keys(podActive()).forEach(k=>s.add(k));return[...s].sort((a,b)=>(+(a.match(/\d+/)||[0])[0])-(+(b.match(/\d+/)||[0])[0])||a.localeCompare(b))};
 function pnlPanel(){const all=tcRows(),po=poRows();if(!all.length)return"";
   const months=Object.keys(S.tcDoc.months).sort(),from=months[0],fxNow=tcFx(months[months.length-1]);
@@ -2800,7 +2800,7 @@ function pnlPanel(){const all=tcRows(),po=poRows();if(!all.length)return"";
       return`<h3 style="margin:16px 0 6px">Tiền còn trên từng shop</h3>
       <p class="small" style="margin-bottom:6px">Shop có Drop: <b>${usd(sum("Drop"))}</b>${miss("Drop")?` (còn ${miss("Drop")} shop chưa nhập)`:""} · Shop chỉ bán POD: <b>${usd(sum("POD"))}</b>${miss("POD")?` <span style="color:var(--bad)">(còn ${miss("POD")} shop POD chưa nhập)</span>`:""}</p>
       ${alTbl([["Shop"],["Loại"],["Đơn POD 2 tháng gần nhất",1],["Còn chờ trên shop",1]],rows.sort((a,b)=>(b.h??-1)-(a.h??-1)||b.n-a.n).map(r=>`<tr><td><b>${esc(r.k)}</b></td><td><span class="pill ${r.t==="Drop"?"p-acc":"p-mute"}">${r.t}</span></td><td class="n">${r.n||"–"}</td><td class="n">${r.h!=null?`<b>${usd(r.h)}</b>`:'<span class="muted">chưa nhập</span>'}</td></tr>`).join(""))}`})()}
-    <p class="hint">Drop: số lấy từ Cotik › Finances › Overview (On hold). POD: các shop POD không có trên Cotik – mở TikTok Seller Center từng shop › Finance › On hold rồi bấm “Nhập tiền còn trên shop”.</p>
+    <p class="hint">Số lấy từ Cotik › Finances › Overview (On hold): tài khoản Cotik 1 = 7 shop Drop, tài khoản Cotik 2 = 19 shop POD${S.hdDoc?.src?` · ${esc(S.hdDoc.src)}`:""}. Shop nào không có trên Cotik thì mở TikTok Seller Center › Finance › On hold rồi bấm “Nhập tiền còn trên shop”.</p>
     <p class="hint">Vốn đã bỏ vào quỹ (tiền chị Hương, chị Thương… chuyển vào): <b>${tcTr(cap)}</b> – tạm coi là tiền túi chủ góp, không phải doanh thu. Quỹ còn lại cuối tháng là tiền vốn chưa tiêu hết, <b>không phải lãi</b>.</p></div>`}
 Object.assign(ACT,{hdEdit:()=>{const sh=holdShops();if(!sh.length)return toast("Chưa có danh sách shop – bấm “Lấy từ Lark ngay” trước");const H=S.hdDoc?.shops||{};
   openForm({title:"Tiền còn chờ trên từng shop ($)",sub:"Mở từng shop trên TikTok Seller Center → Finance (Tài chính) → On hold (Đang tạm giữ) → nhập số tiền. Shop nào không có thì để 0.",
