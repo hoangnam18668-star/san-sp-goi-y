@@ -2616,7 +2616,7 @@ document.addEventListener("change",e=>{if(e.target.id==="alPS"){S.alPS=e.target.
 const tcNum=v=>{const s=String(v??"").replace(/[^0-9.,-]/g,"");if(!s||s==="-")return 0;const t=/[.,]\d{3}(?!\d)/.test(s)&&!/[.,]\d{1,2}$/.test(s)?s.replace(/[.,]/g,""):s.replace(/,/g,"");const n=+t;return isFinite(n)?n:0};
 function tcDate(v,month){const s=String(v||"");const m=/(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(s);if(m)return`${m[3]}-${pad(+m[2])}-${pad(+m[1])}`;
   const m2=/(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s);if(m2)return`${m2[1]}-${pad(+m2[2])}-${pad(+m2[3])}`;return month+"-01"}
-const TC_CATS=[["Quảng cáo",/\bads?\b|quang cao|gmv|tiktok ads|nap ads/],["Fulfillment & tiền hàng",/fulfill|di don|tien hang|ship|van chuyen|mua hang|dat hang/],
+const TC_CATS=[["Quảng cáo",/\bads?\b|quang cao|gmv|tiktok ads|nap ads/],["Fulfillment & tiền hàng",/ful+fil|\bffm\b|topup|cotik|di don|tien hang|ship|van chuyen|mua hang|dat hang/],
   ["Mua shop, kênh, tài khoản",/\bshop\b|kenh|\bacc\b|tai khoan|\btk\b|via|follow/],["Phần mềm & công cụ",/proxy|grok|veo ?3|hidemyacc|credit|cridit|icloud|design|canva|capcut|ung dung|chatgpt|\bgpt\b|vps|tool|phan mem|\bai\b|app|sim|esim/],
   ["Lương, trợ cấp, thưởng",/luong|tro cap|thuong|cong tac phi/],["Mẫu, KOC, livestream",/\bmau\b|koc|sample|livestream|\blive\b/],["Phí giao dịch, ngân hàng",/phi giao dich|phi chuyen|phi ngan hang|phi rut/],
   ["Văn phòng, ăn uống",/tien mang|mang viettel|hop dong mang|internet|wifi|camera|cham cong|lo vi song|ban phim|chieu|choi lau|den trang tri|tinh dau|\bke\b|highlands|bun |pho |lien hoan|com|tra |tra$|hoa qua|banh|do dung|van phong|dien|nuoc|nha |thue nha|in an|giay|muc|an trua|nuoc uong/]];
