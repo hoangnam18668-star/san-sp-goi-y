@@ -229,7 +229,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.24c", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.24d", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -415,7 +415,7 @@ window.APP_CONFIG = {
 <body>
 <section class="auth" id="auth">
   <div class="auth-card">
-    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 24/11c</p></div></div></div>
+    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 24/11d</p></div></div></div>
     <div id="authBox" hidden>
       <h2 id="authTitle">Đăng nhập</h2>
       <form id="authForm" class="auth-form">
@@ -2744,7 +2744,7 @@ function tcCashPanel(){if(S.staff)return"";const all=tcRows(),po=poRows();if(!al
   const R=months.map(row),cur=R.find(x=>x.has)||R[0],tkAll=po.reduce((a,r)=>a+r.amt,0),tkM=R[0];
   const shops=new Map();po.forEach(r=>{const x=shops.get(r.shop)||{n:0,U:0,m:0,last:""};x.n++;x.U+=r.amt;if(r.month===months[0])x.m+=r.amt;if(r.date>x.last)x.last=r.date;shops.set(r.shop,x)});
   const src=new Map();all.filter(r=>r.dir>0&&!TC_SKIP(r.cat)&&r.cat!=="Tiền TikTok về").forEach(r=>{const k=r.cat==="Hoàn tiền"?"Tiền hoàn lại (refund)":(r.who||r.det||"(không ghi)").replace(/\s+/g," ").trim().slice(0,40);const x=src.get(k)||{n:0,T:0,last:""};x.n++;x.T+=tcQ(r);if(r.date>x.last)x.last=r.date;src.set(k,x)});
-  return tcHead("cash")+`<div class="panel">
+  return tcHead("cash")+pnlPanel()+`<div class="panel"><h2 style="margin:0 0 4px">Quỹ văn phòng</h2>
     ${tcSay(`Cuối ${fmtM(cur.m).toLowerCase()}, quỹ văn phòng còn <b>${tcTr(cur.endQ)}</b> (${tcMix(cur.endV,cur.endU)}).
       Trong tháng tiền vào <b>${tcTr(cur.inQ)}</b> (TikTok trả về ${tcTr(cur.tkQ)}, góp vốn & tiền khác ${tcTr(cur.gopQ)}), đã chi <b>${tcTr(cur.outQ)}</b>
       → ${cur.inQ>=cur.outQ?`<b style="color:var(--good)">dư ${tcTr(cur.inQ-cur.outQ)}</b>`:`<b style="color:var(--bad)">hụt ${tcTr(cur.outQ-cur.inQ)}</b>`}.
@@ -2754,11 +2754,12 @@ function tcCashPanel(){if(S.staff)return"";const all=tcRows(),po=poRows();if(!al
       ${tcBig(`Tiền TikTok về ${fmtM(tkM.m).toLowerCase()}`,usd(tkM.tk),`≈ ${tcTr(tkM.tk*tcFx(tkM.m))} · ${tkM.tkN} lần rút`,"var(--accent)")}
       ${tcBig("Tiền TikTok về từ trước tới nay",usd(tkAll),`${shops.size} shop · ≈ ${tcTr(tkAll*tcFxMap()._def)}`)}</div>
     <h3 style="margin:18px 0 8px">Từng tháng <span class="small muted">(đã quy hết ra ₫)</span></h3>
-    ${alTbl([["Tháng"],["Đầu tháng có",1],["+ TikTok trả về",1],["+ Góp vốn & khác",1],["− Đã chi",1],["= Cuối tháng còn",1]],R.map(x=>`<tr><td><b>${fmtM(x.m)}</b></td>
+    ${alTbl([["Tháng"],["Đầu tháng có",1],["+ TikTok trả về",1],["+ Góp vốn & khác",1],["− Đã chi",1],["= Cuối tháng còn",1],["Lãi/lỗ tháng*",1]],R.map(x=>`<tr><td><b>${fmtM(x.m)}</b></td>
       <td class="n">${x.has?tcTr(x.carry):"–"}</td><td class="n" style="color:var(--good)">${x.has?"+ "+tcTr(x.tkQ):"–"}</td><td class="n" style="color:var(--good)">${x.has?"+ "+tcTr(x.gopQ):"–"}</td><td class="n" style="color:var(--bad)">${x.has?"− "+tcTr(x.outQ):"–"}</td>
-      <td class="n"><b>${x.has?tcTr(x.endQ):"–"}</b>${x.has?`<div class="small muted">${tcMix(x.endV,x.endU)}</div>`:""}</td></tr>`).join(""))}
+      <td class="n"><b>${x.has?tcTr(x.endQ):"–"}</b>${x.has?`<div class="small muted">${tcMix(x.endV,x.endU)}</div>`:""}</td><td class="n">${x.has?`<b style="color:${x.tkQ-x.outQ>=0?"var(--good)":"var(--bad)"}">${x.tkQ-x.outQ>=0?"+":"−"}${tcTr(Math.abs(x.tkQ-x.outQ))}</b>`:"–"}</td></tr>`).join(""))}
+    <p class="small muted" style="margin-top:4px">* Lãi/lỗ tháng = TikTok trả về − Đã chi trong tháng (chưa tính tiền còn chờ trên shop).</p>
     <h3 style="margin:18px 0 8px">Tiền TikTok về theo shop</h3>
-    ${alTbl([["Shop"],["Số lần rút",1],[fmtM(months[0]),1],["Tổng từ trước tới nay",1],["Lần rút gần nhất"]],[...shops.entries()].sort((a,b)=>b[1].U-a[1].U).map(([k,x])=>`<tr><td><b>${esc(k)}</b></td><td class="n">${x.n}</td><td class="n">${x.m?usd(x.m):"–"}</td><td class="n"><b>${usd(x.U)}</b></td><td>${fmtD(x.last)}</td></tr>`).join(""),S.tcSync?.perr?"Chưa đọc được bảng tiền về shop (xem dòng báo lỗi ở trên).":"Chưa có dữ liệu tiền về shop.")}
+    ${alTbl([["Shop"],["Số lần rút",1],[fmtM(months[0]),1],["Đã về (tổng)",1],["Còn chờ trên shop",1],["Lần rút gần nhất"]],[...shops.entries()].sort((a,b)=>b[1].U-a[1].U).map(([k,x])=>`<tr><td><b>${esc(k)}</b></td><td class="n">${x.n}</td><td class="n">${x.m?usd(x.m):"–"}</td><td class="n"><b>${usd(x.U)}</b></td><td class="n">${S.hdDoc?.shops?.[k]!=null?usd(S.hdDoc.shops[k]):'<span class="muted">chưa nhập</span>'}</td><td>${fmtD(x.last)}</td></tr>`).join(""),S.tcSync?.perr?"Chưa đọc được bảng tiền về shop (xem dòng báo lỗi ở trên).":"Chưa có dữ liệu tiền về shop.")}
     <h3 style="margin:18px 0 8px">Góp vốn & tiền khác vào quỹ (không tính TikTok)</h3>
     ${alTbl([["Ai chuyển / nguồn"],["Số lần",1],["Tổng (quy ₫)",1],["Lần gần nhất"]],[...src.entries()].sort((a,b)=>b[1].T-a[1].T).slice(0,15).map(([k,x])=>`<tr><td>${esc(k)}</td><td class="n">${x.n}</td><td class="n"><b>${tcTr(x.T)}</b></td><td>${fmtD(x.last)}</td></tr>`).join(""),"Chưa có khoản tiền vào nào.")}
     <p class="hint">Cách đọc: <b>Cuối tháng còn = Đầu tháng có + Tiền vào − Đã chi</b> (khớp ô “Còn lại” trong bảng Lark; chênh vài nghìn ₫ là do đổi tiền). “TikTok trả về” = các dòng “Tiền về shop…” trong bảng Thu chi (bảng Theo dõi tiền về shop dùng để xem chi tiết từng shop). “Góp vốn & khác” = tiền chị Hương, chị Thương… chuyển vào quỹ và tiền được hoàn lại.</p></div>`}
@@ -2767,6 +2768,35 @@ document.addEventListener("change",e=>{if(e.target.id==="tcM"){S.tcM=e.target.va
 document.addEventListener("input",e=>{if(e.target.id==="tcQ"){S.tcQ=e.target.value;clearTimeout(S._tcT);S._tcT=setTimeout(()=>{const p=e.target.selectionStart;render();const el=document.getElementById("tcQ");if(el){el.focus();el.setSelectionRange(p,p)}},350)}});
 /* Phần nhập tay cũ: thu gọn lại khi đã có dữ liệu tự động từ Lark, để trang dễ đọc */
 const tcOld=(html,lb)=>(S.tcDoc?.months?`<details class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">${lb} <span class="small muted">(phần nhập tay cũ – ít dùng, bấm để mở)</span></summary><div style="margin-top:10px">${html}</div></details>`:html);
+/* ===== Lãi / lỗ của công ty (tính theo tiền thật) =====
+   Lãi/lỗ = Tiền TikTok đã trả về + Tiền còn chờ trên shop − Tổng đã chi.
+   "Tiền còn chờ trên shop" = số On hold trong TikTok Seller Center (Finance → On hold) của từng shop – nhập tay ở đây vì web không đọc TikTok. */
+const holdShops=()=>{const s=new Set((S.poDoc?.shops||[]).map(x=>x.shop));Object.keys(S.hdDoc?.shops||{}).forEach(k=>s.add(k));return[...s].sort((a,b)=>(+(a.match(/\d+/)||[0])[0])-(+(b.match(/\d+/)||[0])[0])||a.localeCompare(b))};
+function pnlPanel(){const all=tcRows(),po=poRows();if(!all.length)return"";
+  const months=Object.keys(S.tcDoc.months).sort(),from=months[0],fxNow=tcFx(months[months.length-1]);
+  const spent=all.filter(r=>r.dir<0&&!TC_SKIP(r.cat)),T=spent.reduce((a,r)=>a+tcQ(r),0);
+  const inv=spent.filter(r=>r.cat==="Mua shop, kênh, tài khoản").reduce((a,r)=>a+tcQ(r),0);
+  const tkU=po.length?po.reduce((a,r)=>a+r.amt,0):all.filter(r=>r.cat==="Tiền TikTok về"&&r.cur==="U").reduce((a,r)=>a+r.amt,0);
+  const tk=po.length?po.reduce((a,r)=>a+r.amt*tcFx(r.month),0):all.filter(r=>r.cat==="Tiền TikTok về").reduce((a,r)=>a+tcQ(r),0);
+  const H=S.hdDoc?.shops||{},holdU=Object.values(H).reduce((a,x)=>a+(+x||0),0),hold=holdU*fxNow,hasHold=Object.keys(H).length>0;
+  const cap=all.filter(r=>r.dir>0&&r.cat==="Góp vốn, thu khác").reduce((a,r)=>a+tcQ(r),0);
+  const pl=tk+hold-T,pl2=pl+inv,col=v=>v>=0?"var(--good)":"var(--bad)",word=v=>v>=0?"LÃI":"LỖ";
+  const hAt=S.hdDoc?.at?fmtD(ymd(new Date(S.hdDoc.at))):"";
+  return`<div class="panel" style="margin-bottom:14px"><div class="sec-h" style="margin:0"><div><h2>Công ty đang lãi hay lỗ?</h2><p>Tính từ ${fmtM(from).toLowerCase()} tới nay, theo tiền thật. Tiền đô quy ra ₫ theo giá mua đô gần nhất ${fxNow.toLocaleString("vi-VN")} ₫/$.</p></div>
+      <div class="actions"><button class="btn pri" data-act="hdEdit">Nhập tiền còn trên shop</button></div></div>
+    ${tcSay(`Công ty đang <b style="color:${col(pl)}">${word(pl)} ${tcTr(Math.abs(pl))}</b>${hasHold?"":" <span class=\"small\">(chưa tính tiền còn chờ trên shop – bấm “Nhập tiền còn trên shop”)</span>"}.
+      ${inv?`<br>Trong số đã chi có <b>${tcTr(inv)}</b> là tiền mua shop, kênh, tài khoản (giống tiền đầu tư ban đầu). Nếu không tính khoản này thì công ty ${pl2>=0?"lãi":"lỗ"} <b style="color:${col(pl2)}">${tcTr(Math.abs(pl2))}</b>.`:""}`)}
+    <div class="kpis">
+      ${tcBig("① TikTok đã trả về",tcTr(tk),`${usd(tkU)} · ${new Set(po.map(r=>r.shop)).size||"–"} shop`,"var(--good)")}
+      ${tcBig("② Còn chờ trên shop",hasHold?tcTr(hold):"Chưa nhập",hasHold?`${usd(holdU)} · nhập ngày ${hAt}`:"Xem TikTok Seller Center → Finance → On hold","var(--accent)")}
+      ${tcBig("③ Tổng đã chi",tcTr(T),`${spent.length} khoản · gồm ${tcTr(inv)} mua shop/kênh`,"var(--warn)")}
+      ${tcBig("= ①+②−③ Lãi / lỗ",(pl<0?"−":"+")+tcTr(Math.abs(pl)),word(pl)+(hasHold?"":" · chưa có ②"),col(pl))}</div>
+    <p class="hint">Vốn đã bỏ vào quỹ (tiền chị Hương, chị Thương… chuyển vào): <b>${tcTr(cap)}</b> – tạm coi là tiền túi chủ góp, không phải doanh thu. Quỹ còn lại cuối tháng là tiền vốn chưa tiêu hết, <b>không phải lãi</b>.</p></div>`}
+Object.assign(ACT,{hdEdit:()=>{const sh=holdShops();if(!sh.length)return toast("Chưa có danh sách shop – bấm “Lấy từ Lark ngay” trước");const H=S.hdDoc?.shops||{};
+  openForm({title:"Tiền còn chờ trên từng shop ($)",sub:"Mở từng shop trên TikTok Seller Center → Finance (Tài chính) → On hold (Đang tạm giữ) → nhập số tiền. Shop nào không có thì để 0.",
+    fields:sh.map((s,i)=>({k:"s"+i,label:s,type:"number",nullable:true})),data:Object.fromEntries(sh.map((s,i)=>["s"+i,H[s]??""])),
+    onSave:async o=>{const shops={};sh.forEach((s,i)=>{const v=o["s"+i];if(v!=null&&v!=="")shops[s]=Math.round(+v*100)/100});
+      const doc={shops,at:new Date().toISOString()};await S.db.doc("settings/tkHold").set(doc);S.hdDoc=doc;toast("Đã lưu tiền còn trên shop");render()}})}});
 
 </script>
 <script type="text/plain" id="src-10-boot">
@@ -2878,6 +2908,7 @@ async function publish(){if(pubBusy){schedulePublish();return}pubBusy=true;
   db.doc("settings/attendance").onSnapshot(s=>{S.attCfgDoc=s.exists?s.data():null;schedulePublish();render()},()=>{});
   db.doc("settings/podLark").onSnapshot(s=>{S.podDoc=s.exists?s.data():null;if(S.tab==="banhang")render()},()=>{});
   db.doc("settings/thuChi").onSnapshot(s=>{S.tcDoc=s.exists?s.data():null;if(["chiphi","dongtien"].includes(S.tab))render()},()=>{});
+  db.doc("settings/tkHold").onSnapshot(s=>{S.hdDoc=s.exists?s.data():null;if(S.tab==="dongtien")render()},()=>{});
   db.doc("settings/tkPayout").onSnapshot(s=>{S.poDoc=s.exists?s.data():null;if(["chiphi","dongtien"].includes(S.tab))render()},()=>{});
   db.doc("settings/dropSheet").onSnapshot(s=>{S.dsCfgDoc=s.exists?s.data():null;if(S.tab==="dondrop")render()},()=>{});
   S.rsSub=1;db.doc("settings/research").onSnapshot(s=>{S.rsCfgDoc=s.exists?s.data():null;schedulePublish();render()},()=>{});
