@@ -2771,7 +2771,11 @@ const tcOld=(html,lb)=>(S.tcDoc?.months?`<details class="panel" style="margin-to
 /* ===== Lãi / lỗ của công ty (tính theo tiền thật) =====
    Lãi/lỗ = Tiền TikTok đã trả về + Tiền còn chờ trên shop − Tổng đã chi.
    "Tiền còn chờ trên shop" = số On hold trong TikTok Seller Center (Finance → On hold) của từng shop – nhập tay ở đây vì web không đọc TikTok. */
-const holdShops=()=>{const s=new Set((S.poDoc?.shops||[]).map(x=>x.shop));Object.keys(S.hdDoc?.shops||{}).forEach(k=>s.add(k));return[...s].sort((a,b)=>(+(a.match(/\d+/)||[0])[0])-(+(b.match(/\d+/)||[0])[0])||a.localeCompare(b))};
+/* Shop POD còn chạy: có đơn trong bảng POD (Lark) 2 tháng gần nhất */
+const podActive=()=>{const p=S.podDoc?.months||{},ks=Object.keys(p).sort().slice(-2),o={};ks.forEach(k=>Object.values(p[k].counts||{}).forEach(d=>Object.entries(d).forEach(([sh,n])=>{o[sh]=(o[sh]||0)+n})));return o};
+const DROP_SHOPS=["Shop 47","Shop 45","Shop 37","Shop cổ 3","Shop 13","Shop 12","Shop cổ 2"]; // 7 shop đang quản lý trên Cotik
+const shopType=sh=>{const d=DROP_SHOPS.includes(sh)||(S.hdDoc?.drop||[]).includes(sh),pa=podActive()[sh];return d&&pa?"Drop + POD":d?"Drop":pa?"POD":"–"};
+const holdShops=()=>{const s=new Set((S.poDoc?.shops||[]).map(x=>x.shop));Object.keys(S.hdDoc?.shops||{}).forEach(k=>s.add(k));Object.keys(podActive()).forEach(k=>s.add(k));return[...s].sort((a,b)=>(+(a.match(/\d+/)||[0])[0])-(+(b.match(/\d+/)||[0])[0])||a.localeCompare(b))};
 function pnlPanel(){const all=tcRows(),po=poRows();if(!all.length)return"";
   const months=Object.keys(S.tcDoc.months).sort(),from=months[0],fxNow=tcFx(months[months.length-1]);
   const spent=all.filter(r=>r.dir<0&&!TC_SKIP(r.cat)),T=spent.reduce((a,r)=>a+tcQ(r),0);
@@ -2791,12 +2795,18 @@ function pnlPanel(){const all=tcRows(),po=poRows();if(!all.length)return"";
       ${tcBig("② Còn chờ trên shop",hasHold?tcTr(hold):"Chưa nhập",hasHold?`${usd(holdU)} · nhập ngày ${hAt}`:"Xem TikTok Seller Center → Finance → On hold","var(--accent)")}
       ${tcBig("③ Tổng đã chi",tcTr(T),`${spent.length} khoản · gồm ${tcTr(inv)} mua shop/kênh`,"var(--warn)")}
       ${tcBig("= ①+②−③ Lãi / lỗ",(pl<0?"−":"+")+tcTr(Math.abs(pl)),word(pl)+(hasHold?"":" · chưa có ②"),col(pl))}</div>
+    ${(()=>{const sh=holdShops(),pa=podActive(),rows=sh.map(k=>({k,t:shopType(k),h:H[k],n:pa[k]||0})).filter(r=>r.h!=null||r.n||r.t!=="–");
+      const sum=t=>rows.filter(r=>r.t.includes(t)&&r.h!=null).reduce((a,r)=>a+r.h,0),miss=t=>rows.filter(r=>r.t.includes(t)&&r.h==null).length;
+      return`<h3 style="margin:16px 0 6px">Tiền còn trên từng shop</h3>
+      <p class="small" style="margin-bottom:6px">Drop: <b>${usd(sum("Drop"))}</b>${miss("Drop")?` (còn ${miss("Drop")} shop chưa nhập)`:""} · POD: <b>${usd(sum("POD"))}</b>${miss("POD")?` <span style="color:var(--bad)">(còn ${miss("POD")} shop POD chưa nhập)</span>`:""}</p>
+      ${alTbl([["Shop"],["Loại"],["Đơn POD 2 tháng gần nhất",1],["Còn chờ trên shop",1]],rows.sort((a,b)=>(b.h??-1)-(a.h??-1)||b.n-a.n).map(r=>`<tr><td><b>${esc(r.k)}</b></td><td><span class="pill ${r.t==="Drop"?"p-acc":"p-mute"}">${r.t}</span></td><td class="n">${r.n||"–"}</td><td class="n">${r.h!=null?`<b>${usd(r.h)}</b>`:'<span class="muted">chưa nhập</span>'}</td></tr>`).join(""))}`})()}
+    <p class="hint">Drop: số lấy từ Cotik › Finances › Overview (On hold). POD: các shop POD không có trên Cotik – mở TikTok Seller Center từng shop › Finance › On hold rồi bấm “Nhập tiền còn trên shop”.</p>
     <p class="hint">Vốn đã bỏ vào quỹ (tiền chị Hương, chị Thương… chuyển vào): <b>${tcTr(cap)}</b> – tạm coi là tiền túi chủ góp, không phải doanh thu. Quỹ còn lại cuối tháng là tiền vốn chưa tiêu hết, <b>không phải lãi</b>.</p></div>`}
 Object.assign(ACT,{hdEdit:()=>{const sh=holdShops();if(!sh.length)return toast("Chưa có danh sách shop – bấm “Lấy từ Lark ngay” trước");const H=S.hdDoc?.shops||{};
   openForm({title:"Tiền còn chờ trên từng shop ($)",sub:"Mở từng shop trên TikTok Seller Center → Finance (Tài chính) → On hold (Đang tạm giữ) → nhập số tiền. Shop nào không có thì để 0.",
-    fields:sh.map((s,i)=>({k:"s"+i,label:s,type:"number",nullable:true})),data:Object.fromEntries(sh.map((s,i)=>["s"+i,H[s]??""])),
+    fields:sh.map((s,i)=>({k:"s"+i,label:`${s} · ${shopType(s)}`,type:"number",nullable:true})),data:Object.fromEntries(sh.map((s,i)=>["s"+i,H[s]??""])),
     onSave:async o=>{const shops={};sh.forEach((s,i)=>{const v=o["s"+i];if(v!=null&&v!=="")shops[s]=Math.round(+v*100)/100});
-      const doc={shops,at:new Date().toISOString()};await S.db.doc("settings/tkHold").set(doc);S.hdDoc=doc;toast("Đã lưu tiền còn trên shop");render()}})}});
+      const doc={...(S.hdDoc||{}),shops,at:new Date().toISOString()};await S.db.doc("settings/tkHold").set(doc);S.hdDoc=doc;toast("Đã lưu tiền còn trên shop");render()}})}});
 
 </script>
 <script type="text/plain" id="src-10-boot">
