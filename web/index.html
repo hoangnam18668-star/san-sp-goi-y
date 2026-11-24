@@ -2739,26 +2739,28 @@ function tcCashPanel(){if(S.staff)return"";const all=tcRows(),po=poRows();if(!al
     const endV=s("V",1)-s("V",-1),endU=s("U",1)-s("U",-1),carry=s("V",1,r=>r.cat==="Số dư tháng trước")+s("U",1,r=>r.cat==="Số dư tháng trước")*fx;
     const real=f=>rs.filter(r=>!TC_SKIP(r.cat)&&f(r)).reduce((a,r)=>a+tcQ(r),0);
     const tk=po.filter(r=>r.month===m);
-    return{m,fx,has:rs.length>0,carry,inQ:real(r=>r.dir>0),outQ:real(r=>r.dir<0),endV,endU,endQ:endV+endU*fx,tk:tk.reduce((a,r)=>a+r.amt,0),tkN:tk.length}};
+    return{m,fx,has:rs.length>0,carry,inQ:real(r=>r.dir>0),tkQ:real(r=>r.dir>0&&r.cat==="Tiền TikTok về"),gopQ:real(r=>r.dir>0&&r.cat!=="Tiền TikTok về"),outQ:real(r=>r.dir<0),endV,endU,endQ:endV+endU*fx,tk:tk.reduce((a,r)=>a+r.amt,0),tkN:tk.length}};
   const R=months.map(row),cur=R.find(x=>x.has)||R[0],tkAll=po.reduce((a,r)=>a+r.amt,0),tkM=R[0];
   const shops=new Map();po.forEach(r=>{const x=shops.get(r.shop)||{n:0,U:0,m:0,last:""};x.n++;x.U+=r.amt;if(r.month===months[0])x.m+=r.amt;if(r.date>x.last)x.last=r.date;shops.set(r.shop,x)});
-  const src=new Map();all.filter(r=>r.dir>0&&!TC_SKIP(r.cat)).forEach(r=>{const k=r.cat==="Hoàn tiền"?"Tiền hoàn lại (refund)":(r.who||r.det||"(không ghi)").replace(/\s+/g," ").trim().slice(0,40);const x=src.get(k)||{n:0,T:0,last:""};x.n++;x.T+=tcQ(r);if(r.date>x.last)x.last=r.date;src.set(k,x)});
+  const src=new Map();all.filter(r=>r.dir>0&&!TC_SKIP(r.cat)&&r.cat!=="Tiền TikTok về").forEach(r=>{const k=r.cat==="Hoàn tiền"?"Tiền hoàn lại (refund)":(r.who||r.det||"(không ghi)").replace(/\s+/g," ").trim().slice(0,40);const x=src.get(k)||{n:0,T:0,last:""};x.n++;x.T+=tcQ(r);if(r.date>x.last)x.last=r.date;src.set(k,x)});
   return tcHead("cash")+`<div class="panel">
     ${tcSay(`Cuối ${fmtM(cur.m).toLowerCase()}, quỹ văn phòng còn <b>${tcTr(cur.endQ)}</b> (${tcMix(cur.endV,cur.endU)}).
-      Trong tháng: tiền chuyển vào quỹ <b>${tcTr(cur.inQ)}</b>, đã chi <b>${tcTr(cur.outQ)}</b>.
+      Trong tháng tiền vào <b>${tcTr(cur.inQ)}</b> (TikTok trả về ${tcTr(cur.tkQ)}, góp vốn & tiền khác ${tcTr(cur.gopQ)}), đã chi <b>${tcTr(cur.outQ)}</b>
+      → ${cur.inQ>=cur.outQ?`<b style="color:var(--good)">dư ${tcTr(cur.inQ-cur.outQ)}</b>`:`<b style="color:var(--bad)">hụt ${tcTr(cur.outQ-cur.inQ)}</b>`}.
+      ${cur.outQ>0?` Tiền TikTok trả về mới đủ trả <b>${Math.round(cur.tkQ/cur.outQ*100)}%</b> số tiền đã chi.`:""}
       ${tkAll?`<br>Các shop TikTok đã rút về <b>${usd(tkM.tk)}</b> trong ${fmtM(tkM.m).toLowerCase()} (${tkM.tkN} lần), tổng từ trước tới nay <b>${usd(tkAll)}</b>.`:""}`)}
     <div class="kpis">${tcBig(`Quỹ còn lại cuối ${fmtM(cur.m).toLowerCase()}`,tcTr(cur.endQ),tcMix(cur.endV,cur.endU),"var(--good)")}
       ${tcBig(`Tiền TikTok về ${fmtM(tkM.m).toLowerCase()}`,usd(tkM.tk),`≈ ${tcTr(tkM.tk*tcFx(tkM.m))} · ${tkM.tkN} lần rút`,"var(--accent)")}
       ${tcBig("Tiền TikTok về từ trước tới nay",usd(tkAll),`${shops.size} shop · ≈ ${tcTr(tkAll*tcFxMap()._def)}`)}</div>
     <h3 style="margin:18px 0 8px">Từng tháng <span class="small muted">(đã quy hết ra ₫)</span></h3>
-    ${alTbl([["Tháng"],["Đầu tháng có",1],["+ Tiền vào quỹ",1],["− Đã chi",1],["= Cuối tháng còn",1],["TikTok rút về",1]],R.map(x=>`<tr><td><b>${fmtM(x.m)}</b></td>
-      <td class="n">${x.has?tcTr(x.carry):"–"}</td><td class="n" style="color:var(--good)">${x.has?"+ "+tcTr(x.inQ):"–"}</td><td class="n" style="color:var(--bad)">${x.has?"− "+tcTr(x.outQ):"–"}</td>
-      <td class="n"><b>${x.has?tcTr(x.endQ):"–"}</b>${x.has?`<div class="small muted">${tcMix(x.endV,x.endU)}</div>`:""}</td><td class="n">${x.tk?usd(x.tk):"–"}</td></tr>`).join(""))}
+    ${alTbl([["Tháng"],["Đầu tháng có",1],["+ TikTok trả về",1],["+ Góp vốn & khác",1],["− Đã chi",1],["= Cuối tháng còn",1]],R.map(x=>`<tr><td><b>${fmtM(x.m)}</b></td>
+      <td class="n">${x.has?tcTr(x.carry):"–"}</td><td class="n" style="color:var(--good)">${x.has?"+ "+tcTr(x.tkQ):"–"}</td><td class="n" style="color:var(--good)">${x.has?"+ "+tcTr(x.gopQ):"–"}</td><td class="n" style="color:var(--bad)">${x.has?"− "+tcTr(x.outQ):"–"}</td>
+      <td class="n"><b>${x.has?tcTr(x.endQ):"–"}</b>${x.has?`<div class="small muted">${tcMix(x.endV,x.endU)}</div>`:""}</td></tr>`).join(""))}
     <h3 style="margin:18px 0 8px">Tiền TikTok về theo shop</h3>
     ${alTbl([["Shop"],["Số lần rút",1],[fmtM(months[0]),1],["Tổng từ trước tới nay",1],["Lần rút gần nhất"]],[...shops.entries()].sort((a,b)=>b[1].U-a[1].U).map(([k,x])=>`<tr><td><b>${esc(k)}</b></td><td class="n">${x.n}</td><td class="n">${x.m?usd(x.m):"–"}</td><td class="n"><b>${usd(x.U)}</b></td><td>${fmtD(x.last)}</td></tr>`).join(""),S.tcSync?.perr?"Chưa đọc được bảng tiền về shop (xem dòng báo lỗi ở trên).":"Chưa có dữ liệu tiền về shop.")}
-    <h3 style="margin:18px 0 8px">Tiền vào quỹ văn phòng từ đâu?</h3>
+    <h3 style="margin:18px 0 8px">Góp vốn & tiền khác vào quỹ (không tính TikTok)</h3>
     ${alTbl([["Ai chuyển / nguồn"],["Số lần",1],["Tổng (quy ₫)",1],["Lần gần nhất"]],[...src.entries()].sort((a,b)=>b[1].T-a[1].T).slice(0,15).map(([k,x])=>`<tr><td>${esc(k)}</td><td class="n">${x.n}</td><td class="n"><b>${tcTr(x.T)}</b></td><td>${fmtD(x.last)}</td></tr>`).join(""),"Chưa có khoản tiền vào nào.")}
-    <p class="hint">Cách đọc: <b>Cuối tháng còn = Đầu tháng có + Tiền vào − Đã chi</b> (khớp ô “Còn lại” trong bảng Lark; chênh vài nghìn ₫ là do đổi tiền). “Tiền vào quỹ” là tiền mọi người chuyển vào bảng Thu chi; “TikTok rút về” lấy từ bảng Theo dõi tiền về shop – hai số này để riêng, không cộng vào nhau.</p></div>`}
+    <p class="hint">Cách đọc: <b>Cuối tháng còn = Đầu tháng có + Tiền vào − Đã chi</b> (khớp ô “Còn lại” trong bảng Lark; chênh vài nghìn ₫ là do đổi tiền). “TikTok trả về” = các dòng “Tiền về shop…” trong bảng Thu chi (bảng Theo dõi tiền về shop dùng để xem chi tiết từng shop). “Góp vốn & khác” = tiền chị Hương, chị Thương… chuyển vào quỹ và tiền được hoàn lại.</p></div>`}
 Object.assign(ACT,{tcSync:()=>tcLarkSync(true),tcCat:v=>{S.tcC=S.tcC===v?"":(v||"");S.tcMore=false;render()},tcMore:()=>{S.tcMore=true;render()}});
 document.addEventListener("change",e=>{if(e.target.id==="tcM"){S.tcM=e.target.value;S.tcMore=false;S.tcC="";render()}});
 document.addEventListener("input",e=>{if(e.target.id==="tcQ"){S.tcQ=e.target.value;clearTimeout(S._tcT);S._tcT=setTimeout(()=>{const p=e.target.selectionStart;render();const el=document.getElementById("tcQ");if(el){el.focus();el.setSelectionRange(p,p)}},350)}});
