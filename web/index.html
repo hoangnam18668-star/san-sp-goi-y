@@ -229,7 +229,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.24b", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.24c", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -415,7 +415,7 @@ window.APP_CONFIG = {
 <body>
 <section class="auth" id="auth">
   <div class="auth-card">
-    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 24/11b</p></div></div></div>
+    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 24/11c</p></div></div></div>
     <div id="authBox" hidden>
       <h2 id="authTitle">Đăng nhập</h2>
       <form id="authForm" class="auth-form">
@@ -2648,65 +2648,122 @@ async function tcSave(parsed,src){const ok=parsed.filter(p=>!p.err&&p.tx.length)
   return ok.map(p=>`${fmtM(p.month)}: ${p.tx.length} dòng`).join(", ")}
 /* Cho việc nhập tay qua trình duyệt: E=[{tab, grid}] */
 window.tcIngest=async(E,src)=>{if(S.staff)throw new Error("Cần tài khoản giám đốc");return tcSave(E.map(e=>tcParse(e.grid,e.tab)),src||"đọc từ Lark")};
+/* ===== Tiền TikTok về (bảng Lark "THEO DÕI TIỀN VỀ SHOP TIKTOK US") =====
+   Mỗi shop chiếm 2 cột: dòng tên shop ("Shop 1"), bên dưới là [thời gian rút | số tiền $]. */
+function poParse(grid){const G=r=>grid[r]||[];let hr=-1;for(let r=0;r<5;r++)if(G(r).some(c=>/^\s*shop\b/i.test(c))){hr=r;break}
+  if(hr<0)return{err:'Bảng tiền về: không thấy dòng tên "Shop …"'};const yNow=new Date().getFullYear(),shops=[];
+  G(hr).forEach((name,c)=>{if(!/^\s*shop\b/i.test(name))return;const tx=[];
+    for(let r=hr+1;r<grid.length;r++){const t=String(G(r)[c]||""),a=tcNum(G(r)[c+1]);const m=/(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(t);if(!m||!a)continue;
+      let y=+m[3];if(y<2020||y>yNow+1)y=yNow; // gõ nhầm năm (vd 2206) → năm nay
+      tx.push([`${y}-${pad(+m[2])}-${pad(+m[1])}`,Math.round(a*100)/100])}
+    shops.push({shop:String(name).trim(),tx})});
+  return shops.length?{shops}:{err:"Bảng tiền về: không có shop nào"}}
+async function poSave(p,src){if(p.err)throw new Error(p.err);const doc={shops:p.shops,at:new Date().toISOString(),src};await S.db.doc("settings/tkPayout").set(doc);S.poDoc=doc;if(["chiphi","dongtien"].includes(S.tab))render();
+  return`${p.shops.length} shop, ${p.shops.reduce((a,s)=>a+s.tx.length,0)} lần rút`}
+window.poIngest=async(grid,src)=>{if(S.staff)throw new Error("Cần tài khoản giám đốc");return poSave(poParse(grid),src||"đọc từ Lark")};
+
 S.tcSync=S.tcSync||{};
 async function tcLarkSync(force){if(S.staff||window.APP_SESSION?.role!=="owner"||S.tcSync.busy||!/pages\.dev$|^localhost$|^127\./.test(location.hostname))return;
-  if(!force&&Date.now()-(S.tcSync.ok||0)<30*60e3)return;S.tcSync={...S.tcSync,busy:true,err:""};if(["chiphi","dongtien"].includes(S.tab))render();
-  try{const tok=(await window.APP_SESSION.sb.auth.getSession()).data.session?.access_token;
-    const r=await fetch("/api/pod-lark?doc=thuchi",{headers:{authorization:"Bearer "+tok}});const j=await r.json().catch(()=>({error:"Máy chủ chưa sẵn sàng"}));
-    if(!r.ok||j.error)throw new Error(j.error||"Lỗi "+r.status);const msg=await tcSave(j.tabs.map(t=>tcParse(t.grid,t.tab)),"tự động từ Lark");S.tcSync={ok:Date.now(),msg};if(force)toast("Đã lấy thu chi: "+msg)}
-  catch(e){S.tcSync={err:e.message,ok:Date.now()-25*60e3};if(force)toast("Chưa lấy được thu chi từ Lark: "+e.message)}
+  if(!force&&Date.now()-(S.tcSync.ok||0)<30*60e3)return;S.tcSync={...S.tcSync,busy:true,err:"",perr:""};if(["chiphi","dongtien"].includes(S.tab))render();
+  const tok=(await window.APP_SESSION.sb.auth.getSession()).data.session?.access_token;
+  const call=async doc=>{const r=await fetch("/api/pod-lark?doc="+doc,{headers:{authorization:"Bearer "+tok}});const j=await r.json().catch(()=>({error:"Máy chủ chưa sẵn sàng"}));if(!r.ok||j.error)throw new Error(j.error||"Lỗi "+r.status);return j};
+  let err="",perr="",msg="";
+  try{const j=await call("thuchi");msg=await tcSave(j.tabs.map(t=>tcParse(t.grid,t.tab)),"tự động từ Lark")}catch(e){err=e.message}
+  try{const j=await call("payout");const m2=await poSave(poParse(j.tabs[0]?.grid||[]),"tự động từ Lark");msg+=(msg?" · ":"")+"tiền về: "+m2}catch(e){perr=e.message}
+  S.tcSync={ok:err?Date.now()-25*60e3:Date.now(),err,perr,msg};
+  if(force)toast(err?"Chưa lấy được thu chi: "+err:"Đã cập nhật: "+msg);
   if(["chiphi","dongtien"].includes(S.tab))render()}
 setTimeout(()=>tcLarkSync(false),4000);setInterval(()=>{if(["chiphi","dongtien"].includes(S.tab))tcLarkSync(false)},5*60e3);
 
+/* ===== Tính toán chung ===== */
 function tcRows(){const out=[];for(const[m,p]of Object.entries(S.tcDoc?.months||{}))for(const t of p.tx)out.push({month:m,date:t[0],dir:t[1],cur:t[2],amt:t[3],det:t[4],who:t[5],cat:t[6]});return out}
+function poRows(){const out=[];for(const s of S.poDoc?.shops||[])for(const t of s.tx)out.push({shop:s.shop,date:t[0],month:t[0].slice(0,7),amt:t[1]});return out}
 const tcMoney=(n,cur)=>cur==="U"?usd(n):vnd(n);
 const TC_SKIP=c=>c==="Số dư tháng trước"||c==="Chuyển nội bộ";
-function tcHead(kind){const at=S.tcDoc?.at?new Date(S.tcDoc.at):null;
-  return`<div class="sec-h"><div><h2>${kind==="exp"?"Chi phí thực tế – bảng Thu chi văn phòng":"Dòng tiền thực tế – bảng Thu chi văn phòng"}</h2><p>Tự động từ bảng Lark "THU CHI VĂN PHÒNG TMĐT" (mọi tab tháng). Tiền Việt (₫) và tiền đô ($) tính riêng.${at?` Lấy lúc ${pad(at.getHours())}:${pad(at.getMinutes())} ${fmtD(ymd(at))}.`:""}</p>
-    ${S.tcSync?.err?`<p class="small" style="color:var(--bad);margin-top:4px">⚠ Chưa tự lấy được từ Lark: ${esc(S.tcSync.err)}</p>`:""}</div>
-    <div class="actions"><button class="btn" data-act="tcSync" ${S.tcSync?.busy?"disabled":""}>${S.tcSync?.busy?"Đang lấy…":"Lấy từ Lark ngay"}</button></div></div>`}
+const TC_DESC={"Fulfillment & tiền hàng":"Tiền đi đơn, mua hàng, phí ship","Mua shop, kênh, tài khoản":"Mua shop TikTok, kênh, acc","Lương, trợ cấp, thưởng":"Lương, thưởng, trợ cấp, công tác phí",
+  "Phần mềm & công cụ":"Grok, ChatGPT, proxy, Veo3, app…","Quảng cáo":"Chạy ads","Văn phòng, ăn uống":"Điện nước, mạng, đồ dùng, ăn uống","Mẫu, KOC, livestream":"Gửi mẫu, KOC, live",
+  "Phí giao dịch, ngân hàng":"Phí chuyển tiền, phí ngân hàng","Khác":"Chưa rõ là gì – nên ghi rõ hơn ở cột “Cụ thể”"};
+/* Tỉ giá thật: lấy từ các dòng "Mua 500$" (số ₫ bỏ ra ÷ số $ mua được) của tháng đó; tháng không có thì lấy trung vị mọi tháng */
+function tcFxMap(){if(S._fxK===S.tcDoc?.at)return S._fx;const med=a=>{a=a.sort((x,y)=>x-y);return a.length?a[Math.floor(a.length/2)]:0};const by={},all=[];
+  tcRows().forEach(r=>{if(r.cur!=="V"||r.dir>0)return;const m=/^mua ?([\d.,]+) ?(\$|usd)/.exec(dsNorm(r.det));if(!m)return;const u=+m[1].replace(/,/g,"");const x=u?r.amt/u:0;if(x>20000&&x<32000){(by[r.month]=by[r.month]||[]).push(x);all.push(x)}});
+  const def=Math.round(med(all))||+ST().fx||26600,map={};Object.keys(S.tcDoc?.months||{}).forEach(m=>map[m]=Math.round(med(by[m]||[]))||def);map._def=def;S._fx=map;S._fxK=S.tcDoc?.at;return map}
+const tcFx=m=>{const f=tcFxMap();return f[m]||f._def};
+const tcQ=r=>r.cur==="U"?r.amt*tcFx(r.month):r.amt; // quy ra ₫
+const tcTr=n=>{const a=Math.abs(n),s=n<0?"−":"";return a>=1e9?s+(a/1e9).toLocaleString("vi-VN",{maximumFractionDigits:2})+" tỷ ₫":a>=1e6?s+(a/1e6).toLocaleString("vi-VN",{maximumFractionDigits:1})+" triệu ₫":vnd(n)};
+const tcMix=(v,u)=>[v?vnd(v):"",u?usd(u):""].filter(Boolean).join(" + ")||"0 ₫";
+function tcHead(kind){const at=S.tcDoc?.at?new Date(S.tcDoc.at):null,e=S.tcSync||{};
+  return`<div class="sec-h"><div><h2>${kind==="exp"?"Công ty đã chi tiền vào đâu?":"Tiền vào – tiền ra – còn lại"}</h2>
+    <p>Tự động lấy từ Lark (bảng “Thu chi văn phòng”${kind==="cash"?" và “Theo dõi tiền về shop”":""}). Tiền đô được quy ra ₫ theo đúng giá các lần “Mua $”.${at?` Cập nhật ${pad(at.getHours())}:${pad(at.getMinutes())} ${fmtD(ymd(at))}.`:""}</p>
+    ${e.err?`<p class="small" style="color:var(--bad);margin-top:4px">⚠ Chưa lấy được bảng Thu chi: ${esc(e.err)}</p>`:""}
+    ${kind==="cash"&&e.perr?`<p class="small" style="color:var(--bad);margin-top:4px">⚠ Chưa lấy được bảng Tiền về shop: ${esc(e.perr)}</p>`:""}</div>
+    <div class="actions"><button class="btn" data-act="tcSync" ${e.busy?"disabled":""}>${e.busy?"Đang lấy…":"Lấy từ Lark ngay"}</button></div></div>`}
 function tcMonthSel(months){const k=S.tcM&&(S.tcM==="all"||months.includes(S.tcM))?S.tcM:(months[0]||"all");S.tcM=k;
   return[k,`<select class="inp" id="tcM" style="width:auto">${months.map(m=>`<option value="${m}" ${m===k?"selected":""}>${fmtM(m)}</option>`).join("")}<option value="all" ${k==="all"?"selected":""}>Tất cả các tháng</option></select>`]}
+const tcBig=(lb,v,s,col)=>`<div class="kpi"><div style="padding:2px 4px"><span class="lb">${lb}</span><div style="font-size:24px;font-weight:700;margin:4px 0;color:${col||"inherit"};white-space:nowrap">${v}</div><span class="s">${s}</span></div></div>`;
+const tcBar=(p,col)=>`<div style="height:10px;background:var(--line);border-radius:5px;min-width:80px"><div style="width:${Math.max(1,Math.round(p*100))}%;height:10px;background:${col||"var(--accent)"};border-radius:5px"></div></div>`;
+const tcSay=html=>`<div style="background:var(--accent-soft);border-radius:10px;padding:12px 14px;margin:10px 0 14px;font-size:15px;line-height:1.55">${html}</div>`;
+
+/* ===== Trang Chi phí ===== */
 function tcExpPanel(){if(S.staff)return"";const all=tcRows();if(!all.length)return tcHead("exp")+`<div class="panel"><div class="empty" style="padding:18px">Chưa có dữ liệu thu chi. Bấm "Lấy từ Lark ngay".</div></div>`;
   const months=[...new Set(all.map(r=>r.month))].sort().reverse(),[k,sel]=tcMonthSel(months);
-  const rs=all.filter(r=>(k==="all"||r.month===k)&&r.dir<0&&!TC_SKIP(r.cat)),sum=(a,c)=>a.filter(r=>r.cur===c).reduce((x,r)=>x+r.amt,0);
-  const V=sum(rs,"V"),U=sum(rs,"U"),cats=new Map();rs.forEach(r=>{const x=cats.get(r.cat)||{V:0,U:0,n:0};x[r.cur]+=r.amt;x.n++;cats.set(r.cat,x)});
-  const fx=+ST().fx||25400,cl=[...cats.entries()].sort((a,b)=>(b[1].V+b[1].U*fx)-(a[1].V+a[1].U*fx)),totX=V+U*fx;
+  const spend=m=>all.filter(r=>(m==="all"||r.month===m)&&r.dir<0&&!TC_SKIP(r.cat));
+  const rs=spend(k),V=rs.filter(r=>r.cur==="V").reduce((a,r)=>a+r.amt,0),U=rs.filter(r=>r.cur==="U").reduce((a,r)=>a+r.amt,0),T=rs.reduce((a,r)=>a+tcQ(r),0);
+  const cats=new Map();rs.forEach(r=>{const x=cats.get(r.cat)||{V:0,U:0,T:0,n:0};x[r.cur]+=r.amt;x.T+=tcQ(r);x.n++;cats.set(r.cat,x)});
+  const cl=[...cats.entries()].sort((a,b)=>b[1].T-a[1].T),top=cl[0];
+  const pm=k!=="all"&&months.includes(prevMonth(k))&&prevMonth(k),PT=pm?spend(pm).reduce((a,r)=>a+tcQ(r),0):0,ch=PT?(T-PT)/PT:null;
+  const fxTxt=k==="all"?`${tcFx(months[0]).toLocaleString("vi-VN")} ₫/$ (tháng gần nhất)`:`${tcFx(k).toLocaleString("vi-VN")} ₫/$`;
   const q=dsNorm(S.tcQ||""),C=S.tcC||"";let list=rs.filter(r=>(!C||r.cat===C)&&(!q||dsNorm(r.det+" "+r.who).includes(q))).sort((a,b)=>a.date<b.date?1:-1);
-  return tcHead("exp")+`<div class="panel"><div class="actions" style="margin-bottom:10px">${sel}<span class="small muted">Không tính "Nạp pingpong", "Mua 500$" (đổi tiền nội bộ) và "Tiền thừa tháng trước".</span></div>
-    <div class="kpis">${alK(IC.money,"var(--warn-soft)","var(--warn)","Tổng chi (₫)",vnd(V),`${rs.filter(r=>r.cur==="V").length} khoản`)}
-      ${alK(IC.money,"var(--warn-soft)","var(--warn)","Tổng chi ($)",usd(U),`${rs.filter(r=>r.cur==="U").length} khoản`)}
-      ${alK(IC.inbox,"var(--accent-soft)","var(--accent)","Quy đổi tổng",vnd(totX),`tỉ giá ${fx.toLocaleString("vi-VN")} ₫/$`)}
-      ${alK(IC.leaf,"var(--accent-soft)","var(--accent)","Chi nhiều nhất",esc(cl[0]?.[0]||"–"),cl[0]?`${Math.round((cl[0][1].V+cl[0][1].U*fx)/totX*100)}% tổng chi`:"")}</div>
-    <h3 style="margin:16px 0 8px">Chi theo nhóm</h3>
-    ${alTbl([["Nhóm chi"],["Số khoản",1],["Tiền Việt",1],["Tiền đô",1],["Tỉ trọng"]],cl.map(([c,x])=>{const p=totX?(x.V+x.U*fx)/totX:0;return`<tr style="cursor:pointer" data-act="tcCat" data-id="${esc(c)}"><td><b>${esc(c)}</b></td><td class="n">${x.n}</td><td class="n">${x.V?vnd(x.V):"–"}</td><td class="n">${x.U?usd(x.U):"–"}</td>
-      <td style="min-width:140px"><div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:8px;background:var(--line);border-radius:4px"><div style="width:${Math.round(p*100)}%;height:8px;background:var(--accent);border-radius:4px"></div></div><span class="small">${Math.round(p*100)}%</span></div></td></tr>`}).join(""))}
-    <h3 style="margin:16px 0 8px">Từng khoản chi${C?` – ${esc(C)} <button class="btn" data-act="tcCat" data-id="" style="padding:2px 8px">bỏ lọc</button>`:""}</h3>
-    <div class="actions" style="margin-bottom:8px"><input class="inp" id="tcQ" placeholder="Tìm nội dung, người nhận…" value="${esc(S.tcQ||"")}" style="width:240px"></div>
-    ${alTbl([["Ngày"],["Nội dung"],["Nhóm"],["Người nhận"],["Số tiền",1]],list.slice(0,S.tcMore?2000:150).map(r=>`<tr><td>${fmtD(r.date)}</td><td>${esc(r.det||"–")}</td><td class="small"><span class="pill p-mute">${esc(r.cat)}</span></td><td class="small">${esc(r.who)}</td><td class="n"><b>${tcMoney(r.amt,r.cur)}</b></td></tr>`).join(""),"Không có khoản chi nào khớp.")}
-    ${list.length>150&&!S.tcMore?`<p style="text-align:center;margin:8px 0"><button class="btn" data-act="tcMore">Xem thêm ${list.length-150} khoản</button></p>`:""}
-    <p class="hint">Nhóm chi được web tự xếp theo chữ trong cột "Cụ thể" (ví dụ "Nạp ads" → Quảng cáo, "Mua grok/proxy" → Phần mềm & công cụ). Khoản nào xếp sai, chỉ cần ghi rõ hơn trong bảng Lark.</p></div>`}
-function tcCashPanel(){if(S.staff)return"";const all=tcRows();if(!all.length)return tcHead("cash")+`<div class="panel"><div class="empty" style="padding:18px">Chưa có dữ liệu thu chi. Bấm "Lấy từ Lark ngay".</div></div>`;
-  const months=[...new Set(all.map(r=>r.month))].sort().reverse();
-  const row=m=>{const rs=all.filter(r=>r.month===m),s=(c,d,f=()=>true)=>rs.filter(r=>r.cur===c&&r.dir===d&&f(r)).reduce((a,r)=>a+r.amt,0);
-    const carryV=s("V",1,r=>r.cat==="Số dư tháng trước"),carryU=s("U",1,r=>r.cat==="Số dư tháng trước");
-    const inV=s("V",1),outV=s("V",-1),inU=s("U",1),outU=s("U",-1);return{m,carryV,carryU,inV:inV-carryV,outV,endV:inV-outV,inU:inU-carryU,outU,endU:inU-outU,gop:s("V",1,r=>r.cat==="Góp vốn, thu khác"),gopU:s("U",1,r=>r.cat==="Góp vốn, thu khác"),tiktok:s("U",1,r=>r.cat==="Tiền TikTok về")+s("V",1,r=>r.cat==="Tiền TikTok về")}};
-  const R=months.map(row),last=R[0];
-  const shops=new Map();all.filter(r=>r.dir>0&&!TC_SKIP(r.cat)&&r.cat!=="Hoàn tiền").forEach(r=>{const m=r.cat==="Tiền TikTok về"&&/shop\s*([\w-]+)/i.exec(r.det);const k=m?"TikTok – Shop "+m[1]:(r.who||r.det||"(không ghi)").replace(/\s+/g," ").trim().slice(0,40);const x=shops.get(k)||{n:0,U:0,V:0,last:""};x.n++;x[r.cur]+=r.amt;if(r.date>x.last)x.last=r.date;shops.set(k,x)});
-  const fx=+ST().fx||25400;
+  return tcHead("exp")+`<div class="panel"><div class="actions">${sel}</div>
+    ${tcSay(`${k==="all"?"Từ trước tới nay":fmtM(k)} công ty đã chi <b>${tcTr(T)}</b> (gồm ${tcMix(V,U)}).
+      ${top?`Tiền đi nhiều nhất vào <b>${esc(top[0])}</b>: ${tcTr(top[1].T)}, chiếm ${Math.round(top[1].T/T*100)}%.`:""}
+      ${ch!=null?` So với ${fmtM(pm).toLowerCase()}: <b style="color:${ch>0?"var(--bad)":"var(--good)"}">${ch>0?"tăng":"giảm"} ${Math.abs(Math.round(ch*100))}%</b>.`:""}`)}
+    <div class="kpis">${tcBig("Tổng đã chi (quy ra ₫)",tcTr(T),`${rs.length} khoản`,"var(--warn)")}
+      ${tcBig("Trả bằng tiền Việt",tcTr(V),`${rs.filter(r=>r.cur==="V").length} khoản`)}
+      ${tcBig("Trả bằng tiền đô",usd(U),`≈ ${tcTr(U*(k==="all"?tcFxMap()._def:tcFx(k)))} · tỉ giá ${fxTxt}`)}</div>
+    <h3 style="margin:18px 0 8px">Tiền đi vào việc gì? <span class="small muted">(bấm một dòng để xem chi tiết)</span></h3>
+    <div class="tbl"><table><tbody>${cl.map(([c,x])=>`<tr style="cursor:pointer${C===c?";background:var(--accent-soft)":""}" data-act="tcCat" data-id="${esc(c)}">
+      <td style="width:34%"><b>${esc(c)}</b><div class="small muted">${esc(TC_DESC[c]||"")}</div></td>
+      <td style="width:30%">${tcBar(x.T/T,c==="Khác"?"var(--muted)":"")}</td>
+      <td class="n" style="white-space:nowrap"><b>${tcTr(x.T)}</b><div class="small muted">${Math.round(x.T/T*100)}% · ${x.n} khoản</div></td>
+      <td class="n small muted" style="white-space:nowrap">${tcMix(x.V,x.U)}</td></tr>`).join("")}</tbody></table></div>
+    <h3 style="margin:18px 0 8px">Danh sách từng khoản${C?` – ${esc(C)} <button class="btn" data-act="tcCat" data-id="" style="padding:2px 8px">xem tất cả</button>`:""}</h3>
+    <div class="actions" style="margin-bottom:8px"><input class="inp" id="tcQ" placeholder="Tìm: grok, lương, shop 4…" value="${esc(S.tcQ||"")}" style="width:240px"></div>
+    ${alTbl([["Ngày"],["Chi cho việc gì"],["Nhóm"],["Ai nhận / ai chi"],["Số tiền",1]],list.slice(0,S.tcMore?2000:100).map(r=>`<tr><td>${fmtD(r.date)}</td><td>${esc(r.det||"(không ghi)")}</td><td class="small"><span class="pill p-mute">${esc(r.cat)}</span></td><td class="small">${esc(r.who)}</td><td class="n"><b>${tcMoney(r.amt,r.cur)}</b>${r.cur==="U"?`<div class="small muted">≈ ${tcTr(tcQ(r))}</div>`:""}</td></tr>`).join(""),"Không có khoản chi nào khớp.")}
+    ${list.length>100&&!S.tcMore?`<p style="text-align:center;margin:8px 0"><button class="btn" data-act="tcMore">Xem thêm ${list.length-100} khoản</button></p>`:""}
+    <p class="hint">Không tính là chi phí: đổi tiền (“Mua 500$”, “Nạp pingpong” – chỉ là chuyển tiền từ túi ₫ sang túi $) và “Tiền thừa tháng trước”. Nhóm được web tự xếp theo chữ ở cột “Cụ thể”; khoản nào xếp sai thì ghi rõ hơn trong bảng Lark.</p></div>`}
+
+/* ===== Trang Dòng tiền ===== */
+function tcCashPanel(){if(S.staff)return"";const all=tcRows(),po=poRows();if(!all.length&&!po.length)return tcHead("cash")+`<div class="panel"><div class="empty" style="padding:18px">Chưa có dữ liệu. Bấm "Lấy từ Lark ngay".</div></div>`;
+  const months=[...new Set([...all.map(r=>r.month),...po.map(r=>r.month)])].sort().reverse();
+  const row=m=>{const rs=all.filter(r=>r.month===m),s=(c,d,f=()=>true)=>rs.filter(r=>r.cur===c&&r.dir===d&&f(r)).reduce((a,r)=>a+r.amt,0),fx=tcFx(m);
+    const endV=s("V",1)-s("V",-1),endU=s("U",1)-s("U",-1),carry=s("V",1,r=>r.cat==="Số dư tháng trước")+s("U",1,r=>r.cat==="Số dư tháng trước")*fx;
+    const real=f=>rs.filter(r=>!TC_SKIP(r.cat)&&f(r)).reduce((a,r)=>a+tcQ(r),0);
+    const tk=po.filter(r=>r.month===m);
+    return{m,fx,has:rs.length>0,carry,inQ:real(r=>r.dir>0),outQ:real(r=>r.dir<0),endV,endU,endQ:endV+endU*fx,tk:tk.reduce((a,r)=>a+r.amt,0),tkN:tk.length}};
+  const R=months.map(row),cur=R.find(x=>x.has)||R[0],tkAll=po.reduce((a,r)=>a+r.amt,0),tkM=R[0];
+  const shops=new Map();po.forEach(r=>{const x=shops.get(r.shop)||{n:0,U:0,m:0,last:""};x.n++;x.U+=r.amt;if(r.month===months[0])x.m+=r.amt;if(r.date>x.last)x.last=r.date;shops.set(r.shop,x)});
+  const src=new Map();all.filter(r=>r.dir>0&&!TC_SKIP(r.cat)).forEach(r=>{const k=r.cat==="Hoàn tiền"?"Tiền hoàn lại (refund)":(r.who||r.det||"(không ghi)").replace(/\s+/g," ").trim().slice(0,40);const x=src.get(k)||{n:0,T:0,last:""};x.n++;x.T+=tcQ(r);if(r.date>x.last)x.last=r.date;src.set(k,x)});
   return tcHead("cash")+`<div class="panel">
-    <div class="kpis">${alK(IC.money,"var(--good-soft)","var(--good)",`Còn lại cuối ${fmtM(last.m)} (₫)`,vnd(last.endV),`Thu ${vnd(last.inV)} · Chi ${vnd(last.outV)}`)}
-      ${alK(IC.money,"var(--good-soft)","var(--good)",`Còn lại cuối ${fmtM(last.m)} ($)`,usd(last.endU),`Thu ${usd(last.inU)} · Chi ${usd(last.outU)}`)}
-      ${alK(IC.inbox,"var(--accent-soft)","var(--accent)",`Tiền góp vào ${fmtM(last.m)}`,vnd(last.gop),last.gopU?`+ ${usd(last.gopU)}`:"góp vốn, chuyển vào quỹ")}</div>
-    <h3 style="margin:16px 0 8px">Từng tháng</h3>
-    ${alTbl([["Tháng"],["Đầu kỳ ₫",1],["Thu ₫",1],["Chi ₫",1],["Cuối kỳ ₫",1],["Đầu kỳ $",1],["Thu $",1],["Chi $",1],["Cuối kỳ $",1],["Góp vào ₫",1]],R.map(x=>`<tr><td><b>${fmtM(x.m)}</b></td><td class="n">${vnd(x.carryV)}</td><td class="n">${vnd(x.inV)}</td><td class="n">${vnd(x.outV)}</td><td class="n"><b style="color:${x.endV<0?"var(--bad)":""}">${vnd(x.endV)}</b></td>
-      <td class="n">${usd(x.carryU)}</td><td class="n">${usd(x.inU)}</td><td class="n">${usd(x.outU)}</td><td class="n"><b style="color:${x.endU<0?"var(--bad)":""}">${usd(x.endU)}</b></td><td class="n">${x.gop?vnd(x.gop):"–"}</td></tr>`).join(""))}
-    <h3 style="margin:16px 0 8px">Tiền vào quỹ theo nguồn (mọi tháng)</h3>
-    ${alTbl([["Nguồn tiền"],["Số lần",1],["Tiền Việt",1],["Tiền đô",1],["Lần gần nhất"]],[...shops.entries()].sort((a,b)=>(b[1].V+b[1].U*fx)-(a[1].V+a[1].U*fx)).slice(0,30).map(([k,x])=>`<tr><td>${esc(k)}</td><td class="n">${x.n}</td><td class="n"><b>${x.V?vnd(x.V):"–"}</b></td><td class="n">${x.U?usd(x.U):"–"}</td><td>${fmtD(x.last)}</td></tr>`).join(""),"Chưa có khoản tiền vào nào.")}
-    <p class="hint">Đầu kỳ = dòng "Tiền thừa tháng trước". Thu không gồm đầu kỳ. "Nạp pingpong" xuất hiện cả bên ₫ (chi ra) và bên $ (thu vào) vì là đổi tiền nội bộ. Cuối kỳ = Đầu kỳ + Thu − Chi, khớp ô "Còn lại" trong bảng Lark (tháng nào có 2 sổ thì cộng cả 2). "Mua 500$" được coi là đổi ₫ sang $, không tính là chi phí.</p></div>`}
-Object.assign(ACT,{tcSync:()=>tcLarkSync(true),tcCat:v=>{S.tcC=v||"";render()},tcMore:()=>{S.tcMore=true;render()}});
-document.addEventListener("change",e=>{if(e.target.id==="tcM"){S.tcM=e.target.value;S.tcMore=false;render()}});
+    ${tcSay(`Cuối ${fmtM(cur.m).toLowerCase()}, quỹ văn phòng còn <b>${tcTr(cur.endQ)}</b> (${tcMix(cur.endV,cur.endU)}).
+      Trong tháng: tiền chuyển vào quỹ <b>${tcTr(cur.inQ)}</b>, đã chi <b>${tcTr(cur.outQ)}</b>.
+      ${tkAll?`<br>Các shop TikTok đã rút về <b>${usd(tkM.tk)}</b> trong ${fmtM(tkM.m).toLowerCase()} (${tkM.tkN} lần), tổng từ trước tới nay <b>${usd(tkAll)}</b>.`:""}`)}
+    <div class="kpis">${tcBig(`Quỹ còn lại cuối ${fmtM(cur.m).toLowerCase()}`,tcTr(cur.endQ),tcMix(cur.endV,cur.endU),"var(--good)")}
+      ${tcBig(`Tiền TikTok về ${fmtM(tkM.m).toLowerCase()}`,usd(tkM.tk),`≈ ${tcTr(tkM.tk*tcFx(tkM.m))} · ${tkM.tkN} lần rút`,"var(--accent)")}
+      ${tcBig("Tiền TikTok về từ trước tới nay",usd(tkAll),`${shops.size} shop · ≈ ${tcTr(tkAll*tcFxMap()._def)}`)}</div>
+    <h3 style="margin:18px 0 8px">Từng tháng <span class="small muted">(đã quy hết ra ₫)</span></h3>
+    ${alTbl([["Tháng"],["Đầu tháng có",1],["+ Tiền vào quỹ",1],["− Đã chi",1],["= Cuối tháng còn",1],["TikTok rút về",1]],R.map(x=>`<tr><td><b>${fmtM(x.m)}</b></td>
+      <td class="n">${x.has?tcTr(x.carry):"–"}</td><td class="n" style="color:var(--good)">${x.has?"+ "+tcTr(x.inQ):"–"}</td><td class="n" style="color:var(--bad)">${x.has?"− "+tcTr(x.outQ):"–"}</td>
+      <td class="n"><b>${x.has?tcTr(x.endQ):"–"}</b>${x.has?`<div class="small muted">${tcMix(x.endV,x.endU)}</div>`:""}</td><td class="n">${x.tk?usd(x.tk):"–"}</td></tr>`).join(""))}
+    <h3 style="margin:18px 0 8px">Tiền TikTok về theo shop</h3>
+    ${alTbl([["Shop"],["Số lần rút",1],[fmtM(months[0]),1],["Tổng từ trước tới nay",1],["Lần rút gần nhất"]],[...shops.entries()].sort((a,b)=>b[1].U-a[1].U).map(([k,x])=>`<tr><td><b>${esc(k)}</b></td><td class="n">${x.n}</td><td class="n">${x.m?usd(x.m):"–"}</td><td class="n"><b>${usd(x.U)}</b></td><td>${fmtD(x.last)}</td></tr>`).join(""),S.tcSync?.perr?"Chưa đọc được bảng tiền về shop (xem dòng báo lỗi ở trên).":"Chưa có dữ liệu tiền về shop.")}
+    <h3 style="margin:18px 0 8px">Tiền vào quỹ văn phòng từ đâu?</h3>
+    ${alTbl([["Ai chuyển / nguồn"],["Số lần",1],["Tổng (quy ₫)",1],["Lần gần nhất"]],[...src.entries()].sort((a,b)=>b[1].T-a[1].T).slice(0,15).map(([k,x])=>`<tr><td>${esc(k)}</td><td class="n">${x.n}</td><td class="n"><b>${tcTr(x.T)}</b></td><td>${fmtD(x.last)}</td></tr>`).join(""),"Chưa có khoản tiền vào nào.")}
+    <p class="hint">Cách đọc: <b>Cuối tháng còn = Đầu tháng có + Tiền vào − Đã chi</b> (khớp ô “Còn lại” trong bảng Lark; chênh vài nghìn ₫ là do đổi tiền). “Tiền vào quỹ” là tiền mọi người chuyển vào bảng Thu chi; “TikTok rút về” lấy từ bảng Theo dõi tiền về shop – hai số này để riêng, không cộng vào nhau.</p></div>`}
+Object.assign(ACT,{tcSync:()=>tcLarkSync(true),tcCat:v=>{S.tcC=S.tcC===v?"":(v||"");S.tcMore=false;render()},tcMore:()=>{S.tcMore=true;render()}});
+document.addEventListener("change",e=>{if(e.target.id==="tcM"){S.tcM=e.target.value;S.tcMore=false;S.tcC="";render()}});
 document.addEventListener("input",e=>{if(e.target.id==="tcQ"){S.tcQ=e.target.value;clearTimeout(S._tcT);S._tcT=setTimeout(()=>{const p=e.target.selectionStart;render();const el=document.getElementById("tcQ");if(el){el.focus();el.setSelectionRange(p,p)}},350)}});
+/* Phần nhập tay cũ: thu gọn lại khi đã có dữ liệu tự động từ Lark, để trang dễ đọc */
+const tcOld=(html,lb)=>(S.tcDoc?.months?`<details class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">${lb} <span class="small muted">(phần nhập tay cũ – ít dùng, bấm để mở)</span></summary><div style="margin-top:10px">${html}</div></details>`:html);
 
 </script>
 <script type="text/plain" id="src-10-boot">
@@ -2725,7 +2782,7 @@ function doRender(){
     const g=staffGate();$("#main").innerHTML=g||({congviec:pgTasks,chamcong:pgStaffAtt,kpi:pgStaffKPI,nop:pgStaffSubmit,sanpham:pgResearch}[S.tab]||pgTasks)();
     const drop=$("#drop");if(drop){drop.ondragover=e=>{e.preventDefault();drop.classList.add("over")};drop.ondragleave=()=>drop.classList.remove("over");drop.ondrop=e=>{e.preventDefault();drop.classList.remove("over");handleFile(e.dataTransfer.files[0])}}
     return}
-  renderFilters();const pg={tongquan:pgOverview,banhang:()=>podPanel()+pgSales(),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel():"")+pgStock(),sanpham:pgResearch,fulfill:()=>ffAutoPanel()+pgFulfill(),nhaphang:pgPurch,chiphi:()=>tcExpPanel()+pgExp(),dongtien:()=>tcCashPanel()+pgCash(),congviec:pgTasks,kpi:pgKPI,chamcong:pgAttendance,pheduyet:pgApprovals,tainguyen:pgAssets,caidat:pgSettings}[S.tab]||pgOverview;
+  renderFilters();const pg={tongquan:pgOverview,banhang:()=>podPanel()+pgSales(),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel():"")+pgStock(),sanpham:pgResearch,fulfill:()=>ffAutoPanel()+pgFulfill(),nhaphang:pgPurch,chiphi:()=>tcExpPanel()+tcOld(pgExp(),"Chi phí nhập tay"),dongtien:()=>tcCashPanel()+tcOld(pgCash(),"Dòng tiền nhập tay"),congviec:pgTasks,kpi:pgKPI,chamcong:pgAttendance,pheduyet:pgApprovals,tainguyen:pgAssets,caidat:pgSettings}[S.tab]||pgOverview;
   let banner="";
   if(S.demo)banner=`<div class="banner"><span><b>Đang xem dữ liệu mẫu.</b> ${S.db?"Số liệu trên là ví dụ để bạn hình dung. Bắt đầu bằng việc thêm shop trong Cài đặt, rồi nhập file đơn hàng TikTok.":S.connecting?"Đang kết nối kho dữ liệu…":"Chưa kết nối được máy chủ dữ liệu."}</span>${S.db?'<button class="btn sm" data-act="exitDemo">Bắt đầu với dữ liệu thật</button>':""}</div>`;
   else if(S.readonly)banner=`<div class="banner"><span><b>Chế độ chỉ xem.</b> Tài khoản này không có quyền nhập số liệu.</span></div>`;
@@ -2818,6 +2875,7 @@ async function publish(){if(pubBusy){schedulePublish();return}pubBusy=true;
   db.doc("settings/attendance").onSnapshot(s=>{S.attCfgDoc=s.exists?s.data():null;schedulePublish();render()},()=>{});
   db.doc("settings/podLark").onSnapshot(s=>{S.podDoc=s.exists?s.data():null;if(S.tab==="banhang")render()},()=>{});
   db.doc("settings/thuChi").onSnapshot(s=>{S.tcDoc=s.exists?s.data():null;if(["chiphi","dongtien"].includes(S.tab))render()},()=>{});
+  db.doc("settings/tkPayout").onSnapshot(s=>{S.poDoc=s.exists?s.data():null;if(["chiphi","dongtien"].includes(S.tab))render()},()=>{});
   db.doc("settings/dropSheet").onSnapshot(s=>{S.dsCfgDoc=s.exists?s.data():null;if(S.tab==="dondrop")render()},()=>{});
   S.rsSub=1;db.doc("settings/research").onSnapshot(s=>{S.rsCfgDoc=s.exists?s.data():null;schedulePublish();render()},()=>{});
   db.doc("settings/backup").onSnapshot(s=>{S.backupDoc=s.exists?s.data():null;render()},()=>{});

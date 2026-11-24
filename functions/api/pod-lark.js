@@ -5,7 +5,8 @@
    Chỉ tài khoản giám đốc (role owner trên Supabase) gọi được. */
 const SUPA = "https://hcubziuqxgnfgxxixnam.supabase.co";
 const SUPA_KEY = "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi"; // khoá công khai (publishable), không phải khoá bí mật
-const DOCS = { pod: "HdpOwILOvi99xjkVFXsjRvLQpDg", thuchi: "WyOIw5VyjiqG8ukfZA7j0ND0pYf" };
+// wiki: trang wiki (cần tra obj_token); sheet: bảng trong Drive (token dùng thẳng)
+const DOCS = { pod: { wiki: "HdpOwILOvi99xjkVFXsjRvLQpDg" }, thuchi: { wiki: "WyOIw5VyjiqG8ukfZA7j0ND0pYf" }, payout: { sheet: "Ozv2sJC5fh2A63td6tDjmPe7pMe" } };
 const J = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
 const cell = v => v == null ? "" : Array.isArray(v) ? v.map(cell).join("") : typeof v === "object" ? String(v.text ?? v.link ?? v.value ?? "") : String(v);
 const col = n => { let s = ""; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26) } return s };
@@ -32,13 +33,13 @@ export async function onRequestGet({ request, env }) {
 
     /* 3) Tìm bảng từ trang wiki, liệt kê tab */
     const url0 = new URL(request.url), docKey = DOCS[url0.searchParams.get("doc")] ? url0.searchParams.get("doc") : "pod";
-    const node = (await get("/wiki/v2/spaces/get_node?token=" + DOCS[docKey])).node;
+    const D = DOCS[docKey], node = D.wiki ? (await get("/wiki/v2/spaces/get_node?token=" + D.wiki)).node : { obj_token: D.sheet, title: docKey };
     const sp = node.obj_token;
     const sheets = (await get(`/sheets/v3/spreadsheets/${sp}/sheets/query`)).sheets || [];
     const all = docKey === "thuchi" || url0.searchParams.get("all") === "1";
     const now = new Date(Date.now() + 7 * 36e5), want = new Set();
     for (const k of [0, 1]) { const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - k, 1)); want.add(`${d.getUTCMonth() + 1}.${d.getUTCFullYear()}`) }
-    const pick = sheets.filter(s => { const mm = /^\s*t\s*(\d{1,2})\s*[./-]\s*(\d{4})/i.exec(s.title || ""); return mm && (all || want.has(`${+mm[1]}.${mm[2]}`)) });
+    const pick = docKey === "payout" ? sheets : sheets.filter(s => { const mm = /^\s*t\s*(\d{1,2})\s*[./-]\s*(\d{4})/i.exec(s.title || ""); return mm && (all || want.has(`${+mm[1]}.${mm[2]}`)) });
 
     /* 4) Đọc giá trị từng tab */
     const tabs = [];
