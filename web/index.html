@@ -2784,11 +2784,13 @@ function pnlPanel(){const all=tcRows(),po=poRows();if(!all.length)return"";
   const tk=po.length?po.reduce((a,r)=>a+r.amt*tcFx(r.month),0):all.filter(r=>r.cat==="Tiền TikTok về").reduce((a,r)=>a+tcQ(r),0);
   const H=S.hdDoc?.shops||{},holdU=Object.values(H).reduce((a,x)=>a+(+x||0),0),hold=holdU*fxNow,hasHold=Object.keys(H).length>0;
   const cap=all.filter(r=>r.dir>0&&r.cat==="Góp vốn, thu khác").reduce((a,r)=>a+tcQ(r),0);
+  const D=S.hdDoc?.die||[],dieU=D.reduce((a,x)=>a+(+x.amt||0),0),die=dieU*fxNow,plD=tk+hold+die-T;
   const pl=tk+hold-T,pl2=pl+inv,col=v=>v>=0?"var(--good)":"var(--bad)",word=v=>v>=0?"LÃI":"LỖ";
   const hAt=S.hdDoc?.at?fmtD(ymd(new Date(S.hdDoc.at))):"";
   return`<div class="panel" style="margin-bottom:14px"><div class="sec-h" style="margin:0"><div><h2>Công ty đang lãi hay lỗ?</h2><p>Tính từ ${fmtM(from).toLowerCase()} tới nay, theo tiền thật. Tiền đô quy ra ₫ theo giá mua đô gần nhất ${fxNow.toLocaleString("vi-VN")} ₫/$.</p></div>
       <div class="actions"><button class="btn pri" data-act="hdEdit">Nhập tiền còn trên shop</button></div></div>
     ${tcSay(`Công ty đang <b style="color:${col(pl)}">${word(pl)} ${tcTr(Math.abs(pl))}</b>${hasHold?"":" <span class=\"small\">(chưa tính tiền còn chờ trên shop – bấm “Nhập tiền còn trên shop”)</span>"}.
+      ${D.length?`<br>Ngoài ra còn <b>${usd(dieU)} ≈ ${tcTr(die)}</b> đang <b>kẹt ở ${D.length} shop die / bị giữ tiền</b> – TikTok hẹn trả dần (xem bảng dưới). Nếu số này về đủ thì công ty ${plD>=0?"lãi":"lỗ"} <b style="color:${col(plD)}">${tcTr(Math.abs(plD))}</b>.`:""}
       ${inv?`<br>Trong số đã chi có <b>${tcTr(inv)}</b> là tiền mua shop, kênh, tài khoản (giống tiền đầu tư ban đầu). Nếu không tính khoản này thì công ty ${pl2>=0?"lãi":"lỗ"} <b style="color:${col(pl2)}">${tcTr(Math.abs(pl2))}</b>.`:""}`)}
     <div class="kpis">
       ${tcBig("① TikTok đã trả về",tcTr(tk),`${usd(tkU)} · ${new Set(po.map(r=>r.shop)).size||"–"} shop`,"var(--good)")}
@@ -2800,6 +2802,9 @@ function pnlPanel(){const all=tcRows(),po=poRows();if(!all.length)return"";
       return`<h3 style="margin:16px 0 6px">Tiền còn trên từng shop</h3>
       <p class="small" style="margin-bottom:6px">Shop có Drop: <b>${usd(sum("Drop"))}</b>${miss("Drop")?` (còn ${miss("Drop")} shop chưa nhập)`:""} · Shop chỉ bán POD: <b>${usd(sum("POD"))}</b>${miss("POD")?` <span style="color:var(--bad)">(còn ${miss("POD")} shop POD chưa nhập)</span>`:""}</p>
       ${alTbl([["Shop"],["Loại"],["Đơn POD 2 tháng gần nhất",1],["Còn chờ trên shop",1]],rows.sort((a,b)=>(b.h??-1)-(a.h??-1)||b.n-a.n).map(r=>`<tr><td><b>${esc(r.k)}</b></td><td><span class="pill ${r.t==="Drop"?"p-acc":"p-mute"}">${r.t}</span></td><td class="n">${r.n||"–"}</td><td class="n">${r.h!=null?`<b>${usd(r.h)}</b>`:'<span class="muted">chưa nhập</span>'}</td></tr>`).join(""))}`})()}
+    ${D.length?`<h3 style="margin:16px 0 6px">Tiền kẹt ở shop die / bị giữ tiền <span class="small muted">(chưa tính vào lãi/lỗ ở trên)</span></h3>
+      ${alTbl([["Shop"],["Tiền kẹt",1],["Hẹn trả (NV ghi)"],["Ngày die (NV ghi)"],["Ghi chú"]],[...D].sort((a,b)=>b.amt-a.amt).map(x=>`<tr><td><b>${esc(x.shop)}</b></td><td class="n"><b>${usd(x.amt)}</b></td><td>${esc(x.due||"–")}</td><td>${esc(x.dieAt||"–")}</td><td class="small" style="${/quá hạn/.test(x.note||"")?"color:var(--bad);font-weight:600":""}">${esc(x.note||"")}</td></tr>`).join(""))}
+      <p class="hint">Lấy từ bảng nhân viên (“Hiếu công việc”, cập nhật ${esc(S.hdDoc?.dieSrc||"")}). Chỉ tính shop chưa thấy tiền về trong bảng “Theo dõi tiền về shop”. Shop đã “NHẬN ĐỦ” không đưa vào.</p>`:""}
     <p class="hint">Số lấy từ Cotik › Finances › Overview (On hold): tài khoản Cotik 1 = 7 shop Drop, tài khoản Cotik 2 = 19 shop POD${S.hdDoc?.src?` · ${esc(S.hdDoc.src)}`:""}. Shop nào không có trên Cotik thì mở TikTok Seller Center › Finance › On hold rồi bấm “Nhập tiền còn trên shop”.</p>
     <p class="hint">Vốn đã bỏ vào quỹ (tiền chị Hương, chị Thương… chuyển vào): <b>${tcTr(cap)}</b> – tạm coi là tiền túi chủ góp, không phải doanh thu. Quỹ còn lại cuối tháng là tiền vốn chưa tiêu hết, <b>không phải lãi</b>.</p></div>`}
 Object.assign(ACT,{hdEdit:()=>{const sh=holdShops();if(!sh.length)return toast("Chưa có danh sách shop – bấm “Lấy từ Lark ngay” trước");const H=S.hdDoc?.shops||{};
