@@ -229,7 +229,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.25b", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.25c", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -242,7 +242,7 @@ window.APP_CONFIG = {
   const cfg = window.APP_CONFIG || {};
   const $id = id => document.getElementById(id);
   const ready = cfg.supabaseUrl && cfg.supabaseAnonKey && !/DIEN_|YOUR_/.test(cfg.supabaseUrl + cfg.supabaseAnonKey);
-  const APP_SCRIPTS = ["01-config", "02-demo", "03-calc", "04-data", "05-pages", "06-kpi", "07-actions", "08-import", "09-staff", "11-backup", "12-web", "13-research", "14-attendance", "15-shell", "16-dropsheet", "17-podlark", "18-autolink", "19-thuchi", "20-overview", "10-boot"];
+  const APP_SCRIPTS = ["01-config", "02-demo", "03-calc", "04-data", "05-pages", "06-kpi", "07-actions", "08-import", "09-staff", "11-backup", "12-web", "13-research", "14-attendance", "15-shell", "16-dropsheet", "17-podlark", "18-autolink", "19-thuchi", "20-overview", "21-podorders", "10-boot"];
 
   /* ---------- Kho dữ liệu ---------- */
   function makeDb(sb) {
@@ -415,7 +415,7 @@ window.APP_CONFIG = {
 <body>
 <section class="auth" id="auth">
   <div class="auth-card">
-    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 25/11b</p></div></div></div>
+    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 25/11c</p></div></div></div>
     <div id="authBox" hidden>
       <h2 id="authTitle">Đăng nhập</h2>
       <form id="authForm" class="auth-form">
@@ -2907,6 +2907,93 @@ function podProfitPanel(){const D=S.ppDoc;if(S.staff||!D)return"";const r2=x=>Ma
     <p class="hint">Chưa ghép được: ${int(D.sheetOnly)} đơn có trong bảng xưởng nhưng không có trong Cotik POD (shop khác/đơn cũ) và ${int(D.cotikOnly)} đơn Cotik không có trong bảng xưởng của Hiếu (đi xưởng khác). Muốn đủ 100%: mọi seller ghi đơn vào cùng một bảng xưởng có cột Base Cost.</p></div>`}
 
 </script>
+<script type="text/plain" id="src-21-podorders">
+/* 21-podorders.js · Trang Đơn POD – làm giống trang Đơn Drop.
+   Giá vốn: đọc trực tiếp bảng xưởng Google Sheets (mặc định bảng POD-US-Nguyễn Ngọc Hiếu) – CHỈ các cột: ngày, mã đơn, SKU, SL, tracking,
+            Base Cost, Shipping Cost, thanh toán, trạng thái xưởng. KHÔNG đọc cột tên/địa chỉ/điện thoại khách (dùng truy vấn "select" của Google).
+   Giá bán: settings/podRev – tiền TikTok trả từng đơn (Earn payout) lấy từ Cotik tài khoản POD, Claude cập nhật hằng tuần.
+   Ghép theo mã đơn TikTok. */
+const PO_SHEET_DEF="1WOMZnt9yUWOSVg3C_Mx2gUpI92pizSf1BqR_MtmCRNY";
+const PO_TABS=[["Order(Tumbler)","select A,B,C,D,J,T,U,V,W","Cốc"],["Rug-USA","select A,B,C,D,J,T,U,V","Thảm"]];
+S.po={rows:[],fac:{},at:0,busy:false,err:""};S.poPer="";S.poFrom="";S.poTo="";S.poShop="";S.poSel="";S.poSt="all";S.poQ="";S.poView="orders";
+const poCsv=t=>{const R=[];let row=[],f="",q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=ch}else if(ch=='"')q=true;else if(ch==","){row.push(f);f=""}else if(ch=="\n"){row.push(f);R.push(row);row=[];f=""}else f+=ch}if(f||row.length){row.push(f);R.push(row)}return R};
+const poNum=v=>+String(v||"").replace(/[^0-9.]/g,"")||0;
+const PO_ST={C:"Hoàn tất",D:"Đã giao",T:"Đang giao",S:"Chờ gửi hàng",L:"Chờ lấy hàng",X:"Đã huỷ",U:"Chưa thanh toán",H:"Tạm giữ"};
+function poDateFac(v,last){const s=String(v||"").trim();if(!s)return last;let m=/^(\d{1,2})[./-](\d{1,2})(?:[./-](\d{2,4}))?$/.exec(s);if(m){const y=m[3]?(m[3].length===2?"20"+m[3]:m[3]):today().slice(0,4);let d=`${y}-${pad(+m[2])}-${pad(+m[1])}`;if(d>today())d=`${+y-1}-${pad(+m[2])}-${pad(+m[1])}`;return d}
+  m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s);if(m)return`${m[1]}-${pad(+m[2])}-${pad(+m[3])}`;return last}
+async function poLoad(force){if(S.staff||S.po.busy)return;if(!force&&Date.now()-S.po.at<10*60e3)return;S.po.busy=true;if(S.tab==="banhang")render();
+  const id=(S.ppDoc?.sheetId)||PO_SHEET_DEF,fac={},errs=[];
+  for(const[tab,tq,kind]of PO_TABS){try{const r=await fetch(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&headers=0&sheet=${encodeURIComponent(tab)}&tq=${encodeURIComponent(tq)}`,{cache:"no-store"});
+      const t=await r.text();if(!r.ok||/^\s*<(!doctype|html)/i.test(t))throw new Error("bảng chưa chia sẻ “Bất kỳ ai có liên kết – Người xem”");
+      let last="";poCsv(t).forEach((c,i)=>{if(!i)return;const oid=(String(c[1]).match(/5\d{17}/)||[])[0];last=poDateFac(c[0],last);if(!oid)return;
+        const x=fac[oid]||{sku:String(c[2]).trim(),qty:0,cost:0,ship:0,track:"",pay:"",fst:"",date:last,kind};x.qty+=poNum(c[3])||1;x.cost+=poNum(c[5]);x.ship+=poNum(c[6]);
+        if(c[4]&&String(c[4]).trim())x.track=String(c[4]).trim().slice(0,40);x.pay=String(c[7]||"").trim().slice(0,20);x.fst=String(c[8]||"").trim().slice(0,30);fac[oid]=x})}
+    catch(e){errs.push(`${tab}: ${e.message}`)}}
+  S.po={rows:poMerge(fac),fac,at:Date.now(),busy:false,err:errs.join(" · ")};if(["banhang","tongquan"].includes(S.tab))render()}
+function poMerge(fac){const R=S.prDoc||{},shops=R.shops||[],prods=R.prods||[],o=R.o||{},fx=typeof tcFxMap==="function"&&S.tcDoc?tcFxMap()._def:26600,out=[];
+  const ids=new Set([...Object.keys(o),...Object.keys(fac)]);
+  for(const id of ids){const c=o[id]?String(o[id]).split("|"):null,f=fac[id];
+    const date=c&&c[3]?`20${c[3].slice(0,2)}-${c[3].slice(2,4)}-${c[3].slice(4,6)}`:(f?.date||"");if(!date)continue;
+    const st=c?(PO_ST[c[2]]||c[2]):(f?.fst||"Chưa có trên Cotik"),bad=c?c[2]==="X":/cancel|huỷ|hủy|refund/i.test(f?.fst||"");
+    const rev=c&&!bad?+c[0]||0:0,cost=f?Math.round((f.cost+f.ship)*100)/100:0,shop=c?dsShopFix(shops[+c[4]]||"")||shops[+c[4]]||"(chưa rõ shop)":"(chưa rõ shop)";
+    out.push({date,shop,order:id,prod:c?prods[+c[5]]||f?.sku||"":f?.sku||"",sku:f?.sku||"",kind:f?.kind||"",qty:f?.qty||1,cost,rev,costV:cost*fx,revV:rev*fx,profit:(rev-cost)*fx,
+      status:st,bad,track:f?.track||"",pend:rev>0&&!cost,norev:!c&&!!f,nocost:!f,fpay:f?.pay||""})}
+  return out.sort((a,b)=>a.date<b.date?1:-1)}
+const poRowsAll=()=>{if(!S.po.at&&!S.po.busy)setTimeout(()=>poLoad(true),0);const k=(S.prDoc?.at||"")+"|"+S.po.at+"|"+(S.tcDoc?.at||"");if(S.po.at&&S.po._k!==k){S.po.rows=poMerge(S.po.fac);S.po._k=k}return S.po.rows};
+const poSellerOf=shop=>{const n=dsShopFix(shop);for(const p of Object.values(S.podDoc?.months||{}).reverse())for(const s of p.shops||[])if(dsShopFix(s.name)===n&&s.seller)return s.seller;return""};
+const poIP=n=>/coraline|dr ?pepper|disney|marvel|nfl|nba|stanley|starbucks|grinch|barbie|harry potter|taylor swift|hello kitty|pokemon|snoopy|peanuts/i.test(n||"");
+function poPeriod(rows){const td=today(),months=[...new Set(rows.map(r=>r.date.slice(0,7)))].sort().reverse();let k=S.poPer;
+  if(!k||(k.startsWith("m:")&&!months.includes(k.slice(2))))k=months.includes(curMonth())||!months.length?"m:"+curMonth():"m:"+months[0];
+  const opts=[["7d","7 ngày qua"],["30d","30 ngày qua"],...months.map(x=>["m:"+x,fmtM(x)]),["all","Tất cả"],["custom","Tuỳ chọn ngày…"]];let f,t;
+  if(k==="7d"){f=addDays(td,-6);t=td}else if(k==="30d"){f=addDays(td,-29);t=td}else if(k==="all"){f="2000-01-01";t="2999-12-31"}else if(k==="custom"){f=S.poFrom||addDays(td,-6);t=S.poTo||td;if(f>t)[f,t]=[t,f]}else{const m=k.slice(2);f=m+"-01";t=monthEnd(m)}
+  return{k,f,t,opts,label:k==="all"?"Tất cả":k.startsWith("m:")?fmtM(f.slice(0,7)):`${fmtD(f)} – ${fmtD(t)}`,in:d=>!!d&&d>=f&&d<=t}}
+function pgPodOrders(){if(S.staff)return"";const all=poRowsAll(),P=poPeriod(all),R=S.prDoc;
+  const head=`<div class="sec-h"><div><h2>Đơn POD</h2><p>Giá vốn đọc thẳng bảng xưởng (chỉ cột mã đơn, SKU, SL, tracking, Base Cost, Ship – không đọc thông tin khách), tự làm mới 10 phút/lần. Giá bán = tiền TikTok trả từng đơn (Earn payout) lấy từ Cotik POD${R?.at?`, cập nhật ${fmtD(ymd(new Date(R.at)))}`:""}.</p></div>
+    <div class="actions"><button class="btn" data-act="poNow" ${S.po.busy?"disabled":""}>${S.po.busy?"Đang đọc…":"Làm mới"}</button></div></div>`;
+  if(!all.length)return head+`<div class="panel"><div class="empty" style="padding:24px">${S.po.busy||!S.po.at?"Đang đọc bảng xưởng…":S.po.err?esc(S.po.err):"Chưa có đơn POD."}</div></div>`;
+  let rows=all.filter(r=>P.in(r.date));const sellers=[...new Set(rows.map(r=>poSellerOf(r.shop)).filter(Boolean))].sort();
+  if(S.poSel)rows=rows.filter(r=>(poSellerOf(r.shop)||"_none")===S.poSel);const shops=[...new Set(rows.map(r=>r.shop))].sort((a,b)=>a.localeCompare(b,"vi",{numeric:true}));
+  if(S.poShop&&!shops.includes(S.poShop))S.poShop="";const base=S.poShop?rows.filter(r=>r.shop===S.poShop):rows;const A=dsAgg(base);
+  const live=base.filter(r=>!r.bad),late=live.filter(r=>!r.track&&alDays(r.date)>=5&&!/hoàn tất|đã giao/i.test(r.status));
+  const cnt=f=>base.filter(f).length,chips=[["all","Tất cả",base.length],["bad","Đã huỷ",cnt(r=>r.bad)],["notrack","Thiếu tracking",cnt(r=>!r.bad&&!r.track)],["nocost","Chưa có giá vốn",cnt(r=>r.nocost&&!r.bad)],["norev","Chưa có giá bán",cnt(r=>r.norev)],["loss","Đơn lỗ",cnt(r=>!r.bad&&r.rev&&r.cost&&r.rev<r.cost)],["ip","Mẫu dính thương hiệu",cnt(r=>poIP(r.prod))],
+    ...[...new Set(base.map(r=>r.status))].map(s=>["s:"+s,s,cnt(r=>r.status===s)])].filter(c=>c[2]||c[0]==="all");
+  const st=S.poSt;let list=st==="all"?base:st==="bad"?base.filter(r=>r.bad):st==="notrack"?base.filter(r=>!r.bad&&!r.track):st==="nocost"?base.filter(r=>r.nocost&&!r.bad):st==="norev"?base.filter(r=>r.norev):st==="loss"?base.filter(r=>!r.bad&&r.rev&&r.cost&&r.rev<r.cost):st==="ip"?base.filter(r=>poIP(r.prod)):base.filter(r=>r.status===st.slice(2));
+  if(S.poQ){const q=dsNorm(S.poQ);list=list.filter(r=>dsNorm(r.order+" "+r.prod+" "+r.sku+" "+r.track+" "+r.shop).includes(q))}
+  const K=(ic,bg,fg,lb,v,s,cls="")=>`<div class="kpi"><div class="stat">${icon(ic,bg,fg)}<div><span class="lb">${lb}</span><div class="v ${cls}">${v}</div><span class="s">${s}</span></div></div></div>`;
+  const grp=(keyFn,nameFn,subFn)=>{const g=new Map();for(const r of base){const k=keyFn(r);(g.get(k)||g.set(k,[]).get(k)).push(r)}return[...g].map(([id,rs])=>({id,name:nameFn(id,rs),sub:subFn?subFn(rs):"",rows:rs,...dsAgg(rs)}))};
+  const byShop=grp(r=>r.shop,x=>x,rs=>poSellerOf(rs[0].shop)).sort((a,b)=>b.profit-a.profit);
+  const bySel=grp(r=>poSellerOf(r.shop)||"_none",id=>id==="_none"?"(chưa rõ seller)":id,rs=>[...new Set(rs.map(r=>r.shop))].join(", ")).sort((a,b)=>b.profit-a.profit);
+  const byDay=grp(r=>r.date,d=>`${WD[toD(d).getDay()]} ${fmtD(d)}`).sort((a,b)=>a.id<b.id?1:-1);
+  const bySku=grp(r=>r.sku||r.prod,(k,rs)=>{const c={};rs.forEach(r=>c[r.prod]=(c[r.prod]||0)+1);return Object.entries(c).sort((a,b)=>b[1]-a[1])[0][0]+(poIP(rs[0].prod)?" ⚠":"")},rs=>"SKU "+(rs[0].sku||"–")).sort((a,b)=>b.profit-a.profit);
+  const GT=(g,l,act)=>dsGroupTable(g,l,act).replace(/href="#dondrop"/g,'href="#banhang"');
+  const at=S.po.at?new Date(S.po.at):null;
+  return head+`${S.po.err?`<div class="notice"><span><b>Có bảng chưa đọc được</b><span class="small muted">${esc(S.po.err)}</span></span><span class="pill p-warn">Kiểm tra</span></div>`:""}
+  ${!R?`<div class="notice"><span><b>Chưa có giá bán từ Cotik</b><span class="small muted">Nhờ Claude đọc Cotik POD (Earn payout từng đơn) để tính lãi.</span></span></div>`:""}
+  <div class="panel"><div class="actions" style="margin-bottom:10px"><select class="inp" id="poPer" style="width:auto">${P.opts.map(([k,l])=>`<option value="${k}" ${k===P.k?"selected":""}>${esc(l)}</option>`).join("")}</select>
+      ${P.k==="custom"?`<input class="inp" type="date" id="poFrom" value="${P.f}" style="width:auto"><input class="inp" type="date" id="poTo" value="${P.t}" style="width:auto">`:""}
+      <select class="inp" id="poSel" style="width:auto"><option value="">Tất cả seller</option>${sellers.map(s=>`<option ${S.poSel===s?"selected":""}>${esc(s)}</option>`).join("")}<option value="_none" ${S.poSel==="_none"?"selected":""}>(chưa rõ seller)</option></select>
+      <select class="inp" id="poShop" style="width:auto"><option value="">Tất cả shop (${shops.length})</option>${shops.map(s=>`<option ${s===S.poShop?"selected":""}>${esc(s)}</option>`).join("")}</select>
+      <span class="small muted"><b>${esc(P.label)}</b> · ${at?`Cập nhật lúc ${pad(at.getHours())}:${pad(at.getMinutes())} · ${all.length} đơn`:"Đang đọc…"}</span></div>
+    <div class="kpis">${K(IC.inbox,"var(--accent-soft)","var(--accent)","Số đơn",A.orders.toLocaleString("vi-VN"),`${A.bad} huỷ (${pct(A.orders?A.bad/A.orders:NaN)})`)}
+      ${K(IC.money,"var(--good-soft)","var(--good)","Doanh thu TikTok",usd(A.rev),vnd(A.revV)+` · ${cnt(r=>r.norev)} đơn chưa có giá bán`)}
+      ${K(IC.money,"var(--sunk)","var(--muted)","Vốn xưởng + ship",usd(A.cost),vnd(A.costV)+` · ${cnt(r=>r.nocost&&!r.bad)} đơn chưa có giá vốn`)}
+      ${K(IC.leaf,A.profit>=0?"var(--good-soft)":"var(--bad-soft)",A.profit>=0?"var(--good)":"var(--bad)","Lợi nhuận gộp",vnd(A.profit),`Lãi / doanh thu: ${pct(A.revV?A.profit/A.revV:NaN)}${A.pend?` · trong đó ${vnd(A.pendProfit)} là lãi tạm của ${A.pend} đơn chưa có giá vốn`:""}`,A.profit<0?"dn":"")}
+      ${K(IC.warn,"var(--warn-soft)","var(--warn)","Chưa có tracking",A.notrack,`${late.length} đơn quá 5 ngày chưa có mã vận đơn`)}</div></div>
+  <div class="panel"><div class="subtabs">${[["orders","Danh sách đơn"],["days","Theo ngày"],["sellers","Theo seller"],["shops","Theo shop"],["skus","Theo mẫu"]].map(([k,l])=>`<button class="${S.poView===k?"on":""}" data-act="poView" data-id="${k}">${l}</button>`).join("")}</div>
+  ${S.poView==="days"?GT(byDay,"Ngày","poPickDay"):S.poView==="sellers"?GT(bySel,"Seller","poPickSel"):S.poView==="shops"?GT(byShop,"Shop","poPickShop"):S.poView==="skus"?GT(bySku,"Mẫu","poPickSku")+'<p class="hint">⚠ = tên có thương hiệu/nhân vật (dễ bị khoá shop, giữ tiền) – nên thay bằng mẫu tự thiết kế.</p>':`
+    <div class="chips" style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0">${chips.map(([k,l,n])=>`<button class="chip ${st===k?"on":""}" data-act="poSt" data-id="${esc(k)}">${esc(l)} <b>${n}</b></button>`).join("")}</div>
+    <div class="actions"><input class="inp" id="poQ" placeholder="Tìm mã đơn, sản phẩm, SKU, tracking… (Enter)" value="${esc(S.poQ)}" style="max-width:320px"></div>
+    <div class="tbl"><table><thead><tr><th>Ngày</th><th>Shop</th><th>Mã đơn</th><th>Sản phẩm · SKU</th><th class="n">SL</th><th class="n">Vốn $</th><th class="n">Doanh thu $</th><th class="n">Lợi nhuận</th><th>Trạng thái</th><th>Tracking</th></tr></thead><tbody>
+    ${list.slice(0,500).map(r=>`<tr><td>${fmtD(r.date)}</td><td class="small">${esc(r.shop)}</td><td class="small">${esc(r.order)}</td><td class="small">${esc(r.prod.slice(0,70))}${poIP(r.prod)?' <span class="pill p-bad">⚠ thương hiệu</span>':""}<span class="sub">${r.sku?"SKU "+esc(r.sku):"chưa có trong bảng xưởng"}</span></td><td class="n">${r.qty}</td><td class="n">${r.cost?usd(r.cost):"–"}</td><td class="n">${r.rev?usd(r.rev):r.norev?'<span class="muted small">chưa có</span>':"–"}</td><td class="n ${r.profit<0?"dn":""}">${r.rev||r.cost?vnd(r.profit):"–"}</td><td>${dsPill(r)}</td><td class="small">${esc(r.track)||"–"}</td></tr>`).join("")||'<tr><td colspan="10" class="empty">Không có đơn phù hợp.</td></tr>'}
+    </tbody></table></div>${list.length>500?`<p class="hint">Đang hiện 500/${list.length} dòng.</p>`:""}`}
+    <p class="hint">Lợi nhuận gộp = tiền TikTok trả (Earn payout, đã trừ phí nhãn) − (Base Cost + Shipping Cost của xưởng), quy ra ₫ theo tỉ giá mua đô gần nhất. Chưa trừ quảng cáo, lương, mua shop. “Chưa có giá bán” = đơn có ở xưởng nhưng chưa thấy trên Cotik POD (shop khác hoặc chưa cập nhật). “Chưa có giá vốn” = đơn Cotik chưa có trong bảng xưởng (đi xưởng khác).</p></div>`}
+setInterval(()=>{if(S.tab==="banhang"&&!document.hidden&&Date.now()-S.po.at>10*60e3)poLoad(true)},30e3);
+Object.assign(ACT,{poNow:()=>poLoad(true),poView:v=>{S.poView=v;render()},poSt:v=>{S.poSt=v;render()},
+  poPickDay:v=>{S.poPer="custom";S.poFrom=S.poTo=v;S.poView="orders";render()},poPickSel:v=>{S.poSel=v;S.poView="orders";render()},poPickShop:v=>{S.poShop=v;S.poView="orders";render()},poPickSku:v=>{S.poQ=v;S.poView="orders";render()}});
+document.addEventListener("change",e=>{const t=e.target;if(t.id==="poPer"){S.poPer=t.value;render()}if(t.id==="poFrom"){S.poFrom=t.value;render()}if(t.id==="poTo"){S.poTo=t.value;render()}if(t.id==="poSel"){S.poSel=t.value;render()}if(t.id==="poShop"){S.poShop=t.value;render()}});
+document.addEventListener("keydown",e=>{if(e.target.id==="poQ"&&e.key==="Enter"){S.poQ=e.target.value;render()}});
+
+</script>
 <script type="text/plain" id="src-10-boot">
 /* 10-boot.js · Vẽ trang, điều hướng tab và kết nối kho dữ liệu (giám đốc / nhân viên). Luôn tải file này cuối cùng */
 /* ============ Render ============ */
@@ -2923,8 +3010,8 @@ function doRender(){
     const g=staffGate();$("#main").innerHTML=g||({congviec:pgTasks,chamcong:pgStaffAtt,kpi:pgStaffKPI,nop:pgStaffSubmit,sanpham:pgResearch}[S.tab]||pgTasks)();
     const drop=$("#drop");if(drop){drop.ondragover=e=>{e.preventDefault();drop.classList.add("over")};drop.ondragleave=()=>drop.classList.remove("over");drop.ondrop=e=>{e.preventDefault();drop.classList.remove("over");handleFile(e.dataTransfer.files[0])}}
     return}
-  renderFilters();const AUTO_TABS=["tongquan","dondrop","sanpham","chiphi","dongtien","caidat"];$(".filters").hidden=AUTO_TABS.includes(S.tab);
-  const pg={tongquan:()=>pgAutoOverview()+oldBox(pgOverview(),"Báo cáo từ file TikTok"),banhang:()=>podPanel()+oldBox(pgSales(),"Nhập file đơn TikTok"),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel()+podProfitPanel()+oldBox(pgStock(),"Sản phẩm nhập tay"):pgStock()),sanpham:pgResearch,fulfill:()=>ffAutoPanel()+oldBox(pgFulfill(),"Đối tác, ví, sự cố nhập tay"),nhaphang:pgPurch,caidat:()=>`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">Nguồn dữ liệu – phần nào tự động, phần nào chưa</h3>${ovSources()}</div>`+pgSettings(),chiphi:()=>tcExpPanel()+tcOld(pgExp(),"Chi phí nhập tay"),dongtien:()=>tcCashPanel()+tcOld(pgCash(),"Dòng tiền nhập tay"),congviec:pgTasks,kpi:pgKPI,chamcong:pgAttendance,pheduyet:pgApprovals,tainguyen:pgAssets}[S.tab]||pgAutoOverview;
+  renderFilters();const AUTO_TABS=["tongquan","dondrop","banhang","sanpham","chiphi","dongtien","caidat"];$(".filters").hidden=AUTO_TABS.includes(S.tab);
+  const pg={tongquan:()=>pgAutoOverview()+oldBox(pgOverview(),"Báo cáo từ file TikTok"),banhang:()=>pgPodOrders()+`<details class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">Sản lượng & phí theo bảng Lark FULLFILLMENT CỐC <span class="small muted">(bấm để mở)</span></summary><div style="margin-top:10px">${podPanel()}</div></details>`+oldBox(pgSales(),"Nhập file đơn TikTok"),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel()+podProfitPanel()+oldBox(pgStock(),"Sản phẩm nhập tay"):pgStock()),sanpham:pgResearch,fulfill:()=>ffAutoPanel()+oldBox(pgFulfill(),"Đối tác, ví, sự cố nhập tay"),nhaphang:pgPurch,caidat:()=>`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">Nguồn dữ liệu – phần nào tự động, phần nào chưa</h3>${ovSources()}</div>`+pgSettings(),chiphi:()=>tcExpPanel()+tcOld(pgExp(),"Chi phí nhập tay"),dongtien:()=>tcCashPanel()+tcOld(pgCash(),"Dòng tiền nhập tay"),congviec:pgTasks,kpi:pgKPI,chamcong:pgAttendance,pheduyet:pgApprovals,tainguyen:pgAssets}[S.tab]||pgAutoOverview;
   let banner="";
   if(S.demo)banner=`<div class="banner"><span><b>Đang xem dữ liệu mẫu.</b> ${S.db?"Số liệu trên là ví dụ để bạn hình dung. Bắt đầu bằng việc thêm shop trong Cài đặt, rồi nhập file đơn hàng TikTok.":S.connecting?"Đang kết nối kho dữ liệu…":"Chưa kết nối được máy chủ dữ liệu."}</span>${S.db?'<button class="btn sm" data-act="exitDemo">Bắt đầu với dữ liệu thật</button>':""}</div>`;
   else if(S.readonly)banner=`<div class="banner"><span><b>Chế độ chỉ xem.</b> Tài khoản này không có quyền nhập số liệu.</span></div>`;
@@ -3017,6 +3104,7 @@ async function publish(){if(pubBusy){schedulePublish();return}pubBusy=true;
   db.doc("settings/attendance").onSnapshot(s=>{S.attCfgDoc=s.exists?s.data():null;schedulePublish();render()},()=>{});
   db.doc("settings/podLark").onSnapshot(s=>{S.podDoc=s.exists?s.data():null;if(S.tab==="banhang")render()},()=>{});
   db.doc("settings/thuChi").onSnapshot(s=>{S.tcDoc=s.exists?s.data():null;if(["chiphi","dongtien"].includes(S.tab))render()},()=>{});
+  db.doc("settings/podRev").onSnapshot(s=>{S.prDoc=s.exists?s.data():null;if(S.po?.at){S.po.rows=poMerge(S.po.fac)}if(["banhang","kho"].includes(S.tab))render()},()=>{});
   db.doc("settings/podProfit").onSnapshot(s=>{S.ppDoc=s.exists?s.data():null;if(S.tab==="kho")render()},()=>{});
   db.doc("settings/tkHold").onSnapshot(s=>{S.hdDoc=s.exists?s.data():null;if(S.tab==="dongtien")render()},()=>{});
   db.doc("settings/tkPayout").onSnapshot(s=>{S.poDoc=s.exists?s.data():null;if(["chiphi","dongtien"].includes(S.tab))render()},()=>{});
