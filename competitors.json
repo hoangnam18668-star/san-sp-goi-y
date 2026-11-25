@@ -96,7 +96,7 @@
   "niche": "clog EVA",
   "note": "",
   "firstSeen": "2026-11-13",
-  "lastSeen": "2026-11-22"
+  "lastSeen": "2026-11-25"
  },
  {
   "name": "Caroline's Treasures",
@@ -150,7 +150,7 @@
   "niche": "thảm bếp",
   "note": "~10K/tháng",
   "firstSeen": "2026-11-14",
-  "lastSeen": "2026-11-19"
+  "lastSeen": "2026-11-25"
  },
  {
   "name": "WoodByStu",
@@ -222,7 +222,7 @@
   "niche": "thảm cửa tuỳ chỉnh",
   "note": "153.500 lượt bán",
   "firstSeen": "2026-11-15",
-  "lastSeen": "2026-11-16"
+  "lastSeen": "2026-11-25"
  },
  {
   "name": "StepRite",
@@ -465,7 +465,7 @@
   "niche": "thảm waffle",
   "note": "+100%",
   "firstSeen": "2026-11-18",
-  "lastSeen": "2026-11-18"
+  "lastSeen": "2026-11-25"
  },
  {
   "name": "TYUU",
@@ -537,7 +537,7 @@
   "niche": "dép lông",
   "note": "+100%",
   "firstSeen": "2026-11-19",
-  "lastSeen": "2026-11-21"
+  "lastSeen": "2026-11-25"
  },
  {
   "name": "KIDMI",
@@ -546,7 +546,7 @@
   "niche": "clog da lộn",
   "note": "+100%",
   "firstSeen": "2026-11-19",
-  "lastSeen": "2026-11-19"
+  "lastSeen": "2026-11-25"
  },
  {
   "name": "CustomizeFast",
@@ -636,7 +636,7 @@
   "niche": "ornament chữ cái",
   "note": "417/tuần",
   "firstSeen": "2026-11-21",
-  "lastSeen": "2026-11-21"
+  "lastSeen": "2026-11-25"
  },
  {
   "name": "KarenByWomack",
@@ -654,7 +654,7 @@
   "niche": "dép lông in tên",
   "note": "76/tuần",
   "firstSeen": "2026-11-21",
-  "lastSeen": "2026-11-21"
+  "lastSeen": "2026-11-25"
  },
  {
   "name": "BeeryMellow",
@@ -663,7 +663,7 @@
   "niche": "dép lông in tên",
   "note": "shop mới",
   "firstSeen": "2026-11-21",
-  "lastSeen": "2026-11-21"
+  "lastSeen": "2026-11-25"
  },
  {
   "name": "ShockTagon",
@@ -708,7 +708,7 @@
   "niche": "bình giá rẻ",
   "note": "7K/tháng",
   "firstSeen": "2026-11-22",
-  "lastSeen": "2026-11-22"
+  "lastSeen": "2026-11-25"
  },
  {
   "name": "Hargiis",
@@ -744,7 +744,7 @@
   "niche": "dép nam",
   "note": "3K/tháng",
   "firstSeen": "2026-11-22",
-  "lastSeen": "2026-11-22"
+  "lastSeen": "2026-11-25"
  },
  {
   "name": "LuckFamilyCrafts",
@@ -880,5 +880,50 @@
   "note": "Best seller",
   "firstSeen": "2026-11-24",
   "lastSeen": "2026-11-24"
+ },
+ {
+  "name": "Crinkex",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/1307847060",
+  "niche": "ornament ảnh",
+  "note": "7,4K tổng",
+  "firstSeen": "2026-11-25",
+  "lastSeen": "2026-11-25"
+ },
+ {
+  "name": "LittleLogTreasures",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/4574879492",
+  "niche": "ornament thú cưng",
+  "note": "78/tuần",
+  "firstSeen": "2026-11-25",
+  "lastSeen": "2026-11-25"
+ },
+ {
+  "name": "ODOLY",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B0CSMN1X4W",
+  "niche": "dép đế bần/clog da lộn",
+  "note": "+66,7%",
+  "firstSeen": "2026-11-25",
+  "lastSeen": "2026-11-25"
+ },
+ {
+  "name": "YINENN",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B07BSB37SB",
+  "niche": "thảm chống trượt",
+  "note": "+42,9%",
+  "firstSeen": "2026-11-25",
+  "lastSeen": "2026-11-25"
+ },
+ {
+  "name": "H.VERSAILTEX",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B09Y116MJP",
+  "niche": "bộ thảm",
+  "note": "+100%",
+  "firstSeen": "2026-11-25",
+  "lastSeen": "2026-11-25"
  }
 ]
