@@ -2900,7 +2900,7 @@ const oldBox=(html,lb)=>`<details class="panel" style="margin-top:14px"><summary
 function podProfitPanel(){const D=S.ppDoc;if(S.staff||!D)return"";const r2=x=>Math.round(x*100)/100;
   const T=D.sku.reduce((a,x)=>({n:a.n+x.n,rev:a.rev+x.rev,cost:a.cost+x.cost,profit:a.profit+x.profit}),{n:0,rev:0,cost:0,profit:0});
   const mg=x=>x.rev?Math.round(x.profit/x.rev*100):0,col=v=>v>=0?"var(--good)":"var(--bad)";
-  const flag=n=>/coraline|dr ?pepper|disney|marvel|nfl|nba|stanley|starbucks|grinch|barbie|harry potter|taylor swift/i.test(n);
+  const flag=n=>poIP(n);
   const tbl=(rows,first)=>alTbl([[first],["Đơn",1],["Tiền TikTok trả",1],["Giá xưởng + ship",1],["Lãi",1],["Biên",1]],rows.map(x=>`<tr><td><b>${esc(x.name||x.k)}</b>${x.name?`<div class="small muted">${esc(x.k)}</div>`:""}${flag(x.name||"")?'<div class="small" style="color:var(--bad);font-weight:600">⚠ Tên có thương hiệu/nhân vật – dễ bị khoá shop</div>':""}</td><td class="n">${int(x.n)}</td><td class="n">${usd(x.rev)}</td><td class="n">${usd(x.cost)}</td><td class="n"><b style="color:${col(x.profit)}">${usd(x.profit)}</b></td><td class="n">${mg(x)}%</td></tr>`).join(""));
   const at=D.at?fmtD(ymd(new Date(D.at))):"";
   return`<div class="panel" style="margin-top:14px"><h3 style="margin:0 0 4px">③ POD – lãi theo mẫu và theo shop</h3>
@@ -2949,12 +2949,12 @@ function poMerge(fac){const R=S.prDoc||{},shops=R.shops||[],prods=R.prods||[],o=
     const date=c&&c[3]?`20${c[3].slice(0,2)}-${c[3].slice(2,4)}-${c[3].slice(4,6)}`:(f?.date||"");if(!date)continue;
     const st=c?(PO_ST[c[2]]||c[2]):(f?.fst||"Chưa có trên Cotik"),bad=c?c[2]==="X":/cancel|huỷ|hủy|refund/i.test(f?.fst||"");
     const rev=c&&!bad?+c[0]||0:0,cost=f?Math.round((f.cost+f.ship)*100)/100:0,shop=c?dsShopFix(shops[+c[4]]||"")||shops[+c[4]]||"(chưa rõ shop)":"(chưa rõ shop)";
-    out.push({date,shop,order:id,prod:c?prods[+c[5]]||f?.sku||"":f?.sku||"",sku:f?.sku||"",kind:f?.kind||"",qty:f?.qty||1,cost,rev,costV:cost*fx,revV:rev*fx,profit:(rev-cost)*fx,
+    out.push({date,shop,order:id,prod:(c?prods[+c[5]]||f?.sku||"":f?.sku||"").replace(/^From Affiliate - [\d.]+%\s*/i,""),sku:f?.sku||"",kind:f?.kind||"",qty:f?.qty||1,cost,rev,costV:cost*fx,revV:rev*fx,profit:(rev-cost)*fx,
       status:st,bad,track:f?.track||"",pend:rev>0&&!cost,norev:!c&&!!f,nocost:!f||!cost,estCost:!!f?.est,fpay:f?.pay||""})}
   return out.sort((a,b)=>a.date<b.date?1:-1)}
 const poRowsAll=()=>{if(!S.po.at&&!S.po.busy)setTimeout(()=>poLoad(true),0);const k=(S.prDoc?.at||"")+"|"+S.po.at+"|"+(S.tcDoc?.at||"");if(S.po.at&&S.po._k!==k){S.po.rows=poMerge(S.po.fac);S.po._k=k}return S.po.rows};
 const poSellerOf=shop=>{const n=dsShopFix(shop);for(const p of Object.values(S.podDoc?.months||{}).reverse())for(const s of p.shops||[])if(dsShopFix(s.name)===n&&s.seller)return s.seller;return""};
-const poIP=n=>/coraline|dr ?pepper|disney|marvel|nfl|nba|stanley|starbucks|grinch|barbie|harry potter|taylor swift|hello kitty|pokemon|snoopy|peanuts/i.test(n||"");
+const poIP=n=>/coraline|dr ?pepper|disney|marvel|nfl|nba|ncaa|stanley|starbucks|grinch|barbie|harry potter|taylor swift|hello kitty|pokemon|snoopy|peanuts|thundercats|lion-o|frosty the snowman|crimson tide|alabama|sanrio|kuromi|stitch|mickey|minnie|star wars|batman|spider-?man|sesame/i.test(n||"");
 function poPeriod(rows){const td=today(),months=[...new Set(rows.map(r=>r.date.slice(0,7)))].sort().reverse();let k=S.poPer;
   if(!k||(k.startsWith("m:")&&!months.includes(k.slice(2))))k=months.includes(curMonth())||!months.length?"m:"+curMonth():"m:"+months[0];
   const opts=[["7d","7 ngày qua"],["30d","30 ngày qua"],...months.map(x=>["m:"+x,fmtM(x)]),["all","Tất cả"],["custom","Tuỳ chọn ngày…"]];let f,t;
