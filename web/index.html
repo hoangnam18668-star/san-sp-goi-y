@@ -229,7 +229,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.25a", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.25b", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -415,7 +415,7 @@ window.APP_CONFIG = {
 <body>
 <section class="auth" id="auth">
   <div class="auth-card">
-    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 25/11a</p></div></div></div>
+    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 25/11b</p></div></div></div>
     <div id="authBox" hidden>
       <h2 id="authTitle">Đăng nhập</h2>
       <form id="authForm" class="auth-form">
@@ -2888,6 +2888,23 @@ Object.assign(ACT,{ovGo:t=>{location.hash=t}});
 document.addEventListener("change",e=>{if(e.target.id==="ovM"){S.ovM=e.target.value;render()}});
 /* Phần nhập tay cũ: thu gọn vào một ô bấm mở, để mỗi trang chỉ còn phần tự động ở trên */
 const oldBox=(html,lb)=>`<details class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">${lb} <span class="small muted">(phần nhập tay cũ – ít dùng, bấm để mở)</span></summary><div style="margin-top:10px">${html}</div></details>`;
+/* ===== POD – lãi theo mẫu & theo shop =====
+   Giá bán: Cotik (tài khoản POD) – cột "Earn payout" từng đơn (tiền TikTok trả sau phí nhãn).
+   Giá vốn: bảng xưởng "POD-US-Nguyễn Ngọc Hiếu" – Base Cost + Shipping Cost từng đơn (ghép theo mã đơn TikTok).
+   Chỉ lưu số tổng hợp, không lưu thông tin khách. Claude cập nhật hằng tuần. */
+function podProfitPanel(){const D=S.ppDoc;if(S.staff||!D)return"";const r2=x=>Math.round(x*100)/100;
+  const T=D.sku.reduce((a,x)=>({n:a.n+x.n,rev:a.rev+x.rev,cost:a.cost+x.cost,profit:a.profit+x.profit}),{n:0,rev:0,cost:0,profit:0});
+  const mg=x=>x.rev?Math.round(x.profit/x.rev*100):0,col=v=>v>=0?"var(--good)":"var(--bad)";
+  const flag=n=>/coraline|dr ?pepper|disney|marvel|nfl|nba|stanley|starbucks|grinch|barbie|harry potter|taylor swift/i.test(n);
+  const tbl=(rows,first)=>alTbl([[first],["Đơn",1],["Tiền TikTok trả",1],["Giá xưởng + ship",1],["Lãi",1],["Biên",1]],rows.map(x=>`<tr><td><b>${esc(x.name||x.k)}</b>${x.name?`<div class="small muted">${esc(x.k)}</div>`:""}${flag(x.name||"")?'<div class="small" style="color:var(--bad);font-weight:600">⚠ Tên có thương hiệu/nhân vật – dễ bị khoá shop</div>':""}</td><td class="n">${int(x.n)}</td><td class="n">${usd(x.rev)}</td><td class="n">${usd(x.cost)}</td><td class="n"><b style="color:${col(x.profit)}">${usd(x.profit)}</b></td><td class="n">${mg(x)}%</td></tr>`).join(""));
+  const at=D.at?fmtD(ymd(new Date(D.at))):"";
+  return`<div class="panel" style="margin-top:14px"><h3 style="margin:0 0 4px">③ POD – lãi theo mẫu và theo shop</h3>
+    <p class="small muted" style="margin-bottom:8px">Ghép ${int(D.matched)} đơn có trong cả Cotik (giá bán) và bảng xưởng của Hiếu (giá vốn) theo mã đơn TikTok · cập nhật ${at}. Lãi ở đây là lãi gộp: chưa trừ quảng cáo, lương, mua shop.</p>
+    ${tcSay(`${int(T.n)} đơn POD ghép được: TikTok trả <b>${usd(T.rev)}</b>, giá xưởng + ship <b>${usd(T.cost)}</b> → lãi gộp <b style="color:${col(T.profit)}">${usd(T.profit)}</b> (biên ${mg(T)}%). Trung bình mỗi đơn lãi ${usd(r2(T.profit/Math.max(1,T.n)))}.`)}
+    <h3 style="margin:12px 0 6px">Theo mẫu (SKU xưởng)</h3>${tbl(D.sku,"Mẫu")}
+    <h3 style="margin:16px 0 6px">Theo shop</h3>${tbl(D.shop.map(x=>({...x,name:""})),"Shop")}
+    <h3 style="margin:16px 0 6px">Theo tháng</h3>${tbl(D.mon.map(x=>({...x,k:fmtM(x.k),name:""})),"Tháng")}
+    <p class="hint">Chưa ghép được: ${int(D.sheetOnly)} đơn có trong bảng xưởng nhưng không có trong Cotik POD (shop khác/đơn cũ) và ${int(D.cotikOnly)} đơn Cotik không có trong bảng xưởng của Hiếu (đi xưởng khác). Muốn đủ 100%: mọi seller ghi đơn vào cùng một bảng xưởng có cột Base Cost.</p></div>`}
 
 </script>
 <script type="text/plain" id="src-10-boot">
@@ -2907,7 +2924,7 @@ function doRender(){
     const drop=$("#drop");if(drop){drop.ondragover=e=>{e.preventDefault();drop.classList.add("over")};drop.ondragleave=()=>drop.classList.remove("over");drop.ondrop=e=>{e.preventDefault();drop.classList.remove("over");handleFile(e.dataTransfer.files[0])}}
     return}
   renderFilters();const AUTO_TABS=["tongquan","dondrop","sanpham","chiphi","dongtien","caidat"];$(".filters").hidden=AUTO_TABS.includes(S.tab);
-  const pg={tongquan:()=>pgAutoOverview()+oldBox(pgOverview(),"Báo cáo từ file TikTok"),banhang:()=>podPanel()+oldBox(pgSales(),"Nhập file đơn TikTok"),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel()+oldBox(pgStock(),"Sản phẩm nhập tay"):pgStock()),sanpham:pgResearch,fulfill:()=>ffAutoPanel()+oldBox(pgFulfill(),"Đối tác, ví, sự cố nhập tay"),nhaphang:pgPurch,caidat:()=>`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">Nguồn dữ liệu – phần nào tự động, phần nào chưa</h3>${ovSources()}</div>`+pgSettings(),chiphi:()=>tcExpPanel()+tcOld(pgExp(),"Chi phí nhập tay"),dongtien:()=>tcCashPanel()+tcOld(pgCash(),"Dòng tiền nhập tay"),congviec:pgTasks,kpi:pgKPI,chamcong:pgAttendance,pheduyet:pgApprovals,tainguyen:pgAssets}[S.tab]||pgAutoOverview;
+  const pg={tongquan:()=>pgAutoOverview()+oldBox(pgOverview(),"Báo cáo từ file TikTok"),banhang:()=>podPanel()+oldBox(pgSales(),"Nhập file đơn TikTok"),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel()+podProfitPanel()+oldBox(pgStock(),"Sản phẩm nhập tay"):pgStock()),sanpham:pgResearch,fulfill:()=>ffAutoPanel()+oldBox(pgFulfill(),"Đối tác, ví, sự cố nhập tay"),nhaphang:pgPurch,caidat:()=>`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">Nguồn dữ liệu – phần nào tự động, phần nào chưa</h3>${ovSources()}</div>`+pgSettings(),chiphi:()=>tcExpPanel()+tcOld(pgExp(),"Chi phí nhập tay"),dongtien:()=>tcCashPanel()+tcOld(pgCash(),"Dòng tiền nhập tay"),congviec:pgTasks,kpi:pgKPI,chamcong:pgAttendance,pheduyet:pgApprovals,tainguyen:pgAssets}[S.tab]||pgAutoOverview;
   let banner="";
   if(S.demo)banner=`<div class="banner"><span><b>Đang xem dữ liệu mẫu.</b> ${S.db?"Số liệu trên là ví dụ để bạn hình dung. Bắt đầu bằng việc thêm shop trong Cài đặt, rồi nhập file đơn hàng TikTok.":S.connecting?"Đang kết nối kho dữ liệu…":"Chưa kết nối được máy chủ dữ liệu."}</span>${S.db?'<button class="btn sm" data-act="exitDemo">Bắt đầu với dữ liệu thật</button>':""}</div>`;
   else if(S.readonly)banner=`<div class="banner"><span><b>Chế độ chỉ xem.</b> Tài khoản này không có quyền nhập số liệu.</span></div>`;
@@ -3000,6 +3017,7 @@ async function publish(){if(pubBusy){schedulePublish();return}pubBusy=true;
   db.doc("settings/attendance").onSnapshot(s=>{S.attCfgDoc=s.exists?s.data():null;schedulePublish();render()},()=>{});
   db.doc("settings/podLark").onSnapshot(s=>{S.podDoc=s.exists?s.data():null;if(S.tab==="banhang")render()},()=>{});
   db.doc("settings/thuChi").onSnapshot(s=>{S.tcDoc=s.exists?s.data():null;if(["chiphi","dongtien"].includes(S.tab))render()},()=>{});
+  db.doc("settings/podProfit").onSnapshot(s=>{S.ppDoc=s.exists?s.data():null;if(S.tab==="kho")render()},()=>{});
   db.doc("settings/tkHold").onSnapshot(s=>{S.hdDoc=s.exists?s.data():null;if(S.tab==="dongtien")render()},()=>{});
   db.doc("settings/tkPayout").onSnapshot(s=>{S.poDoc=s.exists?s.data():null;if(["chiphi","dongtien"].includes(S.tab))render()},()=>{});
   db.doc("settings/dropSheet").onSnapshot(s=>{S.dsCfgDoc=s.exists?s.data():null;if(S.tab==="dondrop")render()},()=>{});
