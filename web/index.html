@@ -2923,8 +2923,8 @@ const PO_ST={C:"Hoàn tất",D:"Đã giao",T:"Đang giao",S:"Chờ gửi hàng",
    nên chọn cách hiểu hợp lệ gần nhất và không lùi so với ngày dòng trước. */
 function poDateFac(v,last){const s=String(v||"").trim();if(!s)return last;let m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s);if(m)return`${m[1]}-${pad(+m[2])}-${pad(+m[3])}`;
   m=/^(\d{1,2})[./-](\d{1,2})(?:[./-](\d{2,4}))?$/.exec(s);if(!m)return last;const a=+m[1],b=+m[2],yy=m[3]?(m[3].length===2?"20"+m[3]:m[3]):null,td=today();
-  const mk=(d,mo)=>{if(mo<1||mo>12||d<1||d>31)return null;let y=yy||td.slice(0,4);let x=`${y}-${pad(mo)}-${pad(d)}`;if(!yy&&x>td)x=`${+y-1}-${pad(mo)}-${pad(d)}`;return x};
-  const c=[mk(a,b),mk(b,a)].filter(Boolean);if(!c.length)return last;if(c.length===1||!last)return c[0];
+  const mk=(d,mo,back)=>{if(mo<1||mo>12||d<1||d>31)return null;const y=yy||td.slice(0,4);let x=`${y}-${pad(mo)}-${pad(d)}`;if(!yy&&x>td){if(!back)return null;x=`${+y-1}-${pad(mo)}-${pad(d)}`}return x};
+  let c=[mk(a,b),mk(b,a)].filter(Boolean);if(!c.length)c=[mk(a,b,1),mk(b,a,1)].filter(Boolean);if(!c.length)return last;if(c.length===1||!last)return c[0];
   const dist=x=>Math.abs((toD(x)-toD(last))/864e5)+(x<last?1000:0);return c.sort((p,q)=>dist(p)-dist(q))[0]}
 async function poLoad(force){if(S.staff||S.po.busy)return;if(!force&&Date.now()-S.po.at<10*60e3)return;S.po.busy=true;if(S.tab==="banhang")render();
   const id=(S.ppDoc?.sheetId)||PO_SHEET_DEF,fac={},errs=[];
@@ -2934,6 +2934,9 @@ async function poLoad(force){if(S.staff||S.po.busy)return;if(!force&&Date.now()-
         const x=fac[oid]||{sku:String(c[2]).trim(),qty:0,cost:0,ship:0,track:"",pay:"",fst:"",date:last,kind};x.qty+=poNum(c[3])||1;x.cost+=poNum(c[5]);x.ship+=poNum(c[6]);
         if(c[4]&&String(c[4]).trim())x.track=String(c[4]).trim().slice(0,40);x.pay=String(c[7]||"").trim().slice(0,20);x.fst=String(c[8]||"").trim().slice(0,30);fac[oid]=x})}
     catch(e){errs.push(`${tab}: ${e.message}`)}}
+  try{const r=await fetch(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&headers=0&sheet=${encodeURIComponent("SKU price")}&tq=${encodeURIComponent("select A,B")}`,{cache:"no-store"});const t=await r.text();
+    if(r.ok&&!/^\s*</.test(t)){const price={};poCsv(t).forEach((c,i)=>{if(i&&c[0]&&poNum(c[1]))price[String(c[0]).trim()]=poNum(c[1])});
+      for(const x of Object.values(fac))if(!x.cost&&price[x.sku]){x.cost=price[x.sku]*x.qty;x.est=true}}}catch(e){}
   S.po={rows:poMerge(fac),fac,at:Date.now(),busy:false,err:errs.join(" · ")};if(["banhang","tongquan"].includes(S.tab))render()}
 function poMerge(fac){const R=S.prDoc||{},shops=R.shops||[],prods=R.prods||[],o=R.o||{},fx=typeof tcFxMap==="function"&&S.tcDoc?tcFxMap()._def:26600,out=[];
   const ids=new Set([...Object.keys(o),...Object.keys(fac)]);
@@ -2942,7 +2945,7 @@ function poMerge(fac){const R=S.prDoc||{},shops=R.shops||[],prods=R.prods||[],o=
     const st=c?(PO_ST[c[2]]||c[2]):(f?.fst||"Chưa có trên Cotik"),bad=c?c[2]==="X":/cancel|huỷ|hủy|refund/i.test(f?.fst||"");
     const rev=c&&!bad?+c[0]||0:0,cost=f?Math.round((f.cost+f.ship)*100)/100:0,shop=c?dsShopFix(shops[+c[4]]||"")||shops[+c[4]]||"(chưa rõ shop)":"(chưa rõ shop)";
     out.push({date,shop,order:id,prod:c?prods[+c[5]]||f?.sku||"":f?.sku||"",sku:f?.sku||"",kind:f?.kind||"",qty:f?.qty||1,cost,rev,costV:cost*fx,revV:rev*fx,profit:(rev-cost)*fx,
-      status:st,bad,track:f?.track||"",pend:rev>0&&!cost,norev:!c&&!!f,nocost:!f,fpay:f?.pay||""})}
+      status:st,bad,track:f?.track||"",pend:rev>0&&!cost,norev:!c&&!!f,nocost:!f||!cost,estCost:!!f?.est,fpay:f?.pay||""})}
   return out.sort((a,b)=>a.date<b.date?1:-1)}
 const poRowsAll=()=>{if(!S.po.at&&!S.po.busy)setTimeout(()=>poLoad(true),0);const k=(S.prDoc?.at||"")+"|"+S.po.at+"|"+(S.tcDoc?.at||"");if(S.po.at&&S.po._k!==k){S.po.rows=poMerge(S.po.fac);S.po._k=k}return S.po.rows};
 const poSellerOf=shop=>{const n=dsShopFix(shop);for(const p of Object.values(S.podDoc?.months||{}).reverse())for(const s of p.shops||[])if(dsShopFix(s.name)===n&&s.seller)return s.seller;return""};
@@ -2993,7 +2996,7 @@ function pgPodOrders(){if(S.staff)return"";const all=poRowsAll(),P=poPeriod(all)
     <div class="chips" style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0">${chips.map(([k,l,n])=>`<button class="chip ${st===k?"on":""}" data-act="poSt" data-id="${esc(k)}">${esc(l)} <b>${n}</b></button>`).join("")}</div>
     <div class="actions"><input class="inp" id="poQ" placeholder="Tìm mã đơn, sản phẩm, SKU, tracking… (Enter)" value="${esc(S.poQ)}" style="max-width:320px"></div>
     <div class="tbl"><table><thead><tr><th>Ngày</th><th>Shop</th><th>Mã đơn</th><th>Sản phẩm · SKU</th><th class="n">SL</th><th class="n">Vốn $</th><th class="n">Doanh thu $</th><th class="n">Lợi nhuận</th><th>Trạng thái</th><th>Tracking</th></tr></thead><tbody>
-    ${list.slice(0,500).map(r=>`<tr><td>${fmtD(r.date)}</td><td class="small">${esc(r.shop)}</td><td class="small">${esc(r.order)}</td><td class="small">${esc(r.prod.slice(0,70))}${poIP(r.prod)?' <span class="pill p-bad">⚠ thương hiệu</span>':""}<span class="sub">${r.sku?"SKU "+esc(r.sku):"chưa có trong bảng xưởng"}</span></td><td class="n">${r.qty}</td><td class="n">${r.cost?usd(r.cost):"–"}</td><td class="n">${r.rev?usd(r.rev):r.norev?'<span class="muted small">chưa có</span>':"–"}</td><td class="n ${r.profit<0?"dn":""}">${r.rev||r.cost?vnd(r.profit):"–"}</td><td>${dsPill(r)}</td><td class="small">${esc(r.track)||"–"}</td></tr>`).join("")||'<tr><td colspan="10" class="empty">Không có đơn phù hợp.</td></tr>'}
+    ${list.slice(0,500).map(r=>`<tr><td>${fmtD(r.date)}</td><td class="small">${esc(r.shop)}</td><td class="small">${esc(r.order)}</td><td class="small">${esc(r.prod.slice(0,70))}${poIP(r.prod)?' <span class="pill p-bad">⚠ thương hiệu</span>':""}<span class="sub">${r.sku?"SKU "+esc(r.sku):"chưa có trong bảng xưởng"}</span></td><td class="n">${r.qty}</td><td class="n">${r.cost?usd(r.cost)+(r.estCost?'<span class="sub">theo bảng giá SKU</span>':""):"–"}</td><td class="n">${r.rev?usd(r.rev):r.norev?'<span class="muted small">chưa có</span>':"–"}</td><td class="n ${r.profit<0?"dn":""}">${r.rev||r.cost?vnd(r.profit):"–"}</td><td>${dsPill(r)}</td><td class="small">${esc(r.track)||"–"}</td></tr>`).join("")||'<tr><td colspan="10" class="empty">Không có đơn phù hợp.</td></tr>'}
     </tbody></table></div>${list.length>500?`<p class="hint">Đang hiện 500/${list.length} dòng.</p>`:""}`}
     <p class="hint">Lợi nhuận gộp = tiền TikTok trả (Earn payout, đã trừ phí nhãn) − (Base Cost + Shipping Cost của xưởng), quy ra ₫ theo tỉ giá mua đô gần nhất. Chưa trừ quảng cáo, lương, mua shop. “Chưa có giá bán” = đơn có ở xưởng nhưng chưa thấy trên Cotik POD (shop khác hoặc chưa cập nhật). “Chưa có giá vốn” = đơn Cotik chưa có trong bảng xưởng (đi xưởng khác).</p></div>`}
 setInterval(()=>{if(S.tab==="banhang"&&!document.hidden&&Date.now()-S.po.at>10*60e3)poLoad(true)},30e3);
