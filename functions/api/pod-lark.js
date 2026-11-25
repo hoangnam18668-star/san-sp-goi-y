@@ -6,7 +6,7 @@
 const SUPA = "https://hcubziuqxgnfgxxixnam.supabase.co";
 const SUPA_KEY = "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi"; // khoá công khai (publishable), không phải khoá bí mật
 // wiki: trang wiki (cần tra obj_token); sheet: bảng trong Drive (token dùng thẳng)
-const DOCS = { pod: { wiki: "HdpOwILOvi99xjkVFXsjRvLQpDg" }, thuchi: { wiki: "WyOIw5VyjiqG8ukfZA7j0ND0pYf" }, payout: { sheet: "Ozv2sJC5fh2A63td6tDjmPe7pMe" } };
+const DOCS = { pod: { wiki: "HdpOwILOvi99xjkVFXsjRvLQpDg" }, thuchi: { wiki: "WyOIw5VyjiqG8ukfZA7j0ND0pYf" }, payout: { sheet: "Ozv2sJC5fh2A63td6tDjmPe7pMe" }, podcloth: { sheet: "Qih0s35CAhByRItgin8j0FSUpUe" } };
 const J = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
 const cell = v => v == null ? "" : Array.isArray(v) ? v.map(cell).join("") : typeof v === "object" ? String(v.text ?? v.link ?? v.value ?? "") : String(v);
 const col = n => { let s = ""; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26) } return s };
