@@ -2280,7 +2280,7 @@ function dsAgg(rows){const o=new Set(rows.map(r=>r.order)),b=new Set(rows.filter
   const P=rows.filter(r=>r.pend),B=rows.filter(r=>r.bad);
   return{pend:new Set(P.map(r=>r.order)).size,pendRev:P.reduce((a,r)=>a+r.rev,0),pendProfit:P.reduce((a,r)=>a+r.profit,0),badRev:B.reduce((a,r)=>a+r.rev,0),doneCostV:sd("costV"),orders:o.size,bad:b.size,cost:s("cost"),rev:s("rev"),costV:s("costV"),revV:s("revV"),profit:s("profit"),notrack:new Set(rows.filter(r=>!r.bad&&!r.track).map(r=>r.order)).size}}
 /* Gộp tên shop nhân viên gõ khác nhau ("cổ 2", "Cổ 2", "co 3", "shop 12") về một tên chuẩn "Shop cổ 2", "Shop 12" – khớp với Cotik và bảng Tiền về */
-function dsShopFix(v){const s=String(v||"").trim();if(!s)return"";const m=/^(?:shop|acc)?\s*(co|cổ)?\s*(\d{1,3})\b/i.exec(s.normalize("NFC"))||/^(?:shop|acc)?\s*(co)?\s*(\d{1,3})\b/i.exec(dsNorm(s));return m?`Shop ${m[1]?"cổ ":""}${+m[2]}`:s}
+function dsShopFix(v){const s=String(v||"").trim();if(!s)return"";const m=/^(?:shop|acc)?\s*(co|cổ)?\s*(\d{1,3})(?!\d)/i.exec(s.normalize("NFC"))||/^(?:shop|acc)?\s*(co)?\s*(\d{1,3})(?!\d)/i.exec(dsNorm(s));return m?`Shop ${m[1]?"cổ ":""}${+m[2]}`:s}
 const dsMonths=()=>[...new Set(S.ds.rows.map(r=>r.date.slice(0,7)))].sort().reverse();
 /* Khoảng thời gian: hôm nay, hôm qua, tuần này, tuần trước, 7/30 ngày, từng tháng, tuỳ chọn */
 const dsMon=d=>{const x=toD(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return ymd(x)};
@@ -2915,12 +2915,17 @@ function podProfitPanel(){const D=S.ppDoc;if(S.staff||!D)return"";const r2=x=>Ma
    Ghép theo mã đơn TikTok. */
 const PO_SHEET_DEF="1WOMZnt9yUWOSVg3C_Mx2gUpI92pizSf1BqR_MtmCRNY";
 const PO_TABS=[["Order(Tumbler)","select A,B,C,D,J,T,U,V,W","Cốc"],["Rug-USA","select A,B,C,D,J,T,U,V","Thảm"]];
-S.po={rows:[],fac:{},at:0,busy:false,err:""};S.poPer="";S.poFrom="";S.poTo="";S.poShop="";S.poSel="";S.poSt="all";S.poQ="";S.poView="orders";
+S.po={rows:[],fac:{},at:0,busy:false,err:""};S.poPer="";S.poFrom="";S.poTo="";S.poShop="";S.poSel="";S.poSt="all";S.poQ="";S.poView="orders";S.poFull=true;
 const poCsv=t=>{const R=[];let row=[],f="",q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=ch}else if(ch=='"')q=true;else if(ch==","){row.push(f);f=""}else if(ch=="\n"){row.push(f);R.push(row);row=[];f=""}else f+=ch}if(f||row.length){row.push(f);R.push(row)}return R};
 const poNum=v=>+String(v||"").replace(/[^0-9.]/g,"")||0;
 const PO_ST={C:"Hoàn tất",D:"Đã giao",T:"Đang giao",S:"Chờ gửi hàng",L:"Chờ lấy hàng",X:"Đã huỷ",U:"Chưa thanh toán",H:"Tạm giữ"};
-function poDateFac(v,last){const s=String(v||"").trim();if(!s)return last;let m=/^(\d{1,2})[./-](\d{1,2})(?:[./-](\d{2,4}))?$/.exec(s);if(m){const y=m[3]?(m[3].length===2?"20"+m[3]:m[3]):today().slice(0,4);let d=`${y}-${pad(+m[2])}-${pad(+m[1])}`;if(d>today())d=`${+y-1}-${pad(+m[2])}-${pad(+m[1])}`;return d}
-  m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s);if(m)return`${m[1]}-${pad(+m[2])}-${pad(+m[3])}`;return last}
+/* Ngày trong bảng xưởng gõ lẫn kiểu: "7.22" (tháng.ngày), "7/11" (ngày/tháng). Bảng ghi theo thứ tự thời gian,
+   nên chọn cách hiểu hợp lệ gần nhất và không lùi so với ngày dòng trước. */
+function poDateFac(v,last){const s=String(v||"").trim();if(!s)return last;let m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s);if(m)return`${m[1]}-${pad(+m[2])}-${pad(+m[3])}`;
+  m=/^(\d{1,2})[./-](\d{1,2})(?:[./-](\d{2,4}))?$/.exec(s);if(!m)return last;const a=+m[1],b=+m[2],yy=m[3]?(m[3].length===2?"20"+m[3]:m[3]):null,td=today();
+  const mk=(d,mo)=>{if(mo<1||mo>12||d<1||d>31)return null;let y=yy||td.slice(0,4);let x=`${y}-${pad(mo)}-${pad(d)}`;if(!yy&&x>td)x=`${+y-1}-${pad(mo)}-${pad(d)}`;return x};
+  const c=[mk(a,b),mk(b,a)].filter(Boolean);if(!c.length)return last;if(c.length===1||!last)return c[0];
+  const dist=x=>Math.abs((toD(x)-toD(last))/864e5)+(x<last?1000:0);return c.sort((p,q)=>dist(p)-dist(q))[0]}
 async function poLoad(force){if(S.staff||S.po.busy)return;if(!force&&Date.now()-S.po.at<10*60e3)return;S.po.busy=true;if(S.tab==="banhang")render();
   const id=(S.ppDoc?.sheetId)||PO_SHEET_DEF,fac={},errs=[];
   for(const[tab,tq,kind]of PO_TABS){try{const r=await fetch(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&headers=0&sheet=${encodeURIComponent(tab)}&tq=${encodeURIComponent(tq)}`,{cache:"no-store"});
@@ -2953,7 +2958,10 @@ function pgPodOrders(){if(S.staff)return"";const all=poRowsAll(),P=poPeriod(all)
   if(!all.length)return head+`<div class="panel"><div class="empty" style="padding:24px">${S.po.busy||!S.po.at?"Đang đọc bảng xưởng…":S.po.err?esc(S.po.err):"Chưa có đơn POD."}</div></div>`;
   let rows=all.filter(r=>P.in(r.date));const sellers=[...new Set(rows.map(r=>poSellerOf(r.shop)).filter(Boolean))].sort();
   if(S.poSel)rows=rows.filter(r=>(poSellerOf(r.shop)||"_none")===S.poSel);const shops=[...new Set(rows.map(r=>r.shop))].sort((a,b)=>a.localeCompare(b,"vi",{numeric:true}));
-  if(S.poShop&&!shops.includes(S.poShop))S.poShop="";const base=S.poShop?rows.filter(r=>r.shop===S.poShop):rows;const A=dsAgg(base);
+  if(S.poShop&&!shops.includes(S.poShop))S.poShop="";const base0=S.poShop?rows.filter(r=>r.shop===S.poShop):rows;
+  // Mặc định chỉ tính đơn đủ số liệu (có giá bán từ Cotik và giá vốn từ bảng xưởng); đơn thiếu số để riêng, bổ sung sau
+  const full=r=>!r.norev&&!r.nocost,miss=base0.filter(r=>!full(r)),mRev=miss.filter(r=>r.norev).length,mCost=miss.filter(r=>r.nocost).length;
+  const base=S.poFull?base0.filter(full):base0;const A=dsAgg(base);
   const live=base.filter(r=>!r.bad),late=live.filter(r=>!r.track&&alDays(r.date)>=5&&!/hoàn tất|đã giao/i.test(r.status));
   const cnt=f=>base.filter(f).length,chips=[["all","Tất cả",base.length],["bad","Đã huỷ",cnt(r=>r.bad)],["notrack","Thiếu tracking",cnt(r=>!r.bad&&!r.track)],["nocost","Chưa có giá vốn",cnt(r=>r.nocost&&!r.bad)],["norev","Chưa có giá bán",cnt(r=>r.norev)],["loss","Đơn lỗ",cnt(r=>!r.bad&&r.rev&&r.cost&&r.rev<r.cost)],["ip","Mẫu dính thương hiệu",cnt(r=>poIP(r.prod))],
     ...[...new Set(base.map(r=>r.status))].map(s=>["s:"+s,s,cnt(r=>r.status===s)])].filter(c=>c[2]||c[0]==="all");
@@ -2969,6 +2977,7 @@ function pgPodOrders(){if(S.staff)return"";const all=poRowsAll(),P=poPeriod(all)
   const at=S.po.at?new Date(S.po.at):null;
   return head+`${S.po.err?`<div class="notice"><span><b>Có bảng chưa đọc được</b><span class="small muted">${esc(S.po.err)}</span></span><span class="pill p-warn">Kiểm tra</span></div>`:""}
   ${!R?`<div class="notice"><span><b>Chưa có giá bán từ Cotik</b><span class="small muted">Nhờ Claude đọc Cotik POD (Earn payout từng đơn) để tính lãi.</span></span></div>`:""}
+  ${miss.length?`<div class="notice"><span><b>${S.poFull?`Đang tính ${base.length} đơn đủ số liệu`:`Đang hiện tất cả ${base0.length} đơn`}</b><span class="small muted">Còn ${miss.length} đơn thiếu số: ${mRev} đơn chưa có giá bán (chưa thấy trên Cotik POD), ${mCost} đơn chưa có giá vốn (chưa có trong bảng xưởng). Sẽ tự cộng vào khi có số.</span></span><button class="btn" data-act="poFull">${S.poFull?"Xem cả đơn thiếu số":"Chỉ đơn đủ số liệu"}</button></div>`:""}
   <div class="panel"><div class="actions" style="margin-bottom:10px"><select class="inp" id="poPer" style="width:auto">${P.opts.map(([k,l])=>`<option value="${k}" ${k===P.k?"selected":""}>${esc(l)}</option>`).join("")}</select>
       ${P.k==="custom"?`<input class="inp" type="date" id="poFrom" value="${P.f}" style="width:auto"><input class="inp" type="date" id="poTo" value="${P.t}" style="width:auto">`:""}
       <select class="inp" id="poSel" style="width:auto"><option value="">Tất cả seller</option>${sellers.map(s=>`<option ${S.poSel===s?"selected":""}>${esc(s)}</option>`).join("")}<option value="_none" ${S.poSel==="_none"?"selected":""}>(chưa rõ seller)</option></select>
@@ -2988,7 +2997,7 @@ function pgPodOrders(){if(S.staff)return"";const all=poRowsAll(),P=poPeriod(all)
     </tbody></table></div>${list.length>500?`<p class="hint">Đang hiện 500/${list.length} dòng.</p>`:""}`}
     <p class="hint">Lợi nhuận gộp = tiền TikTok trả (Earn payout, đã trừ phí nhãn) − (Base Cost + Shipping Cost của xưởng), quy ra ₫ theo tỉ giá mua đô gần nhất. Chưa trừ quảng cáo, lương, mua shop. “Chưa có giá bán” = đơn có ở xưởng nhưng chưa thấy trên Cotik POD (shop khác hoặc chưa cập nhật). “Chưa có giá vốn” = đơn Cotik chưa có trong bảng xưởng (đi xưởng khác).</p></div>`}
 setInterval(()=>{if(S.tab==="banhang"&&!document.hidden&&Date.now()-S.po.at>10*60e3)poLoad(true)},30e3);
-Object.assign(ACT,{poNow:()=>poLoad(true),poView:v=>{S.poView=v;render()},poSt:v=>{S.poSt=v;render()},
+Object.assign(ACT,{poFull:()=>{S.poFull=!S.poFull;S.poSt="all";render()},poNow:()=>poLoad(true),poView:v=>{S.poView=v;render()},poSt:v=>{S.poSt=v;render()},
   poPickDay:v=>{S.poPer="custom";S.poFrom=S.poTo=v;S.poView="orders";render()},poPickSel:v=>{S.poSel=v;S.poView="orders";render()},poPickShop:v=>{S.poShop=v;S.poView="orders";render()},poPickSku:v=>{S.poQ=v;S.poView="orders";render()}});
 document.addEventListener("change",e=>{const t=e.target;if(t.id==="poPer"){S.poPer=t.value;render()}if(t.id==="poFrom"){S.poFrom=t.value;render()}if(t.id==="poTo"){S.poTo=t.value;render()}if(t.id==="poSel"){S.poSel=t.value;render()}if(t.id==="poShop"){S.poShop=t.value;render()}});
 document.addEventListener("keydown",e=>{if(e.target.id==="poQ"&&e.key==="Enter"){S.poQ=e.target.value;render()}});
