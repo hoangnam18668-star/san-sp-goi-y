@@ -2846,6 +2846,13 @@ function pgAutoOverview(){alNeedDrop();if(!S.tcDoc&&typeof tcLarkSync==="functio
   const pFee=Object.values(dayMeta).reduce((a,d)=>a+(+d.fee||0)+(+d.extra||0),0)||pr.reduce((a,r)=>a+r.fee,0);
   const tr=typeof tcRows==="function"?tcRows().filter(r=>r.month===m):[],spentQ=tr.filter(r=>r.dir<0&&!TC_SKIP(r.cat)).reduce((a,r)=>a+tcQ(r),0);
   const tkU=(typeof poRows==="function"?poRows():[]).filter(r=>r.month===m).reduce((a,r)=>a+r.amt,0),P=pnlCalc();
+  // So với cùng kỳ tháng trước (tháng đang chạy thì chỉ so tới cùng ngày)
+  const pm=prevMonth(m),cut=m===today().slice(0,7)?today().slice(8,10):"31",inPM=d=>d.startsWith(pm)&&d.slice(8,10)<=cut,inM=d=>d.startsWith(m)&&d.slice(8,10)<=cut;
+  const cmp=(f)=>{const a=f(inM),b=f(inPM);if(!b)return"";const c=(a-b)/b;return` <b style="color:${c>=0?"var(--good)":"var(--bad)"}">${c>=0?"▲":"▼"}${Math.abs(Math.round(c*100))}%</b>`};
+  const cmpInv=(f)=>{const x=cmp(f);return x.replace("var(--good)","TMP").replace("var(--bad)","var(--good)").replace("TMP","var(--bad)")};
+  const cDrop=cmp(fn=>new Set((S.ds.rows||[]).filter(r=>fn(r.date)).map(r=>r.order)).size),cPod=cmp(fn=>podRows().filter(r=>fn(r.date)).reduce((a,r)=>a+r.n,0));
+  const cSpent=cmpInv(fn=>(typeof tcRows==="function"?tcRows():[]).filter(r=>fn(r.date)&&r.dir<0&&!TC_SKIP(r.cat)).reduce((a,r)=>a+tcQ(r),0)),cTk=cmp(fn=>poRows().filter(r=>fn(r.date)).reduce((a,r)=>a+r.amt,0));
+  const vsTxt=`so với ${fmtM(pm).toLowerCase()}${cut!=="31"?` (cùng ${+cut} ngày đầu)`:""}`;
   // Đơn theo ngày (Drop + POD) – cột đơn giản
   const days=[];{const[y,mo]=m.split("-").map(Number),n=new Date(y,mo,0).getDate();for(let d=1;d<=n;d++){const k=`${m}-${pad(d)}`;if(k>today())break;days.push([k,new Set(dr.filter(r=>r.date===k).map(r=>r.order)).size,pr.filter(r=>r.date===k).reduce((a,r)=>a+r.n,0)])}}
   const mx=Math.max(1,...days.map(d=>d[1]+d[2]));
@@ -2858,7 +2865,7 @@ function pgAutoOverview(){alNeedDrop();if(!S.tcDoc&&typeof tcLarkSync==="functio
   if(S.hdDoc?.at&&ovAge(new Date(S.hdDoc.at).getTime())>7)al.push(["p-warn","Số On hold cũ",`Tiền còn trên shop cập nhật ${ovAge(new Date(S.hdDoc.at).getTime())} ngày trước`,"dongtien"]);
   const khac=tr.filter(r=>r.dir<0&&r.cat==="Khác").reduce((a,r)=>a+tcQ(r),0);if(khac>5e6)al.push(["p-warn","Chi chưa rõ",`${tcTr(khac)} chi trong tháng chưa rõ là gì (nhóm “Khác”)`,"chiphi"]);
   [["Đơn Drop",S.ds.err],["POD",S.podSync?.err],["Thu chi",S.tcSync?.err],["Tiền về",S.tcSync?.perr]].forEach(([k,e])=>{if(e)al.push(["p-bad","Lỗi đồng bộ",`${k}: ${esc(e)}`,"caidat"])});
-  const card=(lb,v,s,col,tab)=>`<div class="kpi" style="cursor:pointer" data-act="ovGo" data-id="${tab}"><div style="padding:2px 4px"><span class="lb">${lb}</span><div style="font-size:22px;font-weight:700;margin:4px 0;color:${col||"inherit"};white-space:nowrap">${v}</div><span class="s">${s}</span></div></div>`;
+  const card=(lb,v,s,col,tab)=>`<div class="kpi" style="cursor:pointer" data-act="ovGo" data-id="${tab}"><div style="padding:2px 4px"><span class="lb">${lb}</span><div style="font-size:22px;font-weight:700;margin:4px 0;color:${col||"inherit"};white-space:nowrap">${String(v).replace('<b style="','<b style="font-size:13px;margin-left:6px;')}</div><span class="s">${s}</span></div></div>`;
   const col=v=>v>=0?"var(--good)":"var(--bad)";
   return`<div class="sec-h"><div><h2>Tổng quan công ty</h2><p>Tự động gom từ bảng Drop, bảng POD, bảng Thu chi và Tiền về shop. Không cần nhập file. Bấm vào một ô để xem chi tiết.</p></div>
     <div class="actions"><select class="inp" id="ovM" style="width:auto">${months.map(x=>`<option value="${x}" ${x===m?"selected":""}>${fmtM(x)}</option>`).join("")}</select></div></div>
@@ -2866,11 +2873,11 @@ function pgAutoOverview(){alNeedDrop();if(!S.tcDoc&&typeof tcLarkSync==="functio
     ${P.dieU?`Nếu ${usd(P.dieU)} kẹt ở shop die về đủ thì ${P.plD>=0?"lãi":"lỗ"} <b style="color:${col(P.plD)}">${tcTr(Math.abs(P.plD))}</b>.`:""}
     <a href="#dongtien" class="small">Xem cách tính →</a>`)}
     <div class="kpis">${card("TikTok đã trả về (tổng)",tcTr(P.tk),"từ bảng Tiền về shop","var(--good)","dongtien")}${card("Còn trên shop sống",usd(P.holdU),`≈ ${tcTr(P.holdU*P.fxNow)}`,"var(--accent)","dongtien")}${card("Kẹt ở shop die",usd(P.dieU),"chờ TikTok nhả","var(--warn)","dongtien")}${card("Tổng đã chi (tổng)",tcTr(P.T),`gồm ${tcTr(P.inv)} mua shop/kênh`,"var(--warn)","chiphi")}</div></div>`:""}
-  <div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">${fmtM(m)}</h3>
-    <div class="kpis">${card("Đơn Drop",int(A.orders),`doanh thu ${usd(A.rev,0)} · lãi ${tcTr(A.profit)}`,"","dondrop")}
-      ${card("Đơn POD",int(pN),`phí fulfill ${usd(pFee,0)}`,"","banhang")}
-      ${card("Đã chi trong tháng",tcTr(spentQ),"từ bảng Thu chi","var(--warn)","chiphi")}
-      ${card("TikTok trả về trong tháng",usd(tkU,0),`≈ ${tcTr(tkU*(P?.fxNow||26600))}`,"var(--good)","dongtien")}</div>
+  <div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">${fmtM(m)} <span class="small muted">· ▲▼ ${vsTxt}</span></h3>
+    <div class="kpis">${card("Đơn Drop",int(A.orders)+cDrop,`doanh thu ${usd(A.rev,0)} · lãi ${tcTr(A.profit)}`,"","dondrop")}
+      ${card("Đơn POD",int(pN)+cPod,`phí fulfill ${usd(pFee,0)}`,"","banhang")}
+      ${card("Đã chi trong tháng",tcTr(spentQ)+cSpent,"từ bảng Thu chi","var(--warn)","chiphi")}
+      ${card("TikTok trả về trong tháng",usd(tkU,0)+cTk,`≈ ${tcTr(tkU*(P?.fxNow||26600))}`,"var(--good)","dongtien")}</div>
     <h3 style="margin:16px 0 6px">Số đơn mỗi ngày <span class="small muted">(<span style="color:var(--accent)">■</span> Drop <span style="color:var(--good)">■</span> POD)</span></h3>
     <div style="display:flex;align-items:flex-end;gap:3px;height:120px;border-bottom:1px solid var(--line);padding-top:6px">${days.map(([d,a,b])=>`<div title="${fmtD(d)}: ${a} Drop + ${b} POD" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:${b/mx*100}%;background:var(--good);border-radius:2px 2px 0 0"></div><div style="height:${a/mx*100}%;background:var(--accent)"></div></div>`).join("")}</div>
     <div class="small muted" style="display:flex;justify-content:space-between;margin-top:2px"><span>${days[0]?fmtD(days[0][0]):""}</span><span>${days.length?fmtD(days[days.length-1][0]):""}</span></div></div>
