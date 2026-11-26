@@ -229,7 +229,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.26e", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.26f", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -467,8 +467,8 @@ window.APP_CONFIG = {
 /* ============ Trạng thái & tiện ích ============ */
 const TABS=[["tongquan","Tổng quan"],["canhbao","Cảnh báo"],["pheduyet","Phê duyệt"],["banhang","Đơn POD"],["dondrop","Đơn Drop"],["fulfill","Fulfillment"],["kho","Sản phẩm & Kho"],["sanpham","Săn sản phẩm"],["nhaphang","Nhập hàng"],["chiphi","Chi phí"],["dongtien","Dòng tiền"],["congviec","Công việc"],["kpi","Nhân sự & KPI"],["chamcong","Chấm công"],["tainguyen","Tài nguyên"],["caidat","Cài đặt"]];
 const isFF=()=>ST().model!=="stock";
-/* Trang chưa có dữ liệu thì ẩn khỏi menu cho gọn (vẫn mở được từ Cài đặt › Trang đang ẩn) */
-const tabEmpty=k=>{try{const D=V(),noStaff=!(D.staff||[]).length;return !S.showOld&&(k==="pheduyet"?noStaff&&!(D.attreq||[]).length:k==="chamcong"?noStaff&&!(D.attendance||[]).length:k==="tainguyen"?!(D.assets||[]).length:false)}catch(e){return false}};
+/* Chấm công & Phê duyệt luôn hiện (giám đốc nối máy chấm công). Trang chưa có dữ liệu khác thì ẩn khỏi menu cho gọn (vẫn mở được từ Cài đặt › Trang đang ẩn) */
+const tabEmpty=k=>{try{const D=V(),noStaff=!(D.staff||[]).length;return !S.showOld&&(k==="tainguyen"?!(D.assets||[]).length:false)}catch(e){return false}};
 const tabList=()=>TABS.filter(([k])=>(isFF()?k!=="nhaphang":k!=="fulfill")&&(S.tab===k||!tabEmpty(k))).map(([k,l])=>[k,k==="kho"&&isFF()?"Sản phẩm & Giá vốn":l]);
 const ISSUE_T=["Gửi trễ / chưa gửi","Sai hàng / sai mẫu","Thiếu hàng","Hư hỏng / lỗi in","Mất hàng / thất lạc","Không có tracking","Đối tác hết hàng","Khác"];
 const ISTAT={open:["Đang xử lý","p-bad"],claim:["Đã khiếu nại đối tác","p-warn"],done:["Đã xong","p-good"]};
