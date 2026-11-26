@@ -229,7 +229,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.25h", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.26a", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -242,7 +242,7 @@ window.APP_CONFIG = {
   const cfg = window.APP_CONFIG || {};
   const $id = id => document.getElementById(id);
   const ready = cfg.supabaseUrl && cfg.supabaseAnonKey && !/DIEN_|YOUR_/.test(cfg.supabaseUrl + cfg.supabaseAnonKey);
-  const APP_SCRIPTS = ["01-config", "02-demo", "03-calc", "04-data", "05-pages", "06-kpi", "07-actions", "08-import", "09-staff", "11-backup", "12-web", "13-research", "14-attendance", "15-shell", "16-dropsheet", "17-podlark", "18-autolink", "19-thuchi", "20-overview", "21-podorders", "10-boot"];
+  const APP_SCRIPTS = ["01-config", "02-demo", "03-calc", "04-data", "05-pages", "06-kpi", "07-actions", "08-import", "09-staff", "11-backup", "12-web", "13-research", "14-attendance", "15-shell", "16-dropsheet", "17-podlark", "18-autolink", "19-thuchi", "20-overview", "21-podorders", "22-alerts", "10-boot"];
 
   /* ---------- Kho dữ liệu ---------- */
   function makeDb(sb) {
@@ -415,7 +415,7 @@ window.APP_CONFIG = {
 <body>
 <section class="auth" id="auth">
   <div class="auth-card">
-    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 25/11h</p></div></div></div>
+    <div class="auth-brand"><div class="auth-logo"><svg viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2457D6"/><stop offset="1" stop-color="#14B8D4"/></linearGradient></defs><path d="M22 20v-3a10 10 0 0 1 20 0v3" fill="none" stroke="#1D3FB8" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 20h37a3 3 0 0 1 3 2.8l2.2 29A6 6 0 0 1 49.7 58H14.3a6 6 0 0 1-6-6.2l2.2-29a3 3 0 0 1 3-2.8z" fill="url(#ga)"/><path d="M23 48V31l15.5 15.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40.5 48V33" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M40.5 25.2 47 33.4H34z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><div><h1>Nexa Commerce</h1><p>Điều hành TikTok Shop US · bản 26/11</p></div></div></div>
     <div id="authBox" hidden>
       <h2 id="authTitle">Đăng nhập</h2>
       <form id="authForm" class="auth-form">
@@ -465,7 +465,7 @@ window.APP_CONFIG = {
 <script type="text/plain" id="src-01-config">
 /* 01-config.js · Cấu hình chung: tab, vị trí & bộ KPI chuẩn, cấp thưởng seller, hạng mục, trạng thái và các hàm tiện ích */
 /* ============ Trạng thái & tiện ích ============ */
-const TABS=[["tongquan","Tổng quan"],["pheduyet","Phê duyệt"],["banhang","Đơn POD"],["dondrop","Đơn Drop"],["fulfill","Fulfillment"],["kho","Sản phẩm & Kho"],["sanpham","Săn sản phẩm"],["nhaphang","Nhập hàng"],["chiphi","Chi phí"],["dongtien","Dòng tiền"],["congviec","Công việc"],["kpi","Nhân sự & KPI"],["chamcong","Chấm công"],["tainguyen","Tài nguyên"],["caidat","Cài đặt"]];
+const TABS=[["tongquan","Tổng quan"],["canhbao","Cảnh báo"],["pheduyet","Phê duyệt"],["banhang","Đơn POD"],["dondrop","Đơn Drop"],["fulfill","Fulfillment"],["kho","Sản phẩm & Kho"],["sanpham","Săn sản phẩm"],["nhaphang","Nhập hàng"],["chiphi","Chi phí"],["dongtien","Dòng tiền"],["congviec","Công việc"],["kpi","Nhân sự & KPI"],["chamcong","Chấm công"],["tainguyen","Tài nguyên"],["caidat","Cài đặt"]];
 const isFF=()=>ST().model!=="stock";
 const tabList=()=>TABS.filter(([k])=>isFF()?k!=="nhaphang":k!=="fulfill").map(([k,l])=>[k,k==="kho"&&isFF()?"Sản phẩm & Giá vốn":l]);
 const ISSUE_T=["Gửi trễ / chưa gửi","Sai hàng / sai mẫu","Thiếu hàng","Hư hỏng / lỗi in","Mất hàng / thất lạc","Không có tracking","Đối tác hết hàng","Khác"];
@@ -2147,7 +2147,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="attQ"
 <script type="text/plain" id="src-15-shell">
 /* 15-shell.js · Khung giao diện: menu dọc bên trái chia nhóm (giống phần mềm nhân sự), tiêu đề trang, menu trượt trên điện thoại */
 const NAV_GROUPS=[
-  ["Vận hành",["tongquan","pheduyet","congviec"]],
+  ["Vận hành",["tongquan","canhbao","pheduyet","congviec"]],
   ["Bán hàng",["banhang","dondrop","fulfill","kho","sanpham"]],
   ["Tài chính",["chiphi","dongtien"]],
   ["Con người",["kpi","chamcong"]],
@@ -2156,6 +2156,7 @@ const STAFF_GROUPS=[["Của tôi",["congviec","chamcong","kpi","nop"]],["Bán h�
 /* Biểu tượng nét mảnh 18px, vẽ bằng SVG để không phải tải thêm thư viện */
 const NAV_ICON={
   tongquan:'<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+  canhbao:'<path d="M12 3.5 21.5 20h-19z"/><path d="M12 10v4.5M12 17.2v.3"/>',
   pheduyet:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="m8.5 12 2.5 2.5 4.5-5"/>',
   congviec:'<path d="M9 6h11M9 12h11M9 18h11"/><path d="m3.5 6 1.2 1.2L7 5M3.5 12l1.2 1.2L7 11M3.5 18l1.2 1.2L7 17"/>',
   banhang:'<path d="M3 4h2l2.2 10.4a1.5 1.5 0 0 0 1.5 1.1h8.6a1.5 1.5 0 0 0 1.4-1l1.8-6H6.2"/><circle cx="9.5" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/>',
@@ -2831,20 +2832,27 @@ function pnlCalc(){const all=tcRows(),po=poRows();if(!all.length)return null;con
   return{from:months[0],fxNow,T,inv,tk,holdU,dieU,pl:tk+holdU*fxNow-T,plD:tk+(holdU+dieU)*fxNow-T}}
 const ovAge=ms=>{if(!ms)return null;return Math.floor((Date.now()-ms)/864e5)};
 const ovWhen=ms=>{if(!ms)return"chưa có";const d=new Date(ms),days=ovAge(ms);return`${pad(d.getHours())}:${pad(d.getMinutes())} ${fmtD(ymd(d))}${days>=1?` (${days} ngày trước)`:""}`};
-function ovSources(){const T=v=>v?new Date(v).getTime():0,rs=S.rsCfgDoc||{};
-  const row=(name,src,auto,at,maxDays,err,how)=>{const age=ovAge(at),st=err?["Lỗi","p-bad",err]:!at?["Chưa có số","p-warn",""]:age>maxDays?["Cũ – cần cập nhật","p-warn",""]:["Đang chạy tốt","p-good",""];
-    return`<tr><td><b>${name}</b><div class="small muted">${src}</div></td><td>${auto?'<span class="pill p-good">Tự động</span>':'<span class="pill p-warn">Nhập tay</span>'}<div class="small muted">${how}</div></td><td class="small">${ovWhen(at)}</td><td><span class="pill ${st[1]}">${st[0]}</span>${st[2]?`<div class="small" style="color:var(--bad)">${esc(st[2])}</div>`:""}</td></tr>`};
-  return alTbl([["Phần trên web"],["Cách cập nhật"],["Lần cuối"],["Tình trạng"]],[
-    row("Đơn Drop · Fulfillment · Giá vốn","Google Sheets đơn dropship",1,S.ds.at,1,S.ds.err,"10 phút/lần khi mở web"),
-    row("Đơn POD · phí fulfill","Lark “FULLFILLMENT CỐC US”",1,T(S.podDoc?.at),1,S.podSync?.err,"30 phút/lần khi mở web"),
-    row("Chi phí · Quỹ văn phòng","Lark “THU CHI VĂN PHÒNG TMĐT”",1,T(S.tcDoc?.at),1,S.tcSync?.err,"30 phút/lần khi mở web"),
-    row("Tiền TikTok đã về","Lark “THEO DÕI TIỀN VỀ SHOP”",1,T(S.poDoc?.at),1,S.tcSync?.perr,"cùng lúc với Thu chi"),
-    row("Săn sản phẩm","Claude nghiên cứu mỗi sáng",1,rs.feedAt||0,2,"","07:40 hằng ngày"),
-    row("Giá xưởng dép Lenful","API Lenful (tài khoản cất ở Cloudflare)",1,S.po?.lAt||0,1,S.po?.lErr||"","mỗi lần mở trang Đơn POD"),
-    row("Giá bán POD + giá dép CompassUp","Cotik POD, CompassUp (không có API)",0,Math.max(T(S.prDoc?.at),T(S.cgDoc?.at)),2,"","Claude đọc qua Chrome mỗi tối 21:10"),
-    row("Tiền còn trên shop (On hold)","Cotik › Finances (2 tài khoản)",0,T(S.hdDoc?.at),7,"","Bấm “Nhập tiền còn trên shop” ở Dòng tiền, hoặc nhờ Claude đọc Cotik"),
-    row("Tiền kẹt ở shop die","Bảng nhân viên (chỉ 6 cột tiền)",0,S.hdDoc?.die?.length?T(S.hdDoc.at):0,7,"","Gửi Claude khi NV cập nhật"),
-    `<tr><td><b>Công việc · Nhân sự & KPI · Chấm công · Phê duyệt</b><div class="small muted">Nhập trên web</div></td><td><span class="pill p-mute">Dùng trực tiếp</span></td><td class="small">–</td><td class="small muted">Không cần đồng bộ</td></tr>`].join(""))}
+/* Danh sách nguồn dữ liệu (dùng chung cho bảng Nguồn dữ liệu và trang Cảnh báo) */
+function ovSrcList(){const T=v=>v?new Date(v).getTime():0,rs=S.rsCfgDoc||{};
+  return[["Đơn Drop · Fulfillment · Giá vốn","Google Sheets đơn dropship",1,S.ds.at,1,S.ds.err,"10 phút/lần khi mở web","dondrop"],
+    ["Đơn POD · phí fulfill","Lark “FULLFILLMENT CỐC US”",1,T(S.podDoc?.at),1,S.podSync?.err,"30 phút/lần khi mở web","banhang"],
+    ["Chi phí · Quỹ văn phòng","Lark “THU CHI VĂN PHÒNG TMĐT”",1,T(S.tcDoc?.at),1,S.tcSync?.err,"30 phút/lần khi mở web","chiphi"],
+    ["Tiền TikTok đã về","Lark “THEO DÕI TIỀN VỀ SHOP”",1,T(S.poDoc?.at),1,S.tcSync?.perr,"cùng lúc với Thu chi","dongtien"],
+    ["Săn sản phẩm","Claude nghiên cứu mỗi sáng",1,rs.feedAt||0,2,"","07:40 hằng ngày","sanpham"],
+    ["Giá xưởng dép Lenful","API Lenful (tài khoản cất ở Cloudflare)",1,S.po?.lAt||0,1,S.po?.lErr||"","mỗi lần mở trang Đơn POD","banhang"],
+    ["Giá bán POD + giá dép CompassUp","Cotik POD, CompassUp (không có API)",0,Math.max(T(S.prDoc?.at),T(S.cgDoc?.at)),2,"","Claude đọc qua Chrome mỗi tối 21:10","banhang"],
+    ["Tiền còn trên shop (On hold)","Cotik › Finances (2 tài khoản)",0,T(S.hdDoc?.at),7,"","Bấm “Nhập tiền còn trên shop” ở Dòng tiền, hoặc nhờ Claude đọc Cotik","dongtien"],
+    ["Tiền kẹt ở shop die","Bảng nhân viên (chỉ 6 cột tiền)",0,S.hdDoc?.die?.length?T(S.hdDoc.at):0,7,"","Gửi Claude khi NV cập nhật","dongtien"]]
+    .map(([name,src,auto,at,maxDays,err,how,tab])=>{const age=ovAge(at),st=err?"err":!at?"none":age>maxDays?"old":"ok";
+      /* Độ tươi: 100% khi vừa cập nhật, giảm dần tới 0% khi quá 2 lần hạn */
+      const fresh=st==="err"||st==="none"?0:Math.max(0,Math.min(100,Math.round(100-(Date.now()-at)/864e5/(maxDays*2)*100)));
+      return{name,src,auto,at,maxDays,err,how,tab,age,st,fresh}})}
+function ovSources(){const L=ovSrcList(),ST2={err:["Lỗi","p-bad"],none:["Chưa có số","p-warn"],old:["Cũ – cần cập nhật","p-warn"],ok:["Đang chạy tốt","p-good"]};
+  const ok=L.filter(x=>x.st==="ok").length,avg=Math.round(L.reduce((a,x)=>a+x.fresh,0)/L.length);
+  return`<p class="small" style="margin-bottom:8px"><b>${ok}/${L.length}</b> nguồn đang chạy tốt · độ tươi trung bình <b>${avg}%</b></p>`+alTbl([["Phần trên web"],["Cách cập nhật"],["Lần cuối"],["Độ tươi"],["Tình trạng"]],L.map(x=>`<tr><td><b>${x.name}</b><div class="small muted">${x.src}</div></td><td>${x.auto?'<span class="pill p-good">Tự động</span>':'<span class="pill p-warn">Nhập tay</span>'}<div class="small muted">${x.how}</div></td><td class="small">${ovWhen(x.at)}</td>
+    <td style="min-width:90px"><div style="height:6px;background:var(--line);border-radius:3px"><div style="height:6px;width:${x.fresh}%;border-radius:3px;background:${x.fresh>=60?"var(--good)":x.fresh>=30?"var(--warn)":"var(--bad)"}"></div></div><span class="small muted">${x.fresh}%</span></td>
+    <td><span class="pill ${ST2[x.st][1]}">${ST2[x.st][0]}</span>${x.err?`<div class="small" style="color:var(--bad)">${esc(x.err)}</div>`:""}</td></tr>`).join("")+
+    `<tr><td><b>Công việc · Nhân sự & KPI · Chấm công · Phê duyệt</b><div class="small muted">Nhập trên web</div></td><td><span class="pill p-mute">Dùng trực tiếp</span></td><td class="small">–</td><td></td><td class="small muted">Không cần đồng bộ</td></tr>`)}
 function pgAutoOverview(){alNeedDrop();if(!S.tcDoc&&typeof tcLarkSync==="function")tcLarkSync(false);
   const months=[...new Set([...(S.ds.rows||[]).map(r=>r.date.slice(0,7)),...Object.keys(S.podDoc?.months||{}),...Object.keys(S.tcDoc?.months||{})])].sort().reverse();
   const m=S.ovM&&months.includes(S.ovM)?S.ovM:(months.includes(today().slice(0,7))?today().slice(0,7):months[0]||today().slice(0,7));S.ovM=m;
@@ -2874,8 +2882,10 @@ function pgAutoOverview(){alNeedDrop();if(!S.tcDoc&&typeof tcLarkSync==="functio
   [["Đơn Drop",S.ds.err],["POD",S.podSync?.err],["Thu chi",S.tcSync?.err],["Tiền về",S.tcSync?.perr]].forEach(([k,e])=>{if(e)al.push(["p-bad","Lỗi đồng bộ",`${k}: ${esc(e)}`,"caidat"])});
   const card=(lb,v,s,col,tab)=>`<div class="kpi" style="cursor:pointer" data-act="ovGo" data-id="${tab}"><div style="padding:2px 4px"><span class="lb">${lb}</span><div style="font-size:22px;font-weight:700;margin:4px 0;color:${col||"inherit"};white-space:nowrap">${String(v).replace('<b style="','<b style="font-size:13px;margin-left:6px;')}</div><span class="s">${s}</span></div></div>`;
   const col=v=>v>=0?"var(--good)":"var(--bad)";
+  const AL=typeof alCompute==="function"?alSplit(alCompute()).active:[];
   return`<div class="sec-h"><div><h2>Tổng quan công ty</h2><p>Tự động gom từ bảng Drop, bảng POD, bảng Thu chi và Tiền về shop. Không cần nhập file. Bấm vào một ô để xem chi tiết.</p></div>
     <div class="actions"><select class="inp" id="ovM" style="width:auto">${months.map(x=>`<option value="${x}" ${x===m?"selected":""}>${fmtM(x)}</option>`).join("")}</select></div></div>
+  ${typeof ovBrief==="function"?ovBrief()+ovGoalPanel(m):""}
   ${P?`<div class="panel" style="margin-bottom:14px">${tcSay(`Từ ${fmtM(P.from).toLowerCase()} tới nay công ty đang <b style="color:${col(P.pl)}">${P.pl>=0?"LÃI":"LỖ"} ${tcTr(Math.abs(P.pl))}</b> (đã tính tiền còn trên shop sống).
     ${P.dieU?`Nếu ${usd(P.dieU)} kẹt ở shop die về đủ thì ${P.plD>=0?"lãi":"lỗ"} <b style="color:${col(P.plD)}">${tcTr(Math.abs(P.plD))}</b>.`:""}
     <a href="#dongtien" class="small">Xem cách tính →</a>`)}
@@ -2888,8 +2898,8 @@ function pgAutoOverview(){alNeedDrop();if(!S.tcDoc&&typeof tcLarkSync==="functio
     <h3 style="margin:16px 0 6px">Số đơn mỗi ngày <span class="small muted">(<span style="color:var(--accent)">■</span> Drop <span style="color:var(--good)">■</span> POD)</span></h3>
     <div style="display:flex;align-items:flex-end;gap:3px;height:120px;border-bottom:1px solid var(--line);padding-top:6px">${days.map(([d,a,b])=>`<div title="${fmtD(d)}: ${a} Drop + ${b} POD" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:${b/mx*100}%;background:var(--good);border-radius:2px 2px 0 0"></div><div style="height:${a/mx*100}%;background:var(--accent)"></div></div>`).join("")}</div>
     <div class="small muted" style="display:flex;justify-content:space-between;margin-top:2px"><span>${days[0]?fmtD(days[0][0]):""}</span><span>${days.length?fmtD(days[days.length-1][0]):""}</span></div></div>
-  <div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">Cần chú ý</h3>
-    ${al.length?al.map(([c,t,h,tab])=>`<div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer" data-act="ovGo" data-id="${tab}"><span class="pill ${c}" style="white-space:nowrap">${t}</span><span style="flex:1">${h}</span><span class="small muted">Xem →</span></div>`).join(""):'<p class="small muted">Không có việc gì cần chú ý. 👍</p>'}</div>
+  <div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px;display:flex;justify-content:space-between">Cần chú ý <a href="#canhbao" class="small">Tất cả ${AL.length} cảnh báo →</a></h3>
+    ${AL.length?AL.slice(0,6).map(a=>`<div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer" data-act="ovGo" data-id="canhbao"><span class="pill ${AL_SEV[a.sev][1]}" style="white-space:nowrap">${AL_SEV[a.sev][0]}</span><span style="flex:1"><b>${esc(a.title)}</b> <span class="small muted">${a.detail}</span></span></div>`).join(""):'<p class="small muted">Không có việc gì cần chú ý. 👍</p>'}</div>
   <div class="panel"><h3 style="margin:0 0 4px">Nguồn dữ liệu – phần nào tự động, phần nào chưa</h3><p class="small muted" style="margin-bottom:8px">“Cũ – cần cập nhật” nghĩa là quá lâu chưa có số mới.</p>${ovSources()}</div>`}
 Object.assign(ACT,{ovGo:t=>{location.hash=t}});
 document.addEventListener("change",e=>{if(e.target.id==="ovM"){S.ovM=e.target.value;render()}});
@@ -3044,13 +3054,144 @@ document.addEventListener("change",e=>{const t=e.target;if(t.id==="poPer"){S.poP
 document.addEventListener("keydown",e=>{if(e.target.id==="poQ"&&e.key==="Enter"){S.poQ=e.target.value;render()}});
 
 </script>
+<script type="text/plain" id="src-22-alerts">
+/* 22-alerts.js · Trung tâm cảnh báo + Bản tin giám đốc + Mục tiêu tháng (tham khảo NOVA, dùng số liệu thật của Nexa).
+   - Cảnh báo được TÍNH từ dữ liệu đã có (Drop, POD/Cotik, Thu chi, Tiền về, Công việc, Nguồn dữ liệu) – không cần ai nhập.
+   - Mỗi vấn đề chỉ 1 cảnh báo (có mã cố định), lặp lại thì cập nhật số chứ không tạo thêm.
+   - Trạng thái giám đốc bấm (Đã xem / Hoãn 24h / Đã xử lý + ghi chú) lưu ở settings/alertState → thành "Nhật ký xử lý".
+   - Mục tiêu tháng lưu ở settings/goals. */
+S.alDoc=null;S.goalDoc=null;S.alView="open";
+const AL_SEV={bad:["Nghiêm trọng","p-bad",3],warn:["Cảnh báo","p-warn",2],info:["Lưu ý","p-acc",1]};
+const AL_GROUPS=[["shop","Doanh thu giảm theo shop"],["kpi","Seller dưới KPI 40%"],["order","Đơn hàng cần xử lý"],["ip","Mẫu dính thương hiệu"],["money","Tiền & chi phí"],["task","Công việc"],["data","Dữ liệu chưa cập nhật"]];
+const alSum=(rows,f)=>rows.reduce((a,r)=>a+(+f(r)||0),0);
+/* Dòng đơn chung Drop + POD: {date, shop, seller, rev($), revV(₫), profit(₫), full(đủ số), bad, kind} */
+function alOrders(){const out=[],staff=V().staff||[];
+  for(const r of S.ds.rows||[]){const id=dsSellerId(r.shop);out.push({src:"Drop",date:r.date,shop:r.shop,order:r.order,seller:id?(staff.find(x=>x.id===id)?.name||""):"",rev:+r.rev||0,revV:+r.revV||0,profit:+r.profit||0,full:!r.pend,bad:!!r.bad,track:r.track})}
+  const po=typeof poRowsAll==="function"&&S.prDoc?poRowsAll():[];
+  for(const r of po)out.push({src:"POD",date:r.date,shop:r.shop,order:r.order,seller:poSellerOf(r.shop),rev:r.rev,revV:r.revV,profit:r.profit,full:!r.pend&&!r.nocost&&!r.norev,bad:r.bad,prod:r.prod,nocost:r.rev>0&&r.nocost});
+  return out}
+function alCompute(){if(S.staff)return[];const A=[],td=today(),m=td.slice(0,7),add=(g,id,sev,title,detail,tab,num)=>A.push({g,id,sev,title,detail,tab,num});
+  const O=alOrders(),live=O.filter(r=>!r.bad);
+  /* 1) Doanh thu shop 7 ngày gần nhất so với 7 ngày trước đó (đến hôm qua, vì Cotik cập nhật buổi tối) */
+  const e1=addDays(td,-1),s1=addDays(td,-7),e0=addDays(td,-8),s0=addDays(td,-14),byShop={};
+  live.forEach(r=>{const k=r.shop||"(chưa rõ shop)",x=byShop[k]||(byShop[k]={a:0,b:0,src:new Set()});if(r.date>=s1&&r.date<=e1)x.a+=r.rev;else if(r.date>=s0&&r.date<=e0)x.b+=r.rev;x.src.add(r.src)});
+  Object.entries(byShop).forEach(([k,x])=>{if(x.b<150)return;const c=(x.a-x.b)/x.b;if(c>-.3)return;
+    add("shop","shop:"+k,c<=-.5?"bad":"warn",`Doanh thu giảm: ${k}`,`${usd(x.a,0)} trong 7 ngày gần nhất so với ${usd(x.b,0)} 7 ngày trước (${Math.round(c*100)}%) · ${[...x.src].join("+")}`,[...x.src][0]==="POD"?"banhang":"dondrop",c)});
+  /* 2) Seller dưới KPI 40% trong tháng (chỉ tính đơn đủ số liệu, doanh thu từ $300) */
+  const bySel={};live.filter(r=>r.date.startsWith(m)&&r.full).forEach(r=>{const k=r.seller||"";if(!k)return;const x=bySel[k]||(bySel[k]={rev:0,revV:0,p:0,n:0});x.rev+=r.rev;x.revV+=r.revV;x.p+=r.profit;x.n++});
+  Object.entries(bySel).forEach(([k,x])=>{if(x.rev<300||!x.revV)return;const mg=x.p/x.revV;if(mg>=KPI_MARGIN)return;
+    add("kpi",`kpi:${m}:${k}`,mg<.3?"bad":"warn",`Seller dưới KPI: ${k}`,`${fmtM(m)}: lợi nhuận ${Math.round(mg*100)}% trên ${int(x.n)} đơn đủ số liệu (doanh thu ${usd(x.rev,0)}) – KPI cần ≥ ${KPI_MARGIN*100}%`,"kpi",mg)});
+  /* 3) Đơn cần xử lý */
+  const late=new Set(live.filter(r=>r.src==="Drop"&&!r.track&&r.date>=addDays(td,-30)&&dayDiff(r.date,td)>=3).map(r=>r.order)).size;
+  if(late)add("order","late:drop",late>=10?"bad":"warn","Đơn Drop chậm gửi",`${late} đơn quá 3 ngày chưa có mã vận đơn (tracking)`,"fulfill",late);
+  const nc=live.filter(r=>r.nocost&&r.date.startsWith(m)).length;
+  if(nc)add("order","nocost:"+m,nc>=30?"warn":"info","Đơn POD chưa có giá vốn",`${nc} đơn POD ${fmtM(m).toLowerCase()} có giá bán nhưng chưa có giá xưởng → lãi chưa tính được`,"banhang",nc);
+  let badRows=0;try{badRows=dsIssueRows(S.ds.rows||[],()=>true).filter(r=>r.issues.some(i=>i[0]==="err")).length}catch(e){}
+  if(badRows)add("order","dsbad",badRows>=20?"warn":"info","Bảng Drop nhập sai",`${badRows} dòng trong bảng đơn Drop nhân viên nhập sai/thiếu`,"dondrop",badRows);
+  /* 4) Mẫu dính thương hiệu/nhân vật bán trong 14 ngày */
+  const ip={};live.filter(r=>r.src==="POD"&&r.date>=addDays(td,-14)&&r.prod&&poIP(r.prod)).forEach(r=>{const k=r.prod.slice(0,60);ip[k]=(ip[k]||0)+1});
+  Object.entries(ip).sort((a,b)=>b[1]-a[1]).slice(0,8).forEach(([k,n])=>add("ip","ip:"+k,"bad","Mẫu có thương hiệu/nhân vật",`“${k}” – ${n} đơn trong 14 ngày. Dễ bị TikTok khoá sản phẩm hoặc shop: nên thay bằng mẫu nguyên bản`,"banhang",n));
+  /* 5) Tiền & chi phí */
+  (S.hdDoc?.die||[]).filter(x=>/tới hẹn|quá hạn/i.test(x.note||"")).forEach(x=>add("money","die:"+x.shop,"bad",`Tiền shop die quá hẹn: ${x.shop}`,`${usd(x.amt)} đã tới hẹn trả mà chưa thấy về`,"dongtien",x.amt));
+  const tr=typeof tcRows==="function"&&S.tcDoc?tcRows().filter(r=>r.month===m):[];
+  const khac=tr.filter(r=>r.dir<0&&r.cat==="Khác").reduce((a,r)=>a+tcQ(r),0);if(khac>5e6)add("money","khac:"+m,"warn","Chi chưa rõ mục đích",`${tcTr(khac)} chi trong ${fmtM(m).toLowerCase()} chưa rõ là gì (nhóm “Khác”)`,"chiphi",khac);
+  if(tr.length){const pm=prevMonth(m),cut=td.slice(8,10),sp=f=>(typeof tcRows==="function"?tcRows():[]).filter(r=>f(r.date)&&r.dir<0&&!TC_SKIP(r.cat)).reduce((a,r)=>a+tcQ(r),0);
+    const a=sp(d=>d.startsWith(m)&&d.slice(8,10)<=cut),b=sp(d=>d.startsWith(pm)&&d.slice(8,10)<=cut);
+    if(b>5e6&&a>b*1.3)add("money","spend:"+m,"warn","Chi tiêu tăng mạnh",`${fmtM(m)} đã chi ${tcTr(a)}, cao hơn ${Math.round((a/b-1)*100)}% so với cùng kỳ tháng trước (${tcTr(b)})`,"chiphi",a/b)}
+  /* 6) Công việc quá hạn */
+  const od=(V().tasks||[]).filter(x=>x.status!=="done"&&x.due&&x.due<td);
+  if(od.length)add("task","tasks:overdue",od.length>=5?"bad":"warn","Việc quá hạn",`${od.length} việc đã quá hạn: ${od.slice(0,3).map(x=>`“${esc(x.title)}” (${esc(taskOwnerName(x)||"chưa giao")})`).join(", ")}${od.length>3?"…":""}`,"congviec",od.length);
+  const ap=typeof attPendingCount==="function"?attPendingCount():0;if(ap)add("task","approve","info","Đơn chờ duyệt",`${ap} đơn xin nghỉ/chấm công đang chờ giám đốc duyệt`,"pheduyet",ap);
+  /* 7) Nguồn dữ liệu cũ hoặc lỗi */
+  if(typeof ovSrcList==="function")ovSrcList().filter(x=>x.st!=="ok").forEach(x=>add("data","src:"+x.name,x.st==="err"?"bad":x.st==="none"?"info":"warn",x.st==="err"?`Lỗi đồng bộ: ${x.name}`:x.st==="none"?`Chưa có số: ${x.name}`:`Số cũ: ${x.name}`,x.err?esc(x.err):x.at?`Lần cuối ${ovWhen(x.at)} – cần cập nhật mỗi ${x.maxDays} ngày. Cách cập nhật: ${x.how}`:`Chưa có dữ liệu. Cách cập nhật: ${x.how}`,x.tab,x.age||0));
+  return A.sort((a,b)=>AL_SEV[b.sev][2]-AL_SEV[a.sev][2])}
+/* Trạng thái giám đốc đã bấm. "Đã xử lý" ẩn 7 ngày – còn vấn đề thì hiện lại; "Hoãn" ẩn 24 giờ */
+const alSt=id=>S.alDoc?.s?.[id];
+function alSplit(A){const now=Date.now(),open=[],seen=[],hidden=[];
+  A.forEach(a=>{const st=alSt(a.id);if(st&&(st.st==="done"||st.st==="snooze")&&st.until>now)hidden.push({...a,st});else if(st?.st==="seen")seen.push({...a,st});else open.push(a)});
+  return{open,seen,hidden,active:[...open,...seen]}}
+const alCount=()=>{try{return S.staff?0:alSplit(alCompute()).open.filter(a=>a.sev!=="info").length}catch(e){return 0}};
+/* Điểm điều hành 0–100: trừ 12 điểm mỗi cảnh báo nghiêm trọng, 5 điểm mỗi cảnh báo thường (chưa xử lý) */
+const alScore=act=>Math.max(0,100-12*act.filter(a=>a.sev==="bad").length-5*act.filter(a=>a.sev==="warn").length);
+async function alSet(id,patch,a){const s={...(S.alDoc?.s||{})};s[id]={...(s[id]||{}),...patch,title:a?.title||s[id]?.title||"",at:new Date().toISOString()};
+  const log=[...(S.alDoc?.log||[])];if(patch.st==="done")log.unshift({id,title:a?.title||"",detail:a?.detail||"",note:patch.note||"",at:new Date().toISOString()});
+  const doc={s,log:log.slice(0,200),at:new Date().toISOString()};await S.db.doc("settings/alertState").set(doc);S.alDoc=doc;render()}
+function pgAlerts(){const A=alCompute(),P=alSplit(A),act=P.active,sc=alScore(act);
+  const cnt=g=>act.filter(a=>a.g===g).length,list=S.alView==="hidden"?P.hidden:S.alView==="log"?[]:act;
+  const kp=(lb,v,col,s)=>`<div class="kpi"><span class="lb">${lb}</span><span class="v" style="color:${col||"inherit"}">${v}</span><span class="s">${s||""}</span></div>`;
+  const row=a=>{const st=a.st||alSt(a.id),seen=st?.st==="seen";return`<div class="al-row" style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);${seen?"opacity:.65":""}">
+    <span class="pill ${AL_SEV[a.sev][1]}" style="white-space:nowrap;margin-top:2px">${AL_SEV[a.sev][0]}</span>
+    <div style="flex:1;min-width:0"><b>${esc(a.title)}</b><div class="small" style="margin-top:2px">${a.detail}</div>${st?.st==="snooze"||st?.st==="done"?`<div class="small muted">${st.st==="done"?"Đã xử lý":"Hoãn"} tới ${new Date(st.until).toLocaleString("vi-VN")}${st.note?` · ${esc(st.note)}`:""}</div>`:""}</div>
+    <div class="actions" style="flex-wrap:wrap;justify-content:flex-end;gap:6px">${canAct()?`
+      <a class="btn sm ghost" href="#${a.tab}">Xem</a>
+      ${!seen&&S.alView!=="hidden"?`<button class="btn sm ghost" data-act="alSeen" data-id="${esc(a.id)}">Đã xem</button>`:""}
+      ${S.alView!=="hidden"?`<button class="btn sm ghost" data-act="alSnooze" data-id="${esc(a.id)}">Hoãn 24h</button>
+      <button class="btn sm ghost" data-act="alTask" data-id="${esc(a.id)}">Giao việc</button>
+      <button class="btn sm" data-act="alDone" data-id="${esc(a.id)}">Đã xử lý</button>`:`<button class="btn sm ghost" data-act="alReopen" data-id="${esc(a.id)}">Mở lại</button>`}`:`<a class="btn sm ghost" href="#${a.tab}">Xem</a>`}</div></div>`};
+  const groups=AL_GROUPS.map(([g,lb])=>{const it=list.filter(a=>a.g===g);if(!it.length)return"";
+    return`<div class="panel" style="margin-bottom:12px"><h3 style="margin:0 0 4px;display:flex;justify-content:space-between">${lb}<span class="small muted">${it.length} cảnh báo</span></h3>${it.map(row).join("")}</div>`}).join("");
+  const log=(S.alDoc?.log||[]).slice(0,50);
+  return`<div class="sec-h"><div><h2>Cảnh báo</h2><p>Web tự tìm vấn đề từ số liệu đã có. Mỗi vấn đề chỉ một cảnh báo; khi số thay đổi, cảnh báo tự cập nhật. Đã xử lý thì ẩn 7 ngày, còn vấn đề sẽ hiện lại.</p></div>
+    <div class="actions"><div class="seg">${[["open",`Đang mở (${act.length})`],["hidden",`Đã xử lý/hoãn (${P.hidden.length})`],["log","Nhật ký xử lý"]].map(([k,l])=>`<button class="btn sm ${S.alView===k?"pri":"ghost"}" data-act="alView" data-id="${k}">${l}</button>`).join("")}</div></div></div>
+  <div class="kpis">${kp("Điểm điều hành",`${sc}<span class="small muted">/100</span>`,sc>=80?"var(--good)":sc>=50?"var(--warn)":"var(--bad)","100 = không có vấn đề")}${kp("Nghiêm trọng",act.filter(a=>a.sev==="bad").length,"var(--bad)","cần xử lý hôm nay")}${kp("Cảnh báo",act.filter(a=>a.sev==="warn").length,"var(--warn)","xử lý trong tuần")}
+    ${kp("Doanh thu giảm",cnt("shop"),"","shop giảm ≥30%/7 ngày")}${kp("Seller dưới KPI",cnt("kpi"),"","lợi nhuận <40%")}${kp("Dữ liệu cũ/lỗi",cnt("data"),"","nguồn cần cập nhật")}</div>
+  ${S.alView==="log"?`<div class="panel"><h3 style="margin:0 0 6px">Nhật ký xử lý</h3><p class="small muted" style="margin-bottom:8px">Mỗi lần bấm “Đã xử lý” và ghi lại đã làm gì. Xem lại sau 1 tháng để biết cách xử lý nào hiệu quả.</p>
+    ${alTbl([["Ngày"],["Vấn đề"],["Đã làm gì"]],log.map(x=>`<tr><td class="small" style="white-space:nowrap">${fmtD(x.at.slice(0,10))}</td><td><b>${esc(x.title)}</b><div class="small muted">${x.detail}</div></td><td class="small">${esc(x.note||"–")}</td></tr>`).join(""),"Chưa có lần xử lý nào.")}</div>`
+  :groups||`<div class="panel"><p class="small muted">${S.alView==="hidden"?"Không có cảnh báo nào đang ẩn.":"Không có vấn đề nào. 👍"}</p></div>`}
+  <p class="hint">Ngưỡng: doanh thu shop giảm ≥30% (≥50% là nghiêm trọng) với shop có từ $150/tuần · seller có doanh thu tháng từ $300 mà lợi nhuận dưới 40% (dưới 30% là nghiêm trọng) · đơn Drop quá 3 ngày chưa tracking · nguồn dữ liệu quá hạn cập nhật. Điểm điều hành: 100 trừ 12 điểm mỗi cảnh báo nghiêm trọng, 5 điểm mỗi cảnh báo.</p>`}
+const alFind=id=>alCompute().find(a=>a.id===id)||{id,title:alSt(id)?.title||""};
+Object.assign(ACT,{alView:k=>{S.alView=k;render()},
+  alSeen:id=>alSet(id,{st:"seen"},alFind(id)),
+  alSnooze:id=>alSet(id,{st:"snooze",until:Date.now()+864e5},alFind(id)),
+  alReopen:id=>alSet(id,{st:"open",until:0},alFind(id)),
+  alDone:id=>{const a=alFind(id);openForm({title:"Đã xử lý cảnh báo",sub:a.title,fields:[{k:"note",label:"Bạn đã làm gì? (lưu vào Nhật ký xử lý, có thể để trống)",type:"textarea",wide:1}],data:{},onSave:o=>alSet(id,{st:"done",until:Date.now()+7*864e5,note:String(o.note||"").trim().slice(0,300)},a)})},
+  alTask:id=>{const a=alFind(id);openForm({title:"Giao việc từ cảnh báo",sub:a.title,fields:taskFields(null),data:{status:"todo",title:a.title,priority:a.sev==="bad"?"high":"mid",due:addDays(today(),a.sev==="bad"?1:3)},
+    onSave:async o=>{const ok=await save("tasks",null,{...taskOwnerSave(o,null),doneAt:o.status==="done"?today():null,fromAlert:id});if(ok!==false)await alSet(id,{st:"seen",task:o.title},a);return ok}})}});
+
+/* ===== Bản tin giám đốc (đầu trang Tổng quan) ===== */
+function ovBrief(){if(S.staff)return"";const td=today(),y=addDays(td,-1),m=td.slice(0,7),A=alCompute(),act=alSplit(A).active,sc=alScore(act);
+  const O=alOrders().filter(r=>!r.bad),day=d=>new Set(O.filter(r=>r.date===d).map(r=>r.src+r.order)).size;
+  const yN=day(y),avg=[2,3,4,5,6,7,8].reduce((a,k)=>a+day(addDays(td,-k)),0)/7,ch=avg?(yN-avg)/avg:0;
+  const mo=O.filter(r=>r.date.startsWith(m)&&r.full),mg=alSum(mo,r=>r.revV)?alSum(mo,r=>r.profit)/alSum(mo,r=>r.revV):NaN;
+  const od=(V().tasks||[]).filter(x=>x.status!=="done"&&x.due&&x.due<td).length,top=act.filter(a=>a.sev==="bad").slice(0,3);
+  const li=(ic,h)=>`<li style="margin:6px 0;list-style:none;display:flex;gap:8px"><span>${ic}</span><span>${h}</span></li>`;
+  const G=ovGoal(m);
+  return`<div class="panel" style="margin-bottom:14px;display:flex;flex-wrap:wrap;gap:18px;align-items:center" id="ovBrief">
+    <div style="flex:1 1 150px;max-width:200px;margin:0 auto;text-align:center;cursor:pointer" data-act="ovGo" data-id="canhbao"><div class="small muted">Điểm điều hành</div>
+      <div style="font-size:44px;font-weight:800;line-height:1.1;color:${sc>=80?"var(--good)":sc>=50?"var(--warn)":"var(--bad)"}">${sc}</div><div class="small muted">/100 · ${act.length} cảnh báo</div></div>
+    <div style="flex:999 1 280px;min-width:0"><h3 style="margin:0 0 4px">Bản tin hôm nay · ${fmtD(td)}</h3><ul style="margin:0;padding:0">
+      ${top.length?li("🔴",`<b>Cần xử lý ngay:</b> ${top.map(a=>esc(a.title)).join(" · ")} <a href="#canhbao" class="small">Xem →</a>`):li("🟢","Không có vấn đề nghiêm trọng.")}
+      ${li("📦",`Hôm qua <b>${int(yN)} đơn</b> (Drop + POD), ${avg?`<b style="color:${ch>=0?"var(--good)":"var(--bad)"}">${ch>=0?"▲":"▼"}${Math.abs(Math.round(ch*100))}%</b> so với trung bình 7 ngày (${avg.toFixed(0)} đơn/ngày)`:"chưa đủ số để so sánh"}.`)}
+      ${li("💰",isFinite(mg)?`Lợi nhuận ${fmtM(m).toLowerCase()} trên đơn đủ số liệu: <b style="color:${mg>=KPI_MARGIN?"var(--good)":"var(--bad)"}">${Math.round(mg*100)}%</b> (KPI ≥ 40%).`:"Chưa đủ số liệu để tính lợi nhuận tháng.")}
+      ${G?li("🎯",G.line):li("🎯",`Chưa đặt mục tiêu ${fmtM(m).toLowerCase()}. <button class="btn sm ghost" data-act="goalEdit" data-id="${m}">Đặt mục tiêu →</button>`)}
+      ${li("📋",od?`<b>${od} việc quá hạn</b> – <a href="#congviec">xem Công việc →</a>`:"Không có việc quá hạn.")}</ul></div></div>`}
+
+/* ===== Mục tiêu tháng (giống OKR của NOVA nhưng tự so với số thật) ===== */
+function ovGoal(m){const g=S.goalDoc?.m?.[m];if(!g||!(+g.orders||+g.profit||+g.rev))return null;
+  const O=alOrders().filter(r=>!r.bad&&r.date.startsWith(m)),orders=new Set(O.map(r=>r.src+r.order)).size,rev=alSum(O,r=>r.rev),profit=alSum(O.filter(r=>r.full),r=>r.profit);
+  const[y,mo]=m.split("-").map(Number),nd=new Date(y,mo,0).getDate(),dd=m===today().slice(0,7)?Math.max(1,+today().slice(8,10)-1):nd,frac=dd/nd;
+  const it=[["Đơn",orders,+g.orders,int],["Doanh thu",rev,+g.rev,v=>usd(v,0)],["Lợi nhuận",profit,+g.profit,tcTr]].filter(x=>x[2]>0)
+    .map(([lb,a,t,f])=>{const p=a/t,pace=frac?p/frac:0;return{lb,a,t,f,p,pace,txt:`${lb} ${f(a)}/${f(t)} (${Math.round(p*100)}%)`}});
+  const behind=it.filter(x=>x.pace<.9);
+  return{it,frac,line:`Mục tiêu ${fmtM(m).toLowerCase()}: ${it.map(x=>`<b>${x.txt}</b>`).join(" · ")}${m===today().slice(0,7)?` – đã qua ${Math.round(frac*100)}% tháng${behind.length?`, <b style="color:var(--bad)">đang chậm: ${behind.map(x=>x.lb.toLowerCase()).join(", ")}</b>`:`, <b style="color:var(--good)">đúng tiến độ</b>`}`:""}. <button class="btn sm ghost" data-act="goalEdit" data-id="${m}">Sửa</button>`}}
+function ovGoalPanel(m){const G=ovGoal(m);if(S.staff)return"";
+  if(!G)return`<div class="panel" style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h3 style="margin:0">Mục tiêu ${fmtM(m).toLowerCase()}</h3><p class="small muted" style="margin:2px 0 0">Đặt số đơn, doanh thu, lợi nhuận muốn đạt – web tự so với số thật mỗi ngày và báo khi chậm tiến độ.</p></div>${canAct()?`<button class="btn pri" data-act="goalEdit" data-id="${m}">Đặt mục tiêu</button>`:""}</div>`;
+  return`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px;display:flex;justify-content:space-between">Mục tiêu ${fmtM(m).toLowerCase()}${canAct()?`<button class="btn sm ghost" data-act="goalEdit" data-id="${m}">Sửa mục tiêu</button>`:""}</h3>
+    ${G.it.map(x=>`<div style="margin:8px 0"><div style="display:flex;justify-content:space-between" class="small"><span><b>${x.lb}</b> ${x.f(x.a)} / ${x.f(x.t)}</span><span>${Math.round(x.p*100)}% · ${x.pace>=1?'<b style="color:var(--good)">vượt tiến độ</b>':x.pace>=.9?'<b style="color:var(--good)">đúng tiến độ</b>':'<b style="color:var(--bad)">chậm tiến độ</b>'}</span></div>
+      <div style="position:relative;height:10px;background:var(--line);border-radius:5px;margin-top:4px"><div style="height:10px;width:${Math.min(100,x.p*100)}%;border-radius:5px;background:${x.pace>=.9?"var(--good)":"var(--warn)"}"></div><div title="Mốc thời gian hôm nay" style="position:absolute;top:-3px;left:${Math.min(100,G.frac*100)}%;width:2px;height:16px;background:var(--ink,#333)"></div></div></div>`).join("")}
+    <p class="hint">Vạch đứng = phần tháng đã qua. Thanh vượt vạch là đúng tiến độ. Lợi nhuận chỉ tính đơn đủ số liệu (chưa trừ ads, lương, chi văn phòng).</p></div>`}
+Object.assign(ACT,{goalEdit:m=>{m=m||today().slice(0,7);const g=S.goalDoc?.m?.[m]||{};
+  openForm({title:`Mục tiêu ${fmtM(m).toLowerCase()}`,sub:"Để trống ô nào thì không theo dõi ô đó. Tính cả Drop và POD.",fields:[{k:"orders",label:"Số đơn",type:"number"},{k:"rev",label:"Doanh thu (USD)",type:"number"},{k:"profit",label:"Lợi nhuận gộp (₫)",type:"number",hint:"Ví dụ 300000000 = 300 triệu"}],data:g,
+    onSave:async o=>{const M={...(S.goalDoc?.m||{})};M[m]={orders:+o.orders||0,rev:+o.rev||0,profit:+o.profit||0};const doc={m:M,at:new Date().toISOString()};await S.db.doc("settings/goals").set(doc);S.goalDoc=doc;render()}})}});
+
+</script>
 <script type="text/plain" id="src-10-boot">
 /* 10-boot.js · Vẽ trang, điều hướng tab và kết nối kho dữ liệu (giám đốc / nhân viên). Luôn tải file này cuối cùng */
 /* ============ Render ============ */
 function renderFilters(){const fs=$("#fShop");const cur=S.shop;fs.innerHTML=`<option value="all">Tất cả shop</option>`+V().shops.map(s=>`<option value="${esc(s.id)}">${esc(s.name)}</option>`).join("");
   if(![...fs.options].some(o=>o.value===cur))S.shop="all";fs.value=S.shop;$("#fPeriod").value=S.period;
   const c=S.period==="custom";$("#fFrom").hidden=!c;$("#fTo").hidden=!c;if(c){const[f,t]=range();$("#fFrom").value=f;$("#fTo").value=t}
-  const tl=tabList();$("#tabs").innerHTML=navHtml(tl,NAV_GROUPS,{pheduyet:attPendingCount()});setPageTitle(tl)}
+  const tl=tabList();$("#tabs").innerHTML=navHtml(tl,NAV_GROUPS,{pheduyet:attPendingCount(),canhbao:typeof alCount==="function"?alCount():0});setPageTitle(tl)}
 let raf;function render(){cancelAnimationFrame(raf);raf=requestAnimationFrame(doRender)}
 function doRender(){
   if(S.staff){$(".filters").hidden=true;$("#who").textContent=S.my?`${S.my.name} · ${ROLES[S.my.role]?.name||""}`:"Cổng nhân viên";
@@ -3060,8 +3201,8 @@ function doRender(){
     const g=staffGate();$("#main").innerHTML=g||({congviec:pgTasks,chamcong:pgStaffAtt,kpi:pgStaffKPI,nop:pgStaffSubmit,sanpham:pgResearch}[S.tab]||pgTasks)();
     const drop=$("#drop");if(drop){drop.ondragover=e=>{e.preventDefault();drop.classList.add("over")};drop.ondragleave=()=>drop.classList.remove("over");drop.ondrop=e=>{e.preventDefault();drop.classList.remove("over");handleFile(e.dataTransfer.files[0])}}
     return}
-  renderFilters();const AUTO_TABS=["tongquan","dondrop","banhang","sanpham","chiphi","dongtien","caidat"];$(".filters").hidden=AUTO_TABS.includes(S.tab);
-  const pg={tongquan:()=>pgAutoOverview()+oldBox(pgOverview(),"Báo cáo từ file TikTok"),banhang:()=>pgPodOrders()+`<details class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">Sản lượng & phí theo bảng Lark FULLFILLMENT CỐC <span class="small muted">(bấm để mở)</span></summary><div style="margin-top:10px">${podPanel()}</div></details>`+oldBox(pgSales(),"Nhập file đơn TikTok"),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel()+podProfitPanel()+oldBox(pgStock(),"Sản phẩm nhập tay"):pgStock()),sanpham:pgResearch,fulfill:()=>ffAutoPanel()+oldBox(pgFulfill(),"Đối tác, ví, sự cố nhập tay"),nhaphang:pgPurch,caidat:()=>`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">Nguồn dữ liệu – phần nào tự động, phần nào chưa</h3>${ovSources()}</div>`+pgSettings(),chiphi:()=>tcExpPanel()+tcOld(pgExp(),"Chi phí nhập tay"),dongtien:()=>tcCashPanel()+tcOld(pgCash(),"Dòng tiền nhập tay"),congviec:pgTasks,kpi:pgKPI,chamcong:pgAttendance,pheduyet:pgApprovals,tainguyen:pgAssets}[S.tab]||pgAutoOverview;
+  renderFilters();const AUTO_TABS=["tongquan","canhbao","dondrop","banhang","sanpham","chiphi","dongtien","caidat"];$(".filters").hidden=AUTO_TABS.includes(S.tab);
+  const pg={canhbao:()=>pgAlerts(),tongquan:()=>pgAutoOverview()+oldBox(pgOverview(),"Báo cáo từ file TikTok"),banhang:()=>pgPodOrders()+`<details class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">Sản lượng & phí theo bảng Lark FULLFILLMENT CỐC <span class="small muted">(bấm để mở)</span></summary><div style="margin-top:10px">${podPanel()}</div></details>`+oldBox(pgSales(),"Nhập file đơn TikTok"),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel()+podProfitPanel()+oldBox(pgStock(),"Sản phẩm nhập tay"):pgStock()),sanpham:pgResearch,fulfill:()=>ffAutoPanel()+oldBox(pgFulfill(),"Đối tác, ví, sự cố nhập tay"),nhaphang:pgPurch,caidat:()=>`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">Nguồn dữ liệu – phần nào tự động, phần nào chưa</h3>${ovSources()}</div>`+pgSettings(),chiphi:()=>tcExpPanel()+tcOld(pgExp(),"Chi phí nhập tay"),dongtien:()=>tcCashPanel()+tcOld(pgCash(),"Dòng tiền nhập tay"),congviec:pgTasks,kpi:pgKPI,chamcong:pgAttendance,pheduyet:pgApprovals,tainguyen:pgAssets}[S.tab]||pgAutoOverview;
   let banner="";
   if(S.demo)banner=`<div class="banner"><span><b>Đang xem dữ liệu mẫu.</b> ${S.db?"Số liệu trên là ví dụ để bạn hình dung. Bắt đầu bằng việc thêm shop trong Cài đặt, rồi nhập file đơn hàng TikTok.":S.connecting?"Đang kết nối kho dữ liệu…":"Chưa kết nối được máy chủ dữ liệu."}</span>${S.db?'<button class="btn sm" data-act="exitDemo">Bắt đầu với dữ liệu thật</button>':""}</div>`;
   else if(S.readonly)banner=`<div class="banner"><span><b>Chế độ chỉ xem.</b> Tài khoản này không có quyền nhập số liệu.</span></div>`;
@@ -3158,6 +3299,8 @@ async function publish(){if(pubBusy){schedulePublish();return}pubBusy=true;
   db.doc("settings/podCatalog").onSnapshot(s=>{S.pcDoc=s.exists?s.data():null;if(S.tab==="banhang")render()},()=>{});
   db.doc("settings/podRev").onSnapshot(s=>{S.prDoc=s.exists?s.data():null;if(S.po?.at){S.po.rows=poMerge(S.po.fac)}if(["banhang","kho"].includes(S.tab))render()},()=>{});
   db.doc("settings/podProfit").onSnapshot(s=>{S.ppDoc=s.exists?s.data():null;if(S.tab==="kho")render()},()=>{});
+  db.doc("settings/alertState").onSnapshot(s=>{S.alDoc=s.exists?s.data():null;if(["tongquan","canhbao"].includes(S.tab))render()},()=>{});
+  db.doc("settings/goals").onSnapshot(s=>{S.goalDoc=s.exists?s.data():null;if(S.tab==="tongquan")render()},()=>{});
   db.doc("settings/tkHold").onSnapshot(s=>{S.hdDoc=s.exists?s.data():null;if(S.tab==="dongtien")render()},()=>{});
   db.doc("settings/tkPayout").onSnapshot(s=>{S.poDoc=s.exists?s.data():null;if(["chiphi","dongtien"].includes(S.tab))render()},()=>{});
   db.doc("settings/dropSheet").onSnapshot(s=>{S.dsCfgDoc=s.exists?s.data():null;if(S.tab==="dondrop")render()},()=>{});
