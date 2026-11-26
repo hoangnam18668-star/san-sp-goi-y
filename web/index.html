@@ -229,7 +229,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.26d", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.26e", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -467,7 +467,9 @@ window.APP_CONFIG = {
 /* ============ Trạng thái & tiện ích ============ */
 const TABS=[["tongquan","Tổng quan"],["canhbao","Cảnh báo"],["pheduyet","Phê duyệt"],["banhang","Đơn POD"],["dondrop","Đơn Drop"],["fulfill","Fulfillment"],["kho","Sản phẩm & Kho"],["sanpham","Săn sản phẩm"],["nhaphang","Nhập hàng"],["chiphi","Chi phí"],["dongtien","Dòng tiền"],["congviec","Công việc"],["kpi","Nhân sự & KPI"],["chamcong","Chấm công"],["tainguyen","Tài nguyên"],["caidat","Cài đặt"]];
 const isFF=()=>ST().model!=="stock";
-const tabList=()=>TABS.filter(([k])=>isFF()?k!=="nhaphang":k!=="fulfill").map(([k,l])=>[k,k==="kho"&&isFF()?"Sản phẩm & Giá vốn":l]);
+/* Trang chưa có dữ liệu thì ẩn khỏi menu cho gọn (vẫn mở được từ Cài đặt › Trang đang ẩn) */
+const tabEmpty=k=>{try{const D=V(),noStaff=!(D.staff||[]).length;return !S.showOld&&(k==="pheduyet"?noStaff&&!(D.attreq||[]).length:k==="chamcong"?noStaff&&!(D.attendance||[]).length:k==="tainguyen"?!(D.assets||[]).length:false)}catch(e){return false}};
+const tabList=()=>TABS.filter(([k])=>(isFF()?k!=="nhaphang":k!=="fulfill")&&(S.tab===k||!tabEmpty(k))).map(([k,l])=>[k,k==="kho"&&isFF()?"Sản phẩm & Giá vốn":l]);
 const ISSUE_T=["Gửi trễ / chưa gửi","Sai hàng / sai mẫu","Thiếu hàng","Hư hỏng / lỗi in","Mất hàng / thất lạc","Không có tracking","Đối tác hết hàng","Khác"];
 const ISTAT={open:["Đang xử lý","p-bad"],claim:["Đã khiếu nại đối tác","p-warn"],done:["Đã xong","p-good"]};
 const PTYPE=["Fulfillment (3PL)","In theo yêu cầu (POD)","Dropship","Khác"];
@@ -537,6 +539,15 @@ function taskOwnerId(x,staff=V().staff){if(!x)return"";if(x.ownerId&&staff.some(
 function taskOwnerName(x,staff=V().staff){const id=taskOwnerId(x,staff);return id?(staff.find(s=>s.id===id)?.name||""):(x?.owner||"")}
 const taskUnlinked=x=>!!(x?.owner||x?.ownerId)&&!taskOwnerId(x);
 let toastT;function toast(m){clearTimeout(toastT);let t=$(".toast");if(!t){t=document.createElement("div");t.className="toast";t.setAttribute("role","status");document.body.append(t)}t.textContent=m;toastT=setTimeout(()=>t.remove(),3200)}
+
+/* ===== Gọn web =====
+   lim(k): số dòng đang hiện của bảng k (mặc định 100), nút "Xem thêm" tăng 200 dòng/lần.
+   oldHas(): có dùng phần nhập tay cũ không (shop, đơn import, chi phí…). Không có → ẩn hẳn phần cũ và thanh lọc cũ. */
+S.lim={};const LIM0=100;const lim=k=>S.lim[k]||LIM0;
+const moreBtn=(k,shown,total)=>total>shown?`<div style="text-align:center;margin:10px 0"><button class="btn" data-act="limMore" data-id="${k}">Xem thêm (${shown}/${total} dòng)</button></div>`:"";
+const OLD_COLS=["shops","products","sales","expenses","purchases","cash","partners","ffbills","ffissues","reports","assets"];
+const oldHas=()=>{try{return S.showOld||OLD_COLS.some(c=>(V()[c]||[]).length)}catch(e){return true}};
+try{S.showOld=localStorage.getItem("nexaShowOld")==="1"}catch(e){}
 
 </script>
 <script type="text/plain" id="src-02-demo">
@@ -1386,6 +1397,7 @@ const ACT={
   impWrite:()=>writeImport(),
   exitDemo:()=>{S.demo=false;S.demoOff=true;render()},
 };
+Object.assign(ACT,{limMore:k=>{S.lim[k]=lim(k)+200;render()},showOld:()=>{S.showOld=!S.showOld;try{localStorage.setItem("nexaShowOld",S.showOld?"1":"0")}catch(e){}render()}});
 document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b||b.tagName==="SELECT")return;const f=ACT[b.dataset.act];if(!f)return;
   if(S.demo&&!["impCancel","impBack","impProcess","exitDemo","kpiOpen"].includes(b.dataset.act)&&!S.db){toast("Chưa kết nối được máy chủ dữ liệu. Kiểm tra mạng rồi tải lại trang.");return}
   if(S.demo&&!["impCancel","impBack","impProcess","impWrite","exitDemo","kpiOpen"].includes(b.dataset.act)){S.demo=false;S.demoOff=true;render()}
@@ -1729,7 +1741,7 @@ function pgResearch(){
       <input class="inp" id="rfQ" placeholder="Tìm tên, shop, ngành… (Enter)" value="${esc(F.q)}" style="width:240px">
     </div>
     <div class="tbl"><table><thead><tr><th>Sản phẩm / shop</th><th class="n">Giá</th><th class="n">Bán ${cfg.days} ngày</th><th class="n">Tăng trưởng</th><th class="n">Video</th><th class="n">KOC</th><th>Nhãn</th><th>Trạng thái</th><th></th></tr></thead>
-      <tbody>${list.map(row).join("")||`<tr><td colspan="9" class="empty">${all.length?"Không có mục nào khớp bộ lọc.":'Chưa theo dõi sản phẩm nào. Bấm "+ Sản phẩm" khi thấy sản phẩm hay trên TikTok, hoặc "Nhập file Kalodata".'}</td></tr>`}</tbody></table></div>
+      <tbody>${list.slice(0,lim("rs")).map(row).join("")||`<tr><td colspan="9" class="empty">${all.length?"Không có mục nào khớp bộ lọc.":'Chưa theo dõi sản phẩm nào. Bấm "+ Sản phẩm" khi thấy sản phẩm hay trên TikTok, hoặc "Nhập file Kalodata".'}</td></tr>`}</tbody></table></div>${moreBtn("rs",Math.min(lim("rs"),list.length),list.length)}
     <p class="hint">Tăng trưởng = số bán lần cập nhật mới nhất so với lần trước đó (cách nhau ít nhất ${Math.min(3,Math.max(1,Math.round(+cfg.days||7)))} ngày), hoặc lấy thẳng cột tăng trưởng trong file Kalodata nếu có. Bấm tên sản phẩm (có dấu ↗) để mở trang gốc; ảnh lấy từ cột ảnh trong file hoặc ô "Link ảnh" khi thêm tay.</p></div>
   ${S.staff?"":rsCfgPanel(cfg)}`}
 
@@ -2325,7 +2337,7 @@ function dsCheckView(base,inP){const all=dsIssueRows(base,inP),nErr=all.filter(r
     </tbody></table></div>
     <div class="chips" style="margin-top:14px">${[...Object.entries(DS_CK).map(([k,l])=>[k,l,k==="all"?all.length:k==="err"?nErr:nWarn]),...[...types].sort((a,b)=>b[1]-a[1]).map(([k,n])=>[k,DS_CODE[k]||k,n])].map(([k,l,n])=>`<button class="chip ${(S.dsCk||"all")===k?"on":""}" data-act="dsCk" data-id="${esc(k)}">${esc(l)} <b>${n}</b></button>`).join("")}</div>
     <div class="tbl"><table><thead><tr><th class="n">Dòng</th><th>Shop</th><th>Phụ trách</th><th>Mã đơn</th><th>Ngày</th><th>Vấn đề</th></tr></thead><tbody>
-    ${list.slice(0,500).map(r=>`<tr><td class="n">${(S.ds.src>1?esc(r.src)+" · ":"")+r.line}</td><td class="small">${esc(r.shop||"—")}</td><td class="small">${esc(dsOwner(r.shop))||'<span class="muted">—</span>'}</td><td class="small">${esc(r.order||"—")}</td><td class="small">${r.date?fmtD(r.date):"—"}</td>
+    ${list.slice(0,lim("dsi")).map(r=>`<tr><td class="n">${(S.ds.src>1?esc(r.src)+" · ":"")+r.line}</td><td class="small">${esc(r.shop||"—")}</td><td class="small">${esc(dsOwner(r.shop))||'<span class="muted">—</span>'}</td><td class="small">${esc(r.order||"—")}</td><td class="small">${r.date?fmtD(r.date):"—"}</td>
       <td>${r.issues.map(([lv,t])=>`<div><span class="pill ${lv==="err"?"p-bad":"p-warn"}">${lv==="err"?"Lỗi":"Xem lại"}</span> <span class="small">${esc(t)}</span></div>`).join("")}</td></tr>`).join("")||'<tr><td colspan="6" class="empty">Không có dòng nào có vấn đề. Bảng đang được làm đúng 👍</td></tr>'}
     </tbody></table></div>${list.length>500?`<p class="hint">Đang hiện 500/${list.length} dòng.</p>`:""}
     <p class="hint">"Dòng" là số dòng trong Google Sheets để nhân viên tìm và sửa. Sửa xong trên Sheets, bấm Làm mới là web kiểm tra lại. Gán người phụ trách cho từng shop để biết ai làm sai.</p>`}
@@ -2363,8 +2375,8 @@ function pgDrop(){const links=dsLinks(),cfg=dsCfg();if(links.length&&!S.ds.at&&!
   ${S.dsView==="days"?dsGroupTable(byDay,"Ngày","dsPickDay"):S.dsView==="sellers"?`<div class="actions" style="margin-top:10px"><button class="btn" data-act="dsOwners">Gán seller cho shop</button></div>${dsGroupTable(bySeller,"Seller","dsPickSeller")}`:S.dsView==="check"?`<div class="actions" style="margin-top:10px"><button class="btn" data-act="dsOwners">Gán người phụ trách shop</button><button class="btn" data-act="dsCkExport">Xuất Excel danh sách lỗi</button></div>${dsCheckView(base,inP)}`:S.dsView==="shops"?dsGroupTable(byShop,"Shop","dsPickShop"):`<div class="chips">${[["all","Tất cả"],["bad","Hoàn / huỷ"],["notrack","Thiếu tracking"],["pend","Chưa nhập vốn"],...stList.filter(s=>!dsBad(s)).map(s=>[s,s])].map(([k,l])=>{const n=k==="all"?base.length:k==="bad"?base.filter(r=>r.bad).length:k==="notrack"?base.filter(r=>!r.bad&&!r.track).length:k==="pend"?base.filter(r=>r.pend).length:base.filter(r=>r.status===k).length;return`<button class="chip ${S.dsSt===k?"on":""}" data-act="dsSt" data-id="${esc(k)}">${esc(l)} <b>${n}</b></button>`}).join("")}</div>
     <div class="actions"><input class="inp" id="dsQ" placeholder="Tìm mã đơn, sản phẩm, tracking… (Enter)" value="${esc(S.dsQ)}" style="max-width:320px"></div>
     <div class="tbl"><table><thead><tr><th>Ngày</th><th>Shop</th><th>Mã đơn</th><th>Sản phẩm / phân loại</th><th class="n">SL</th><th class="n">Vốn $</th><th class="n">Doanh thu $</th><th class="n">Lợi nhuận</th><th class="n">% lãi</th><th>Trạng thái</th><th>Tracking</th></tr></thead><tbody>
-    ${list.slice(0,500).map(r=>`<tr><td>${fmtD(r.date)}</td><td class="small">${esc(r.shop)}</td><td class="small">${esc(r.order)}</td><td class="small">${r.url?`<a href="${esc(r.url)}" target="_blank" rel="noopener">Mở sản phẩm ↗</a>`:esc(r.prod)}${r.note?`<span class="sub">${esc(r.note)}</span>`:""}</td><td class="n">${r.qty}</td><td class="n">${r.cost?usd(r.cost):"–"}</td><td class="n">${r.rev?usd(r.rev):"–"}</td><td class="n ${r.profit<0?"dn":""}">${vnd(r.profit)}${r.pend?'<span class="sub">tạm – chưa nhập vốn</span>':""}</td><td class="n">${r.bad?"–":mgPill(mgOf(r.profit,r.revV))}</td><td>${dsPill(r)}</td><td class="small">${esc(r.track)||"—"}</td></tr>`).join("")||'<tr><td colspan="10" class="empty">Không có đơn phù hợp.</td></tr>'}
-    </tbody></table></div>${list.length>500?`<p class="hint">Đang hiện 500/${list.length} dòng, lọc theo shop để xem hết.</p>`:""}`}
+    ${list.slice(0,lim("dso")).map(r=>`<tr><td>${fmtD(r.date)}</td><td class="small">${esc(r.shop)}</td><td class="small">${esc(r.order)}</td><td class="small">${r.url?`<a href="${esc(r.url)}" target="_blank" rel="noopener">Mở sản phẩm ↗</a>`:esc(r.prod)}${r.note?`<span class="sub">${esc(r.note)}</span>`:""}</td><td class="n">${r.qty}</td><td class="n">${r.cost?usd(r.cost):"–"}</td><td class="n">${r.rev?usd(r.rev):"–"}</td><td class="n ${r.profit<0?"dn":""}">${vnd(r.profit)}${r.pend?'<span class="sub">tạm – chưa nhập vốn</span>':""}</td><td class="n">${r.bad?"–":mgPill(mgOf(r.profit,r.revV))}</td><td>${dsPill(r)}</td><td class="small">${esc(r.track)||"—"}</td></tr>`).join("")||'<tr><td colspan="10" class="empty">Không có đơn phù hợp.</td></tr>'}
+    </tbody></table></div>${moreBtn("dso",Math.min(lim("dso"),list.length),list.length)}`}
     <p class="hint">Vốn ₫ và Lợi nhuận lấy đúng cột \"Cost\" và \"Lợi nhuận\" trong bảng (khớp số tổng trên Sheets). Dòng nào trống thì web tự tính: Doanh thu $ × tỉ giá về − Vốn $ × tỉ giá mua (mặc định ${cfg.rateCost.toLocaleString("vi-VN")} / ${cfg.rateRev.toLocaleString("vi-VN")}). Đơn chưa nhập vốn đang tính lãi tạm = toàn bộ doanh thu, sẽ giảm khi nhập vốn.</p></div>`}
 Object.assign(ACT,{
   dsNow:()=>dsLoad(true),
@@ -2898,13 +2910,11 @@ function pgAutoOverview(){alNeedDrop();if(!S.tcDoc&&typeof tcLarkSync==="functio
     <h3 style="margin:16px 0 6px">Số đơn mỗi ngày <span class="small muted">(<span style="color:var(--accent)">■</span> Drop <span style="color:var(--good)">■</span> POD)</span></h3>
     <div style="display:flex;align-items:flex-end;gap:3px;height:120px;border-bottom:1px solid var(--line);padding-top:6px">${days.map(([d,a,b])=>`<div title="${fmtD(d)}: ${a} Drop + ${b} POD" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:${b/mx*100}%;background:var(--good);border-radius:2px 2px 0 0"></div><div style="height:${a/mx*100}%;background:var(--accent)"></div></div>`).join("")}</div>
     <div class="small muted" style="display:flex;justify-content:space-between;margin-top:2px"><span>${days[0]?fmtD(days[0][0]):""}</span><span>${days.length?fmtD(days[days.length-1][0]):""}</span></div></div>
-  <div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px;display:flex;justify-content:space-between">Cần chú ý <a href="#canhbao" class="small">Tất cả ${AL.length} cảnh báo →</a></h3>
-    ${AL.length?AL.slice(0,6).map(a=>`<div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer" data-act="ovGo" data-id="canhbao"><span class="pill ${AL_SEV[a.sev][1]}" style="white-space:nowrap">${AL_SEV[a.sev][0]}</span><span style="flex:1"><b>${esc(a.title)}</b> <span class="small muted">${a.detail}</span></span></div>`).join(""):'<p class="small muted">Không có việc gì cần chú ý. 👍</p>'}</div>
-  <div class="panel"><h3 style="margin:0 0 4px">Nguồn dữ liệu – phần nào tự động, phần nào chưa</h3><p class="small muted" style="margin-bottom:8px">“Cũ – cần cập nhật” nghĩa là quá lâu chưa có số mới.</p>${ovSources()}</div>`}
+  <p class="small muted" style="text-align:center">Tình trạng các nguồn dữ liệu: xem ở <a href="#caidat">Cài đặt</a> · Mọi vấn đề cần xử lý: xem ở <a href="#canhbao">Cảnh báo</a>.</p>`}
 Object.assign(ACT,{ovGo:t=>{location.hash=t}});
 document.addEventListener("change",e=>{if(e.target.id==="ovM"){S.ovM=e.target.value;render()}});
 /* Phần nhập tay cũ: thu gọn vào một ô bấm mở, để mỗi trang chỉ còn phần tự động ở trên */
-const oldBox=(html,lb)=>`<details class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">${lb} <span class="small muted">(phần nhập tay cũ – ít dùng, bấm để mở)</span></summary><div style="margin-top:10px">${html}</div></details>`;
+const oldBox=(html,lb)=>!oldHas()?"":`<details class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">${lb} <span class="small muted">(phần nhập tay cũ – ít dùng, bấm để mở)</span></summary><div style="margin-top:10px">${html}</div></details>`;
 /* ===== POD – lãi theo mẫu & theo shop =====
    Giá bán: Cotik (tài khoản POD) – cột "Earn payout" từng đơn (tiền TikTok trả sau phí nhãn).
    Giá vốn: bảng xưởng "POD-US-Nguyễn Ngọc Hiếu" – Base Cost + Shipping Cost từng đơn (ghép theo mã đơn TikTok).
@@ -3044,8 +3054,8 @@ function pgPodOrders(){if(S.staff)return"";const all=poRowsAll(),P=poPeriod(all)
     <div class="chips" style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0">${chips.map(([k,l,n])=>`<button class="chip ${st===k?"on":""}" data-act="poSt" data-id="${esc(k)}">${esc(l)} <b>${n}</b></button>`).join("")}</div>
     <div class="actions"><input class="inp" id="poQ" placeholder="Tìm mã đơn, sản phẩm, SKU, tracking… (Enter)" value="${esc(S.poQ)}" style="max-width:320px"></div>
     <div class="tbl"><table><thead><tr><th>Ngày</th><th>Shop</th><th>Mã đơn</th><th>Sản phẩm · SKU</th><th class="n">SL</th><th class="n">Vốn $</th><th class="n">Doanh thu $</th><th class="n">Lợi nhuận</th><th class="n">% lãi</th><th>Trạng thái</th><th>Tracking</th></tr></thead><tbody>
-    ${list.slice(0,500).map(r=>`<tr><td>${fmtD(r.date)}</td><td class="small">${esc(r.shop)}</td><td class="small">${esc(r.order)}</td><td class="small">${esc(r.prod.slice(0,70))}${poIP(r.prod)?' <span class="pill p-bad">⚠ thương hiệu</span>':""}<span class="sub">${r.sku?"SKU "+esc(r.sku):"chưa có trong bảng xưởng"}</span></td><td class="n">${r.qty}</td><td class="n">${r.cost?usd(r.cost)+(r.cgSrc?`<span class="sub">giá xưởng ${esc(r.cgSrc)}</span>`:r.estCat?`<span class="sub">${esc(r.estCat)}</span>`:r.estDay?'<span class="sub">ước tính: phí ngày ÷ số đơn</span>':r.estCost?'<span class="sub">theo bảng giá SKU</span>':""):"–"}</td><td class="n">${r.rev?usd(r.rev):r.norev?'<span class="muted small">chưa có</span>':"–"}</td><td class="n ${r.profit<0?"dn":""}">${r.rev||r.cost?vnd(r.profit):"–"}</td><td class="n">${r.bad||!r.rev?"–":mgPill(mgOf(r.profit,r.revV))}</td><td>${dsPill(r)}</td><td class="small">${esc(r.track)||"–"}</td></tr>`).join("")||'<tr><td colspan="11" class="empty">Không có đơn phù hợp.</td></tr>'}
-    </tbody></table></div>${list.length>500?`<p class="hint">Đang hiện 500/${list.length} dòng.</p>`:""}`}
+    ${list.slice(0,lim("poo")).map(r=>`<tr><td>${fmtD(r.date)}</td><td class="small">${esc(r.shop)}</td><td class="small">${esc(r.order)}</td><td class="small">${esc(r.prod.slice(0,70))}${poIP(r.prod)?' <span class="pill p-bad">⚠ thương hiệu</span>':""}<span class="sub">${r.sku?"SKU "+esc(r.sku):"chưa có trong bảng xưởng"}</span></td><td class="n">${r.qty}</td><td class="n">${r.cost?usd(r.cost)+(r.cgSrc?`<span class="sub">giá xưởng ${esc(r.cgSrc)}</span>`:r.estCat?`<span class="sub">${esc(r.estCat)}</span>`:r.estDay?'<span class="sub">ước tính: phí ngày ÷ số đơn</span>':r.estCost?'<span class="sub">theo bảng giá SKU</span>':""):"–"}</td><td class="n">${r.rev?usd(r.rev):r.norev?'<span class="muted small">chưa có</span>':"–"}</td><td class="n ${r.profit<0?"dn":""}">${r.rev||r.cost?vnd(r.profit):"–"}</td><td class="n">${r.bad||!r.rev?"–":mgPill(mgOf(r.profit,r.revV))}</td><td>${dsPill(r)}</td><td class="small">${esc(r.track)||"–"}</td></tr>`).join("")||'<tr><td colspan="11" class="empty">Không có đơn phù hợp.</td></tr>'}
+    </tbody></table></div>${moreBtn("poo",Math.min(lim("poo"),list.length),list.length)}`}
     <p class="hint">Lợi nhuận gộp = tiền TikTok trả (Earn payout, đã trừ phí nhãn) − (Base Cost + Shipping Cost của xưởng), quy ra ₫ theo tỉ giá mua đô gần nhất. Chưa trừ quảng cáo, lương, mua shop. “Chưa có giá bán” = đơn có ở xưởng nhưng chưa thấy trên Cotik POD (shop khác hoặc chưa cập nhật). “Chưa có giá vốn” = đơn Cotik chưa có trong bảng xưởng (đi xưởng khác). Dép: giá thật từng đơn theo mã đơn ở CompassUp/Lenful. Quần áo: ưu tiên giá theo báo giá xưởng (loại áo + size, đã gồm ship Ship By TikTok); không khớp thì như dép/thảm: giá vốn ước tính = phí fulfill cả ngày ÷ số đơn hôm đó (bảng Lark FULFILLMENT QUẦN ÁO & DÉP & THẢM).</p></div>`}
 setInterval(()=>{if(S.tab==="banhang"&&!document.hidden&&Date.now()-S.po.at>10*60e3)poLoad(true)},30e3);
 Object.assign(ACT,{poFull:()=>{S.poFull=!S.poFull;S.poSt="all";render()},poNow:()=>poLoad(true),poView:v=>{S.poView=v;render()},poSt:v=>{S.poSt=v;render()},
@@ -3078,9 +3088,9 @@ function alCompute(){if(S.staff)return[];const A=[],td=today(),m=td.slice(0,7),a
   Object.entries(byShop).forEach(([k,x])=>{if(x.b<150)return;const c=(x.a-x.b)/x.b;if(c>-.3)return;
     add("shop","shop:"+k,c<=-.5?"bad":"warn",`Doanh thu giảm: ${k}`,`${usd(x.a,0)} trong 7 ngày gần nhất có số (đến ${fmtD(last[[...x.src][0]]||addDays(td,-1)).slice(0,5)}) so với ${usd(x.b,0)} 7 ngày trước đó (${Math.round(c*100)}%) · ${[...x.src].join("+")}`,[...x.src][0]==="POD"?"banhang":"dondrop",c)});
   /* 2) Seller dưới KPI 40% trong tháng (chỉ tính đơn đủ số liệu, doanh thu từ $300) */
-  const bySel={};live.filter(r=>r.date.startsWith(m)&&r.full).forEach(r=>{const k=r.seller||"";if(!k)return;const x=bySel[k]||(bySel[k]={rev:0,revV:0,p:0,n:0});x.rev+=r.rev;x.revV+=r.revV;x.p+=r.profit;x.n++});
+  const bySel={};live.filter(r=>r.date.startsWith(m)&&r.full).forEach(r=>{const k=r.seller||"";if(!k)return;const x=bySel[k]||(bySel[k]={rev:0,revV:0,p:0,n:0,src:r.src});x.rev+=r.rev;x.revV+=r.revV;x.p+=r.profit;x.n++});
   Object.entries(bySel).forEach(([k,x])=>{if(x.rev<300||!x.revV)return;const mg=x.p/x.revV;if(mg>=KPI_MARGIN)return;
-    add("kpi",`kpi:${m}:${k}`,mg<.3?"bad":"warn",`Seller dưới KPI: ${k}`,`${fmtM(m)}: lợi nhuận ${Math.round(mg*100)}% trên ${int(x.n)} đơn đủ số liệu (doanh thu ${usd(x.rev,0)}) – KPI cần ≥ ${KPI_MARGIN*100}%`,"kpi",mg)});
+    add("kpi",`kpi:${m}:${k}`,mg<.3?"bad":"warn",`Seller dưới KPI: ${k}`,`${fmtM(m)}: lợi nhuận ${Math.round(mg*100)}% trên ${int(x.n)} đơn đủ số liệu (doanh thu ${usd(x.rev,0)}) – KPI cần ≥ ${KPI_MARGIN*100}%`,x.src==="Drop"?"dondrop":"banhang",mg)});
   /* 3) Đơn cần xử lý */
   const late=new Set(live.filter(r=>r.src==="Drop"&&!r.track&&r.date>=addDays(td,-30)&&dayDiff(r.date,td)>=3).map(r=>r.order)).size;
   if(late)add("order","late:drop",late>=10?"bad":"warn","Đơn Drop chậm gửi",`${late} đơn quá 3 ngày chưa có mã vận đơn (tracking)`,"fulfill",late);
@@ -3204,8 +3214,12 @@ function doRender(){
     const g=staffGate();$("#main").innerHTML=g||({congviec:pgTasks,chamcong:pgStaffAtt,kpi:pgStaffKPI,nop:pgStaffSubmit,sanpham:pgResearch}[S.tab]||pgTasks)();
     const drop=$("#drop");if(drop){drop.ondragover=e=>{e.preventDefault();drop.classList.add("over")};drop.ondragleave=()=>drop.classList.remove("over");drop.ondrop=e=>{e.preventDefault();drop.classList.remove("over");handleFile(e.dataTransfer.files[0])}}
     return}
-  renderFilters();const AUTO_TABS=["tongquan","canhbao","dondrop","banhang","sanpham","chiphi","dongtien","caidat"];$(".filters").hidden=AUTO_TABS.includes(S.tab);
-  const pg={canhbao:()=>pgAlerts(),tongquan:()=>pgAutoOverview()+oldBox(pgOverview(),"Báo cáo từ file TikTok"),banhang:()=>pgPodOrders()+`<details class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">Sản lượng & phí theo bảng Lark FULLFILLMENT CỐC <span class="small muted">(bấm để mở)</span></summary><div style="margin-top:10px">${podPanel()}</div></details>`+oldBox(pgSales(),"Nhập file đơn TikTok"),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel()+podProfitPanel()+oldBox(pgStock(),"Sản phẩm nhập tay"):pgStock()),sanpham:pgResearch,fulfill:()=>ffAutoPanel()+oldBox(pgFulfill(),"Đối tác, ví, sự cố nhập tay"),nhaphang:pgPurch,caidat:()=>`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">Nguồn dữ liệu – phần nào tự động, phần nào chưa</h3>${ovSources()}</div>`+pgSettings(),chiphi:()=>tcExpPanel()+tcOld(pgExp(),"Chi phí nhập tay"),dongtien:()=>tcCashPanel()+tcOld(pgCash(),"Dòng tiền nhập tay"),congviec:pgTasks,kpi:pgKPI,chamcong:pgAttendance,pheduyet:pgApprovals,tainguyen:pgAssets}[S.tab]||pgAutoOverview;
+  renderFilters();const AUTO_TABS=["tongquan","canhbao","dondrop","banhang","sanpham","chiphi","dongtien","caidat"];$(".filters").hidden=AUTO_TABS.includes(S.tab)||!oldHas();
+  const pg={canhbao:()=>pgAlerts(),tongquan:()=>pgAutoOverview()+oldBox(pgOverview(),"Báo cáo từ file TikTok"),banhang:()=>pgPodOrders()+`<details class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">Sản lượng & phí theo bảng Lark FULLFILLMENT CỐC <span class="small muted">(bấm để mở)</span></summary><div style="margin-top:10px">${podPanel()}</div></details>`+oldBox(pgSales(),"Nhập file đơn TikTok"),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel()+podProfitPanel()+oldBox(pgStock(),"Sản phẩm nhập tay"):pgStock()),sanpham:pgResearch,fulfill:()=>ffAutoPanel()+oldBox(pgFulfill(),"Đối tác, ví, sự cố nhập tay"),nhaphang:pgPurch,caidat:()=>`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">Nguồn dữ liệu – phần nào tự động, phần nào chưa</h3>${ovSources()}</div>
+    <div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 6px">Gọn giao diện</h3>
+      <p class="small">${(()=>{const h=TABS.filter(([k])=>tabEmpty(k));return h.length?`Trang đang ẩn vì chưa có dữ liệu: ${h.map(([k,l])=>`<a href="#${k}">${esc(l)}</a>`).join(" · ")}. Khi có dữ liệu (thêm nhân sự, chấm công, tài nguyên) trang sẽ tự hiện lại.`:"Không có trang nào đang ẩn."})()}</p>
+      <p class="small">Phần nhập tay cũ (nhập file TikTok, chi phí/shop/đối tác nhập tay, thanh lọc kỳ cũ) ${oldHas()&&!S.showOld?"đang hiện vì còn dữ liệu cũ.":S.showOld?"đang bật hiện.":"đang ẩn vì không dùng – số liệu đã tự động."}</p>
+      ${OLD_COLS.some(c=>(V()[c]||[]).length)?"":`<button class="btn sm" data-act="showOld">${S.showOld?"Ẩn lại phần nhập tay cũ":"Hiện phần nhập tay cũ"}</button>`}</div>`+pgSettings(),chiphi:()=>tcExpPanel()+tcOld(pgExp(),"Chi phí nhập tay"),dongtien:()=>tcCashPanel()+tcOld(pgCash(),"Dòng tiền nhập tay"),congviec:pgTasks,kpi:pgKPI,chamcong:pgAttendance,pheduyet:pgApprovals,tainguyen:pgAssets}[S.tab]||pgAutoOverview;
   let banner="";
   if(S.demo)banner=`<div class="banner"><span><b>Đang xem dữ liệu mẫu.</b> ${S.db?"Số liệu trên là ví dụ để bạn hình dung. Bắt đầu bằng việc thêm shop trong Cài đặt, rồi nhập file đơn hàng TikTok.":S.connecting?"Đang kết nối kho dữ liệu…":"Chưa kết nối được máy chủ dữ liệu."}</span>${S.db?'<button class="btn sm" data-act="exitDemo">Bắt đầu với dữ liệu thật</button>':""}</div>`;
   else if(S.readonly)banner=`<div class="banner"><span><b>Chế độ chỉ xem.</b> Tài khoản này không có quyền nhập số liệu.</span></div>`;
