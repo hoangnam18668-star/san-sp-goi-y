@@ -229,7 +229,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.26b", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.26c", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -3073,10 +3073,10 @@ function alOrders(){const out=[],staff=V().staff||[];
 function alCompute(){if(S.staff)return[];const A=[],td=today(),m=td.slice(0,7),add=(g,id,sev,title,detail,tab,num)=>A.push({g,id,sev,title,detail,tab,num});
   const O=alOrders(),live=O.filter(r=>!r.bad);
   /* 1) Doanh thu shop 7 ngày gần nhất so với 7 ngày trước đó (đến hôm qua, vì Cotik cập nhật buổi tối) */
-  const e1=addDays(td,-1),s1=addDays(td,-7),e0=addDays(td,-8),s0=addDays(td,-14),byShop={};
-  live.forEach(r=>{const k=r.shop||"(chưa rõ shop)",x=byShop[k]||(byShop[k]={a:0,b:0,src:new Set()});if(r.date>=s1&&r.date<=e1)x.a+=r.rev;else if(r.date>=s0&&r.date<=e0)x.b+=r.rev;x.src.add(r.src)});
+  const last={};live.forEach(r=>{if(r.rev>0&&r.date<td&&(!last[r.src]||r.date>last[r.src]))last[r.src]=r.date});const byShop={};
+  live.forEach(r=>{const e1=last[r.src]||addDays(td,-1),s1=addDays(e1,-6),e0=addDays(e1,-7),s0=addDays(e1,-13),k=r.shop||"(chưa rõ shop)",x=byShop[k]||(byShop[k]={a:0,b:0,src:new Set()});if(r.date>=s1&&r.date<=e1)x.a+=r.rev;else if(r.date>=s0&&r.date<=e0)x.b+=r.rev;x.src.add(r.src)});
   Object.entries(byShop).forEach(([k,x])=>{if(x.b<150)return;const c=(x.a-x.b)/x.b;if(c>-.3)return;
-    add("shop","shop:"+k,c<=-.5?"bad":"warn",`Doanh thu giảm: ${k}`,`${usd(x.a,0)} trong 7 ngày gần nhất so với ${usd(x.b,0)} 7 ngày trước (${Math.round(c*100)}%) · ${[...x.src].join("+")}`,[...x.src][0]==="POD"?"banhang":"dondrop",c)});
+    add("shop","shop:"+k,c<=-.5?"bad":"warn",`Doanh thu giảm: ${k}`,`${usd(x.a,0)} trong 7 ngày gần nhất có số (đến ${fmtD(last[[...x.src][0]]||addDays(td,-1)).slice(0,5)}) so với ${usd(x.b,0)} 7 ngày trước đó (${Math.round(c*100)}%) · ${[...x.src].join("+")}`,[...x.src][0]==="POD"?"banhang":"dondrop",c)});
   /* 2) Seller dưới KPI 40% trong tháng (chỉ tính đơn đủ số liệu, doanh thu từ $300) */
   const bySel={};live.filter(r=>r.date.startsWith(m)&&r.full).forEach(r=>{const k=r.seller||"";if(!k)return;const x=bySel[k]||(bySel[k]={rev:0,revV:0,p:0,n:0});x.rev+=r.rev;x.revV+=r.revV;x.p+=r.profit;x.n++});
   Object.entries(bySel).forEach(([k,x])=>{if(x.rev<300||!x.revV)return;const mg=x.p/x.revV;if(mg>=KPI_MARGIN)return;
@@ -3090,7 +3090,8 @@ function alCompute(){if(S.staff)return[];const A=[],td=today(),m=td.slice(0,7),a
   if(badRows)add("order","dsbad",badRows>=20?"warn":"info","Bảng Drop nhập sai",`${badRows} dòng trong bảng đơn Drop nhân viên nhập sai/thiếu`,"dondrop",badRows);
   /* 4) Mẫu dính thương hiệu/nhân vật bán trong 14 ngày */
   const ip={};live.filter(r=>r.src==="POD"&&r.date>=addDays(td,-14)&&r.prod&&poIP(r.prod)).forEach(r=>{const k=r.prod.slice(0,60);ip[k]=(ip[k]||0)+1});
-  Object.entries(ip).sort((a,b)=>b[1]-a[1]).slice(0,8).forEach(([k,n])=>add("ip","ip:"+k,"bad","Mẫu có thương hiệu/nhân vật",`“${k}” – ${n} đơn trong 14 ngày. Dễ bị TikTok khoá sản phẩm hoặc shop: nên thay bằng mẫu nguyên bản`,"banhang",n));
+  const ipL=Object.entries(ip).sort((a,b)=>b[1]-a[1]),ipN=ipL.reduce((a,x)=>a+x[1],0);
+  if(ipL.length)add("ip","ip","bad",`${ipL.length} mẫu có thương hiệu/nhân vật đang bán`,`${ipN} đơn trong 14 ngày. Dễ bị TikTok khoá sản phẩm hoặc die shop – nên thay bằng mẫu nguyên bản:<ul style="margin:4px 0 0 18px;padding:0">${ipL.slice(0,8).map(([k,n])=>`<li>${esc(k)} – <b>${n} đơn</b></li>`).join("")}${ipL.length>8?`<li>… và ${ipL.length-8} mẫu khác</li>`:""}</ul>`,"banhang",ipN);
   /* 5) Tiền & chi phí */
   (S.hdDoc?.die||[]).filter(x=>/tới hẹn|quá hạn/i.test(x.note||"")).forEach(x=>add("money","die:"+x.shop,"bad",`Tiền shop die quá hẹn: ${x.shop}`,`${usd(x.amt)} đã tới hẹn trả mà chưa thấy về`,"dongtien",x.amt));
   const tr=typeof tcRows==="function"&&S.tcDoc?tcRows().filter(r=>r.month===m):[];
@@ -3112,7 +3113,7 @@ function alSplit(A){const now=Date.now(),open=[],seen=[],hidden=[];
   return{open,seen,hidden,active:[...open,...seen]}}
 const alCount=()=>{try{return S.staff?0:alSplit(alCompute()).open.filter(a=>a.sev!=="info").length}catch(e){return 0}};
 /* Điểm điều hành 0–100: trừ 12 điểm mỗi cảnh báo nghiêm trọng, 5 điểm mỗi cảnh báo thường (chưa xử lý) */
-const alScore=act=>Math.max(0,100-12*act.filter(a=>a.sev==="bad").length-5*act.filter(a=>a.sev==="warn").length);
+const alScore=act=>{const g={};act.forEach(a=>{g[a.g]=(g[a.g]||0)+(a.sev==="bad"?12:a.sev==="warn"?5:0)});return Math.max(0,Math.round(100-Object.values(g).reduce((s,v)=>s+Math.min(25,v),0)))};
 async function alSet(id,patch,a){const s={...(S.alDoc?.s||{})};s[id]={...(s[id]||{}),...patch,title:a?.title||s[id]?.title||"",at:new Date().toISOString()};
   const log=[...(S.alDoc?.log||[])];if(patch.st==="done")log.unshift({id,title:a?.title||"",detail:a?.detail||"",note:patch.note||"",at:new Date().toISOString()});
   const doc={s,log:log.slice(0,200),at:new Date().toISOString()};await S.db.doc("settings/alertState").set(doc);S.alDoc=doc;render()}
@@ -3138,7 +3139,7 @@ function pgAlerts(){if(typeof alNeedDrop==="function")alNeedDrop();const A=alCom
   ${S.alView==="log"?`<div class="panel"><h3 style="margin:0 0 6px">Nhật ký xử lý</h3><p class="small muted" style="margin-bottom:8px">Mỗi lần bấm “Đã xử lý” và ghi lại đã làm gì. Xem lại sau 1 tháng để biết cách xử lý nào hiệu quả.</p>
     ${alTbl([["Ngày"],["Vấn đề"],["Đã làm gì"]],log.map(x=>`<tr><td class="small" style="white-space:nowrap">${fmtD(x.at.slice(0,10))}</td><td><b>${esc(x.title)}</b><div class="small muted">${x.detail}</div></td><td class="small">${esc(x.note||"–")}</td></tr>`).join(""),"Chưa có lần xử lý nào.")}</div>`
   :groups||`<div class="panel"><p class="small muted">${S.alView==="hidden"?"Không có cảnh báo nào đang ẩn.":"Không có vấn đề nào. 👍"}</p></div>`}
-  <p class="hint">Ngưỡng: doanh thu shop giảm ≥30% (≥50% là nghiêm trọng) với shop có từ $150/tuần · seller có doanh thu tháng từ $300 mà lợi nhuận dưới 40% (dưới 30% là nghiêm trọng) · đơn Drop quá 3 ngày chưa tracking · nguồn dữ liệu quá hạn cập nhật. Điểm điều hành: 100 trừ 12 điểm mỗi cảnh báo nghiêm trọng, 5 điểm mỗi cảnh báo.</p>`}
+  <p class="hint">Ngưỡng: doanh thu shop giảm ≥30% (≥50% là nghiêm trọng) với shop có từ $150/tuần · seller có doanh thu tháng từ $300 mà lợi nhuận dưới 40% (dưới 30% là nghiêm trọng) · đơn Drop quá 3 ngày chưa tracking · nguồn dữ liệu quá hạn cập nhật. Điểm điều hành: 100 trừ 12 điểm mỗi cảnh báo nghiêm trọng, 5 điểm mỗi cảnh báo; mỗi nhóm trừ tối đa 25 điểm.</p>`}
 const alFind=id=>alCompute().find(a=>a.id===id)||{id,title:alSt(id)?.title||""};
 Object.assign(ACT,{alView:k=>{S.alView=k;render()},
   alSeen:id=>alSet(id,{st:"seen"},alFind(id)),
@@ -3303,7 +3304,7 @@ async function publish(){if(pubBusy){schedulePublish();return}pubBusy=true;
   db.doc("settings/goals").onSnapshot(s=>{S.goalDoc=s.exists?s.data():null;if(S.tab==="tongquan")render()},()=>{});
   db.doc("settings/tkHold").onSnapshot(s=>{S.hdDoc=s.exists?s.data():null;if(S.tab==="dongtien")render()},()=>{});
   db.doc("settings/tkPayout").onSnapshot(s=>{S.poDoc=s.exists?s.data():null;if(["chiphi","dongtien"].includes(S.tab))render()},()=>{});
-  db.doc("settings/dropSheet").onSnapshot(s=>{S.dsCfgDoc=s.exists?s.data():null;if(S.tab==="dondrop")render()},()=>{});
+  db.doc("settings/dropSheet").onSnapshot(s=>{S.dsCfgDoc=s.exists?s.data():null;if(["dondrop","tongquan","canhbao","fulfill","kho"].includes(S.tab))render()},()=>{});
   S.rsSub=1;db.doc("settings/research").onSnapshot(s=>{S.rsCfgDoc=s.exists?s.data():null;schedulePublish();render()},()=>{});
   db.doc("settings/backup").onSnapshot(s=>{S.backupDoc=s.exists?s.data():null;render()},()=>{});
   db.collection("my").onSnapshot(s=>{S.myDocs=Object.fromEntries(s.docs.map(d=>[d.id,d.data()]))},()=>{});
