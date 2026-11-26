@@ -159,7 +159,7 @@
   "niche": "thảm cửa in tên",
   "note": "16.819 lượt bán",
   "firstSeen": "2026-11-14",
-  "lastSeen": "2026-11-21"
+  "lastSeen": "2026-11-26"
  },
  {
   "name": "Mibao",
@@ -177,7 +177,7 @@
   "niche": "dép clog đế rời",
   "note": "22,6K đánh giá",
   "firstSeen": "2026-11-14",
-  "lastSeen": "2026-11-14"
+  "lastSeen": "2026-11-26"
  },
  {
   "name": "BEDELITE",
@@ -663,7 +663,7 @@
   "niche": "dép lông in tên",
   "note": "shop mới",
   "firstSeen": "2026-11-21",
-  "lastSeen": "2026-11-25"
+  "lastSeen": "2026-11-26"
  },
  {
   "name": "ShockTagon",
@@ -690,7 +690,7 @@
   "niche": "túi in tên",
   "note": "387/tuần",
   "firstSeen": "2026-11-22",
-  "lastSeen": "2026-11-22"
+  "lastSeen": "2026-11-26"
  },
  {
   "name": "BowlesDesigns",
@@ -717,7 +717,7 @@
   "niche": "thảm bồn tắm",
   "note": "+33%",
   "firstSeen": "2026-11-22",
-  "lastSeen": "2026-11-22"
+  "lastSeen": "2026-11-26"
  },
  {
   "name": "MontVoo",
@@ -735,7 +735,7 @@
   "niche": "thảm bồn tắm",
   "note": "shop mới",
   "firstSeen": "2026-11-22",
-  "lastSeen": "2026-11-22"
+  "lastSeen": "2026-11-26"
  },
  {
   "name": "VeraCosy",
@@ -925,5 +925,68 @@
   "note": "+100%",
   "firstSeen": "2026-11-25",
   "lastSeen": "2026-11-25"
+ },
+ {
+  "name": "Muvunyi",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/4368655772",
+  "niche": "váy gốc thông in tên",
+  "note": "2,7K tổng",
+  "firstSeen": "2026-11-26",
+  "lastSeen": "2026-11-26"
+ },
+ {
+  "name": "Fangsha",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/4392416080",
+  "niche": "tất Noel nhung",
+  "note": "132/tuần",
+  "firstSeen": "2026-11-26",
+  "lastSeen": "2026-11-26"
+ },
+ {
+  "name": "BRNDGiftsUS",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/4543073049",
+  "niche": "ornament chuông",
+  "note": "433/tuần",
+  "firstSeen": "2026-11-26",
+  "lastSeen": "2026-11-26"
+ },
+ {
+  "name": "MightyThreadsCo",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/4379518255",
+  "niche": "áo ngủ gia đình",
+  "note": "45/tuần",
+  "firstSeen": "2026-11-26",
+  "lastSeen": "2026-11-26"
+ },
+ {
+  "name": "RockTheKazbahDesign",
+  "platform": "Etsy",
+  "link": "https://etsyhunt.com/product-detail/600172528",
+  "niche": "dép babouche",
+  "note": "9,7K tổng",
+  "firstSeen": "2026-11-26",
+  "lastSeen": "2026-11-26"
+ },
+ {
+  "name": "TEESHLY",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B0CFJVMD5R",
+  "niche": "thảm bồn tắm",
+  "note": "10K/tháng",
+  "firstSeen": "2026-11-26",
+  "lastSeen": "2026-11-26"
+ },
+ {
+  "name": "IRON °FLASK",
+  "platform": "Amazon",
+  "link": "https://www.amazon.com/dp/B07N2F3JXP",
+  "niche": "bình 40oz",
+  "note": "2K/tháng",
+  "firstSeen": "2026-11-26",
+  "lastSeen": "2026-11-26"
  }
 ]
