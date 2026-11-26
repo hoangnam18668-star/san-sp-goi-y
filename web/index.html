@@ -229,7 +229,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.26a", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.26b", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -2510,7 +2510,7 @@ document.addEventListener("change",async e=>{const t=e.target;if(t.id==="podPer"
 const alK=(ic,bg,fg,lb,v,s)=>`<div class="kpi"><div class="stat">${icon(ic,bg,fg)}<div><span class="lb">${lb}</span><div class="v">${v}</div><span class="s">${s}</span></div></div></div>`;
 const alTbl=(cols,body,empty)=>`<div class="tbl"><table><thead><tr>${cols.map(([l,n])=>`<th${n?' class="n"':""}>${l}</th>`).join("")}</tr></thead><tbody>${body||`<tr><td colspan="${cols.length}" class="empty">${empty||"Không có dữ liệu trong khoảng này."}</td></tr>`}</tbody></table></div>`;
 /* Bảng Drop chỉ được tải khi mở trang Đơn Drop – các trang khác cũng tự tải khi cần */
-function alNeedDrop(){if(!S.staff&&dsLinks().length&&!S.ds.at&&!S.ds.busy)setTimeout(()=>dsLoad(true).then(()=>{if(["fulfill","kho","tongquan","caidat"].includes(S.tab))render()}),0)}
+function alNeedDrop(){if(!S.staff&&dsLinks().length&&!S.ds.at&&!S.ds.busy)setTimeout(()=>dsLoad(true).then(()=>{if(["fulfill","kho","tongquan","caidat","canhbao"].includes(S.tab))render()}),0)}
 setInterval(()=>{if(["fulfill","kho"].includes(S.tab)&&!document.hidden&&dsLinks().length&&Date.now()-S.ds.at>10*60e3)dsLoad(true).then(()=>render())},30e3);
 const alDays=d=>Math.round((toD(today())-toD(d))/864e5);
 const alSrc=()=>{const at=S.ds.at?new Date(S.ds.at):null,pa=S.podDoc?.at?new Date(S.podDoc.at):null,t=x=>`${pad(x.getHours())}:${pad(x.getMinutes())} ${fmtD(ymd(x))}`;
@@ -2980,7 +2980,7 @@ async function poLoad(force){if(S.staff||S.po.busy)return;if(!force&&Date.now()-
     if(r.ok&&!/^\s*</.test(t)){const price={};poCsv(t).forEach((c,i)=>{if(i&&c[0]&&poNum(c[1]))price[String(c[0]).trim()]=poNum(c[1])});
       for(const x of Object.values(fac))if(!x.cost&&price[x.sku]){x.cost=price[x.sku]*x.qty;x.est=true}}}catch(e){}
   const onWeb=/pages\.dev$|^localhost$|^127\./.test(location.hostname),cloth=onWeb?await poClothLoad():null,len=onWeb?await poLenfulLoad():null;
-  S.po={rows:[],fac,cloth:cloth||S.po.cloth||{},len:len||S.po.len||{},lErr:S.po.lErr,lAt:S.po.lAt,at:Date.now(),busy:false,err:errs.join(" · ")+(S.po.cErr?` · Bảng dép/áo: ${S.po.cErr}`:"")};S.po.rows=poMerge(fac);if(["banhang","tongquan"].includes(S.tab))render()}
+  S.po={rows:[],fac,cloth:cloth||S.po.cloth||{},len:len||S.po.len||{},lErr:S.po.lErr,lAt:S.po.lAt,at:Date.now(),busy:false,err:errs.join(" · ")+(S.po.cErr?` · Bảng dép/áo: ${S.po.cErr}`:"")};S.po.rows=poMerge(fac);if(["banhang","tongquan","canhbao"].includes(S.tab))render()}
 function poMerge(fac){const R=S.prDoc||{},shops=R.shops||[],prods=R.prods||[],o=R.o||{},fx=typeof tcFxMap==="function"&&S.tcDoc?tcFxMap()._def:26600,out=[];
   const ids=new Set([...Object.keys(o),...Object.keys(fac)]);
   for(const id of ids){const c=o[id]?String(o[id]).split("|"):null,f=fac[id];
@@ -3116,7 +3116,7 @@ const alScore=act=>Math.max(0,100-12*act.filter(a=>a.sev==="bad").length-5*act.f
 async function alSet(id,patch,a){const s={...(S.alDoc?.s||{})};s[id]={...(s[id]||{}),...patch,title:a?.title||s[id]?.title||"",at:new Date().toISOString()};
   const log=[...(S.alDoc?.log||[])];if(patch.st==="done")log.unshift({id,title:a?.title||"",detail:a?.detail||"",note:patch.note||"",at:new Date().toISOString()});
   const doc={s,log:log.slice(0,200),at:new Date().toISOString()};await S.db.doc("settings/alertState").set(doc);S.alDoc=doc;render()}
-function pgAlerts(){const A=alCompute(),P=alSplit(A),act=P.active,sc=alScore(act);
+function pgAlerts(){if(typeof alNeedDrop==="function")alNeedDrop();const A=alCompute(),P=alSplit(A),act=P.active,sc=alScore(act);
   const cnt=g=>act.filter(a=>a.g===g).length,list=S.alView==="hidden"?P.hidden:S.alView==="log"?[]:act;
   const kp=(lb,v,col,s)=>`<div class="kpi"><span class="lb">${lb}</span><span class="v" style="color:${col||"inherit"}">${v}</span><span class="s">${s||""}</span></div>`;
   const row=a=>{const st=a.st||alSt(a.id),seen=st?.st==="seen";return`<div class="al-row" style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);${seen?"opacity:.65":""}">
@@ -3297,7 +3297,7 @@ async function publish(){if(pubBusy){schedulePublish();return}pubBusy=true;
   db.doc("settings/thuChi").onSnapshot(s=>{S.tcDoc=s.exists?s.data():null;if(["chiphi","dongtien"].includes(S.tab))render()},()=>{});
   db.doc("settings/podClog").onSnapshot(s=>{S.cgDoc=s.exists?s.data():null;if(S.tab==="banhang")render()},()=>{});
   db.doc("settings/podCatalog").onSnapshot(s=>{S.pcDoc=s.exists?s.data():null;if(S.tab==="banhang")render()},()=>{});
-  db.doc("settings/podRev").onSnapshot(s=>{S.prDoc=s.exists?s.data():null;if(S.po?.at){S.po.rows=poMerge(S.po.fac)}if(["banhang","kho"].includes(S.tab))render()},()=>{});
+  db.doc("settings/podRev").onSnapshot(s=>{S.prDoc=s.exists?s.data():null;if(S.po?.at){S.po.rows=poMerge(S.po.fac)}if(["banhang","kho","canhbao","tongquan"].includes(S.tab))render()},()=>{});
   db.doc("settings/podProfit").onSnapshot(s=>{S.ppDoc=s.exists?s.data():null;if(S.tab==="kho")render()},()=>{});
   db.doc("settings/alertState").onSnapshot(s=>{S.alDoc=s.exists?s.data():null;if(["tongquan","canhbao"].includes(S.tab))render()},()=>{});
   db.doc("settings/goals").onSnapshot(s=>{S.goalDoc=s.exists?s.data():null;if(S.tab==="tongquan")render()},()=>{});
