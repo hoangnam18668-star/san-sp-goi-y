@@ -229,7 +229,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.26c", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.26d", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -3152,7 +3152,9 @@ Object.assign(ACT,{alView:k=>{S.alView=k;render()},
 /* ===== Bản tin giám đốc (đầu trang Tổng quan) ===== */
 function ovBrief(){if(S.staff)return"";const td=today(),y=addDays(td,-1),m=td.slice(0,7),A=alCompute(),act=alSplit(A).active,sc=alScore(act);
   const O=alOrders().filter(r=>!r.bad),day=d=>new Set(O.filter(r=>r.date===d).map(r=>r.src+r.order)).size;
-  const yN=day(y),avg=[2,3,4,5,6,7,8].reduce((a,k)=>a+day(addDays(td,-k)),0)/7,ch=avg?(yN-avg)/avg:0;
+  /* Ngày gần nhất có đủ số: Cotik POD được đọc buổi tối, nên nếu lần đọc cuối là hôm qua thì lấy ngày trước đó */
+  const pAt=S.prDoc?.at?ymd(new Date(S.prDoc.at)):"",ref=pAt&&addDays(pAt,-1)<y?addDays(pAt,-1):y;
+  const yN=day(ref),avg=[1,2,3,4,5,6,7].reduce((a,k)=>a+day(addDays(ref,-k)),0)/7,ch=avg?(yN-avg)/avg:0;
   const mo=O.filter(r=>r.date.startsWith(m)&&r.full),mg=alSum(mo,r=>r.revV)?alSum(mo,r=>r.profit)/alSum(mo,r=>r.revV):NaN;
   const od=(V().tasks||[]).filter(x=>x.status!=="done"&&x.due&&x.due<td).length,top=act.filter(a=>a.sev==="bad").slice(0,3);
   const li=(ic,h)=>`<li style="margin:6px 0;list-style:none;display:flex;gap:8px"><span>${ic}</span><span>${h}</span></li>`;
@@ -3162,7 +3164,7 @@ function ovBrief(){if(S.staff)return"";const td=today(),y=addDays(td,-1),m=td.sl
       <div style="font-size:44px;font-weight:800;line-height:1.1;color:${sc>=80?"var(--good)":sc>=50?"var(--warn)":"var(--bad)"}">${sc}</div><div class="small muted">/100 · ${act.length} cảnh báo</div></div>
     <div style="flex:999 1 280px;min-width:0"><h3 style="margin:0 0 4px">Bản tin hôm nay · ${fmtD(td)}</h3><ul style="margin:0;padding:0">
       ${top.length?li("🔴",`<b>Cần xử lý ngay:</b> ${top.map(a=>esc(a.title)).join(" · ")} <a href="#canhbao" class="small">Xem →</a>`):li("🟢","Không có vấn đề nghiêm trọng.")}
-      ${li("📦",`Hôm qua <b>${int(yN)} đơn</b> (Drop + POD), ${avg?`<b style="color:${ch>=0?"var(--good)":"var(--bad)"}">${ch>=0?"▲":"▼"}${Math.abs(Math.round(ch*100))}%</b> so với trung bình 7 ngày (${avg.toFixed(0)} đơn/ngày)`:"chưa đủ số để so sánh"}.`)}
+      ${li("📦",`${ref===y?"Hôm qua":"Ngày "+fmtD(ref).slice(0,5)} <b>${int(yN)} đơn</b> (Drop + POD), ${avg?`<b style="color:${ch>=0?"var(--good)":"var(--bad)"}">${ch>=0?"▲":"▼"}${Math.abs(Math.round(ch*100))}%</b> so với trung bình 7 ngày trước đó (${avg.toFixed(0)} đơn/ngày)`:"chưa đủ số để so sánh"}${ref!==y?` <span class="small muted">(Cotik POD mới cập nhật đến ${fmtD(pAt).slice(0,5)})</span>`:""}.`)}
       ${li("💰",isFinite(mg)?`Lợi nhuận ${fmtM(m).toLowerCase()} trên đơn đủ số liệu: <b style="color:${mg>=KPI_MARGIN?"var(--good)":"var(--bad)"}">${Math.round(mg*100)}%</b> (KPI ≥ 40%).`:"Chưa đủ số liệu để tính lợi nhuận tháng.")}
       ${G?li("🎯",G.line):li("🎯",`Chưa đặt mục tiêu ${fmtM(m).toLowerCase()}. <button class="btn sm ghost" data-act="goalEdit" data-id="${m}">Đặt mục tiêu →</button>`)}
       ${li("📋",od?`<b>${od} việc quá hạn</b> – <a href="#congviec">xem Công việc →</a>`:"Không có việc quá hạn.")}</ul></div></div>`}
