@@ -267,7 +267,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.27g", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.27h", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -3171,7 +3171,7 @@ const alSum=(rows,f)=>rows.reduce((a,r)=>a+(+f(r)||0),0);
 function alOrders(){const out=[],staff=V().staff||[];
   for(const r of S.ds.rows||[]){const id=dsSellerId(r.shop);out.push({src:"Drop",date:r.date,shop:r.shop,order:r.order,seller:id?(staff.find(x=>x.id===id)?.name||""):"",rev:+r.rev||0,revV:+r.revV||0,profit:+r.profit||0,full:!r.pend,bad:!!r.bad,track:r.track})}
   const po=typeof poRowsAll==="function"&&S.prDoc?poRowsAll():[];
-  for(const r of po)out.push({src:"POD",date:r.date,shop:r.shop,order:r.order,seller:poSellerOf(r.shop),rev:r.rev,revV:r.revV,profit:r.profit,full:!r.pend&&!r.nocost&&!r.norev,bad:r.bad,prod:r.prod,nocost:r.rev>0&&r.nocost});
+  for(const r of po)out.push({src:"POD",date:r.date,shop:r.shop,order:r.order,seller:poSellerOf(r.shop),rev:r.rev,revV:r.revV,profit:r.profit,full:!r.pend&&!r.nocost&&!r.norev,bad:r.bad,prod:r.prod,track:r.track||(/Đang giao|Đã giao|Hoàn tất/.test(r.status||"")?"cotik":""),nocost:r.rev>0&&r.nocost});
   return out}
 function alCompute(){if(S.staff)return[];const A=[],td=today(),m=td.slice(0,7),add=(g,id,sev,title,detail,tab,num)=>A.push({g,id,sev,title,detail,tab,num});
   const O=alOrders(),live=O.filter(r=>!r.bad);
