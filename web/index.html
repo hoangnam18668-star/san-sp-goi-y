@@ -267,7 +267,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.27i", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.27j", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -280,7 +280,7 @@ window.APP_CONFIG = {
   const cfg = window.APP_CONFIG || {};
   const $id = id => document.getElementById(id);
   const ready = cfg.supabaseUrl && cfg.supabaseAnonKey && !/DIEN_|YOUR_/.test(cfg.supabaseUrl + cfg.supabaseAnonKey);
-  const APP_SCRIPTS = ["01-config", "02-demo", "03-calc", "04-data", "05-pages", "06-kpi", "07-actions", "08-import", "09-staff", "11-backup", "12-web", "13-research", "14-attendance", "15-shell", "16-dropsheet", "17-podlark", "18-autolink", "19-thuchi", "20-overview", "21-podorders", "22-alerts", "23-media", "24-hub", "25-ffpod", "10-boot"];
+  const APP_SCRIPTS = ["01-config", "02-demo", "03-calc", "04-data", "05-pages", "06-kpi", "07-actions", "08-import", "09-staff", "11-backup", "12-web", "13-research", "14-attendance", "15-shell", "16-dropsheet", "17-podlark", "18-autolink", "19-thuchi", "20-overview", "21-podorders", "22-alerts", "23-media", "24-hub", "25-ffpod", "26-ffdrop", "10-boot"];
 
   /* ---------- Kho dữ liệu ---------- */
   function makeDb(sb) {
@@ -3667,6 +3667,71 @@ if(typeof alCompute==="function"){const _alc=alCompute;alCompute=function(){cons
   }catch(e){}return A.sort((a,b)=>AL_SEV[b.sev][2]-AL_SEV[a.sev][2])}}
 
 </script>
+<script type="text/plain" id="src-26-ffdrop">
+/* 26-ffdrop.js · Điều phối đi đơn Drop (mua hộ SHEIN…) – cùng kiểu với POD: mỗi dòng đơn trong bảng Drop rơi vào 1 ô.
+   Chờ mua → Đã mua, chờ tracking → Có tracking → Đã giao; bắt lỗi: Thiếu link mua, Chậm tracking, Huỷ nhưng đã mua, Mua lỗ.
+   Chỉ đọc bảng Drop (không có thông tin khách). Việc THANH TOÁN trên SHEIN luôn do người bấm. */
+S.ffMode="pod";S.fd={b:"buy",q:"",who:""};
+const FD_B=[["buy","Chờ mua","p-warn","Chưa nhập vốn và chưa có tracking → chưa mua. Nên mua trong ngày để kịp hạn gửi 3 ngày của TikTok."],
+  ["nolink","Thiếu thông tin mua","p-bad","Cột Link sản phẩm trống – người mua không biết mua mẫu nào, màu/size nào."],
+  ["wait","Đã mua – chờ tracking","p-acc","Đã nhập vốn, chưa có tracking. Sau 3 ngày chưa có sẽ chuyển sang Chậm tracking."],
+  ["late","Chậm tracking ≥3 ngày","p-bad","Đã mua ≥3 ngày vẫn chưa có tracking – kiểm tra đơn SHEIN, dễ bị TikTok phạt giao trễ."],
+  ["cancel","Huỷ nhưng đã mua","p-bad","Khách huỷ/hoàn trên TikTok nhưng đơn đã mua (có vốn) – huỷ hoặc yêu cầu hoàn tiền bên SHEIN, ghi “đã hoàn” vào Note."],
+  ["loss","Mua lỗ","p-warn","Vốn cao hơn tiền TikTok trả – kiểm tra giá trước khi mua tiếp sản phẩm này."],
+  ["ship","Đã có tracking","p-mute","Đã có tracking, đang giao."],["done","Đã giao","p-mute","Trạng thái đã giao."]];
+function fdCompute(){if(S.staff)return null;alNeedDrop();const t=today(),from=addDays(t,-30),out=[];
+  for(const r of S.ds.rows||[]){if(r.date<from)continue;const age=dayDiff(r.date,t),n=dsNorm(r.status),note=dsNorm(r.note),who=dsOwner(r.shop)||"";let b;
+    if(r.bad){if(r.cost>0&&!/hoan|refund|huy shein|da huy|cancel/.test(note))b="cancel";else continue}
+    else if(!r.cost&&!r.track)b=String(r.prod||"").trim()?"buy":"nolink";
+    else if(!r.track)b=age>=3?"late":"wait";
+    else b=/deliver|da giao/.test(n)?"done":"ship";
+    const loss=!r.bad&&r.cost>0&&r.rev>0&&r.profit<0;
+    out.push({...r,b,age,who,loss,over:b==="buy"&&age>=1||b==="nolink"})}
+  return out.sort((a,b)=>b.over-a.over||a.date.localeCompare(b.date))}
+function ffDropPanel(){const L=fdCompute();if(!L)return"";if(!S.ds.at)return`<div class="panel"><p class="small muted">${S.ds.busy?"Đang đọc bảng Drop…":dsLinks().length?"Chưa đọc được bảng Drop.":"Chưa kết nối bảng đơn Drop – vào tab Đơn Drop để dán link."}</p></div>`;
+  const inB=(x,k)=>k==="loss"?x.loss:x.b===k,cnt=k=>L.filter(x=>inB(x,k)).length,b=S.fd.b,info=FD_B.find(x=>x[0]===b)||FD_B[0],q=S.fd.q.toLowerCase();
+  let list=L.filter(x=>inB(x,b)&&(!q||[x.order,x.prod,x.shop,x.who].join(" ").toLowerCase().includes(q)));if(S.fd.who)list=list.filter(x=>x.who===S.fd.who);
+  const whos=[...new Set(L.filter(x=>inB(x,b)).map(x=>x.who).filter(Boolean))],warn=cnt("nolink")+cnt("late")+cnt("cancel"),buyOver=L.filter(x=>x.b==="buy"&&x.age>=1).length;
+  const chip=([k,lb,cl])=>{const n=cnt(k);if(!n&&!["buy","wait"].includes(k)&&k!==b)return"";return`<button class="btn sm ${b===k?"pri":"ghost"}" data-act="fdB" data-id="${k}">${lb} <span class="pill ${cl}" style="margin-left:4px">${n}</span></button>`};
+  /* Danh sách mua gộp theo link (cùng sản phẩm nhiều đơn → mua 1 lần nhiều cái) */
+  const grp=b==="buy"?Object.values(list.reduce((a,x)=>{const k=x.url||x.prod;const g=a[k]||(a[k]={url:x.url,prod:x.prod,img:x.img,qty:0,n:0,orders:[],old:0});g.qty+=x.qty||1;g.n++;g.orders.push(x.order);g.old=Math.max(g.old,x.age);return a},{})).sort((a,b)=>b.old-a.old||b.qty-a.qty):[];
+  const rows=list.slice(0,lim("fdl")).map(x=>`<tr${x.over?' style="background:color-mix(in srgb,var(--bad) 7%,transparent)"':""}><td class="small">${fmtD(x.date).slice(0,5)}<div class="muted">${x.age} ngày</div></td>
+    <td class="small"><b>${esc(x.order)}</b><div class="muted">${esc(x.shop)}${x.who?" · "+esc(x.who):""}</div></td>
+    <td class="small">${x.url?`<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.prod.replace(/^https?:\/\/(www\.)?/,"").slice(0,60))} ↗</a>`:esc(String(x.prod).slice(0,80))||'<span class="muted">(trống)</span>'}</td>
+    <td class="n">${int(x.qty||1)}</td><td class="n">${usd(x.rev||0)}</td><td class="n">${x.cost?usd(x.cost):"–"}${x.loss?' <span class="pill p-warn">lỗ</span>':""}</td><td class="small">${esc(x.status)}${x.track?`<div class="muted">${esc(x.track)}</div>`:""}</td><td class="small">${esc(x.note||"")}</td></tr>`).join("");
+  return`<div class="panel" style="margin-bottom:14px"><div class="sec-h"><div><h3 style="margin:0">Điều phối đi đơn Drop <span class="small muted">· 30 ngày · bảng Drop đọc lúc ${new Date(S.ds.at).toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"})}</span></h3>
+      <p class="small muted" style="margin:2px 0 0">${cnt("buy")?`<b>${cnt("buy")}</b> dòng chờ mua${buyOver?` (<b style="color:var(--bad)">${buyOver} quá 1 ngày</b>)`:""}`:"Không còn đơn chờ mua"}${warn?` · <b style="color:var(--bad)">${warn} dòng cần xử lý gấp</b>`:""}</p></div>
+      <div class="actions"><button class="btn sm ghost" data-act="fdReload">Đọc lại bảng Drop</button></div></div>
+    <div class="ff-flow small muted">Đơn TikTok vào bảng Drop → <b>Chờ mua</b> → mua trên SHEIN, nhập vốn → <b>Chờ tracking</b> → nhập tracking (TikTok) → <b>Đang giao</b> → <b>Đã giao</b></div>
+    <div class="actions" style="flex-wrap:wrap;gap:6px;margin:8px 0">${FD_B.map(chip).join("")}</div><p class="hint" style="margin:4px 0 8px">${info[3]}</p>
+    <div class="actions" style="flex-wrap:wrap;gap:6px;margin-bottom:6px"><input class="inp" id="fdQ" placeholder="Tìm mã đơn / sản phẩm (Enter)" value="${esc(S.fd.q)}" style="width:230px">
+      ${whos.length>1?`<select class="inp" id="fdWho" style="width:auto"><option value="">Mọi seller</option>${whos.map(w=>`<option ${S.fd.who===w?"selected":""}>${esc(w)}</option>`).join("")}</select>`:""}
+      ${b==="buy"&&list.length?`<button class="btn sm pri" data-act="fdCsv">⬇ Danh sách cần mua (${grp.length} sản phẩm · ${int(grp.reduce((a,g)=>a+g.qty,0))} cái)</button>`:""}</div>
+    ${b==="buy"&&grp.length?`<details open style="margin-bottom:8px"><summary class="small" style="cursor:pointer"><b>Gộp theo sản phẩm</b> – cùng link mua chung 1 lần</summary><div class="tbl"><table><thead><tr><th>Sản phẩm</th><th class="n">Số cái</th><th class="n">Số đơn</th><th class="n">Đơn cũ nhất</th></tr></thead><tbody>
+      ${grp.slice(0,30).map(g=>`<tr><td class="small">${g.url?`<a href="${esc(g.url)}" target="_blank" rel="noopener">${esc(g.prod.replace(/^https?:\/\/(www\.)?/,"").slice(0,70))} ↗</a>`:esc(g.prod.slice(0,80))}</td><td class="n"><b>${int(g.qty)}</b></td><td class="n">${g.n}</td><td class="n" style="color:${g.old>=1?"var(--bad)":"inherit"}">${g.old} ngày</td></tr>`).join("")}</tbody></table></div></details>`:""}
+    <div class="tbl"><table><thead><tr><th>Ngày</th><th>Mã đơn / Shop</th><th>Sản phẩm</th><th class="n">SL</th><th class="n">TikTok trả</th><th class="n">Vốn</th><th>Trạng thái</th><th>Note</th></tr></thead><tbody>${rows||'<tr><td colspan="8" class="muted">Không có dòng nào ở ô này.</td></tr>'}</tbody></table></div>${moreBtn("fdl",Math.min(lim("fdl"),list.length),list.length)}
+    <p class="hint">Sửa trên bảng Google Sheets Drop (nhập vốn khi đã mua, nhập tracking khi có) – web đọc lại mỗi 10 phút. Thanh toán trên SHEIN luôn do người mua bấm xác nhận.</p></div>`}
+const ffModeBar=()=>S.staff?"":`<div class="actions" style="gap:6px;margin-bottom:8px"><button class="btn sm ${S.ffMode==="pod"?"pri":"ghost"}" data-act="ffMode" data-id="pod">Đi đơn POD${fdBadge("pod")}</button><button class="btn sm ${S.ffMode==="drop"?"pri":"ghost"}" data-act="ffMode" data-id="drop">Đi đơn Drop${fdBadge("drop")}</button></div>`;
+function fdBadge(k){try{if(k==="drop"){const L=fdCompute()||[];const n=L.filter(x=>["buy","nolink","late","cancel"].includes(x.b)).length;return n?` <span class="pill p-warn" style="margin-left:4px">${n}</span>`:""}
+  const L=ffCompute()||[];const n=L.filter(x=>["map","design","label","ready","dup","cancel","late"].includes(x.b)).length;return n?` <span class="pill p-warn" style="margin-left:4px">${n}</span>`:""}catch(e){return""}}
+function ffPanel(){return ffModeBar()+(S.ffMode==="drop"?ffDropPanel():ffPodPanel())}
+Object.assign(ACT,{ffMode:k=>{S.ffMode=k;render()},fdB:k=>{S.fd.b=k;S.fd.who="";S.lim.fdl=0;render()},fdReload:()=>{dsLoad(true).then(()=>render());toast("Đang đọc lại bảng Drop…")},
+  fdCsv:async()=>{const L=(fdCompute()||[]).filter(x=>x.b==="buy"&&(!S.fd.who||x.who===S.fd.who));const g={};L.forEach(x=>{const k=x.url||x.prod;const e=g[k]||(g[k]={url:x.url,prod:x.prod,qty:0,orders:[],shops:new Set(),who:new Set(),old:0});e.qty+=x.qty||1;e.orders.push(x.order);e.shops.add(x.shop);if(x.who)e.who.add(x.who);e.old=Math.max(e.old,x.age)});
+    const rows=[["Link mua","Sản phẩm","Số cái","Mã đơn TikTok","Shop","Seller","Đơn cũ nhất (ngày)"],...Object.values(g).sort((a,b)=>b.old-a.old).map(e=>[e.url,e.url?"":e.prod,e.qty,e.orders.join(" "),[...e.shops].join(" "),[...e.who].join(" "),e.old])];
+    if(await ffDownload(`can-mua-drop-${today()}.csv`,ffCsv(rows)))toast(`Đã tải danh sách ${rows.length-1} sản phẩm cần mua.`)}});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target?.id==="fdQ"){S.fd.q=e.target.value;render()}});
+document.addEventListener("change",e=>{if(e.target?.id==="fdWho"){S.fd.who=e.target.value;render()}});
+/* Cảnh báo Drop thêm vào trang Cảnh báo */
+if(typeof alCompute==="function"){const _alc2=alCompute;alCompute=function(){const A=_alc2();try{const L=fdCompute();if(!L||!S.ds.at)return A;
+  const add=(id,sev,title,detail)=>A.push({g:"order",id,sev,title,detail,tab:"fulfill",num:0});
+  const buy=L.filter(x=>x.b==="buy"&&x.age>=1),nl=L.filter(x=>x.b==="nolink"),c=L.filter(x=>x.b==="cancel"),loss=L.filter(x=>x.loss&&x.age<=7);
+  if(buy.length)add("fd:buy",buy.some(x=>x.age>=2)?"bad":"warn",`${buy.length} dòng Drop chưa mua sau 1 ngày`,buy.slice(0,4).map(x=>`${x.order} (${x.age} ngày)`).join(" · "));
+  if(nl.length)add("fd:nolink","warn",`${nl.length} dòng Drop trống cột Link sản phẩm`,nl.slice(0,4).map(x=>x.order).join(" · "));
+  if(c.length)add("fd:cancel","bad",`${c.length} đơn Drop đã huỷ nhưng đã mua`,"Huỷ/hoàn bên SHEIN rồi ghi “đã hoàn” vào Note: "+c.slice(0,4).map(x=>x.order).join(" · "));
+  if(loss.length)add("fd:loss","warn",`${loss.length} đơn Drop mua lỗ trong 7 ngày`,loss.slice(0,4).map(x=>`${x.order} (vốn ${usd(x.cost)} > ${usd(x.rev)})`).join(" · "));
+  }catch(e){}return A.sort((a,b)=>AL_SEV[b.sev][2]-AL_SEV[a.sev][2])}}
+
+</script>
 <script type="text/plain" id="src-10-boot">
 /* 10-boot.js · Vẽ trang, điều hướng tab và kết nối kho dữ liệu (giám đốc / nhân viên). Luôn tải file này cuối cùng */
 /* ============ Render ============ */
@@ -3685,7 +3750,7 @@ function doRender(){
     const drop=$("#drop");if(drop){drop.ondragover=e=>{e.preventDefault();drop.classList.add("over")};drop.ondragleave=()=>drop.classList.remove("over");drop.ondrop=e=>{e.preventDefault();drop.classList.remove("over");handleFile(e.dataTransfer.files[0])}}
     return}
   renderFilters();const AUTO_TABS=["media","tongquan","canhbao","dondrop","banhang","sanpham","chiphi","dongtien","caidat"];$(".filters").hidden=AUTO_TABS.includes(S.tab)||!oldHas();
-  const pg={canhbao:()=>pgAlerts(),tongquan:()=>pgAutoOverview()+oldBox(pgOverview(),"Báo cáo từ file TikTok"),banhang:()=>pgPodOrders()+`<details class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">Sản lượng & phí theo bảng Lark FULLFILLMENT CỐC <span class="small muted">(bấm để mở)</span></summary><div style="margin-top:10px">${podPanel()}</div></details>`+oldBox(pgSales(),"Nhập file đơn TikTok"),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel()+podProfitPanel()+oldBox(pgStock(),"Sản phẩm nhập tay"):pgStock()),sanpham:pgResearch,media:pgMedia,fulfill:()=>ffPodPanel()+hubPerf()+ffAutoPanel()+oldBox(pgFulfill(),"Đối tác, ví, sự cố nhập tay"),nhaphang:pgPurch,caidat:()=>`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">Nguồn dữ liệu – phần nào tự động, phần nào chưa</h3>${ovSources()}</div>
+  const pg={canhbao:()=>pgAlerts(),tongquan:()=>pgAutoOverview()+oldBox(pgOverview(),"Báo cáo từ file TikTok"),banhang:()=>pgPodOrders()+`<details class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">Sản lượng & phí theo bảng Lark FULLFILLMENT CỐC <span class="small muted">(bấm để mở)</span></summary><div style="margin-top:10px">${podPanel()}</div></details>`+oldBox(pgSales(),"Nhập file đơn TikTok"),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel()+podProfitPanel()+oldBox(pgStock(),"Sản phẩm nhập tay"):pgStock()),sanpham:pgResearch,media:pgMedia,fulfill:()=>ffPanel()+hubPerf()+ffAutoPanel()+oldBox(pgFulfill(),"Đối tác, ví, sự cố nhập tay"),nhaphang:pgPurch,caidat:()=>`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">Nguồn dữ liệu – phần nào tự động, phần nào chưa</h3>${ovSources()}</div>
     <div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 6px">Gọn giao diện</h3>
       <p class="small">${(()=>{const h=TABS.filter(([k])=>tabEmpty(k));return h.length?`Trang đang ẩn vì chưa có dữ liệu: ${h.map(([k,l])=>`<a href="#${k}">${esc(l)}</a>`).join(" · ")}. Khi có dữ liệu (thêm nhân sự, chấm công, tài nguyên) trang sẽ tự hiện lại.`:"Không có trang nào đang ẩn."})()}</p>
       <p class="small">Phần nhập tay cũ (nhập file TikTok, chi phí/shop/đối tác nhập tay, thanh lọc kỳ cũ) ${oldHas()&&!S.showOld?"đang hiện vì còn dữ liệu cũ.":S.showOld?"đang bật hiện.":"đang ẩn vì không dùng – số liệu đã tự động."}</p>
