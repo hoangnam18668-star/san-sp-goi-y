@@ -245,7 +245,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.27b", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.27c", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -3084,7 +3084,7 @@ function poMerge(fac){const R=S.prDoc||{},shops=R.shops||[],prods=R.prods||[],o=
   return out.sort((a,b)=>a.date<b.date?1:-1)}
 const poRowsAll=()=>{if(!S.po.at&&!S.po.busy)setTimeout(()=>poLoad(true),0);const k=(S.prDoc?.at||"")+"|"+S.po.at+"|"+(S.tcDoc?.at||"")+"|"+Object.keys(S.po.cloth||{}).length+"|"+(S.pcDoc?.at||"")+"|"+(S.cgDoc?.at||"")+"|"+Object.keys(S.po.len||{}).length;if(S.po.at&&S.po._k!==k){S.po.rows=poMerge(S.po.fac);S.po._k=k}return S.po.rows};
 const poSellerOf=shop=>{const n=dsShopFix(shop);for(const p of Object.values(S.podDoc?.months||{}).reverse())for(const s of p.shops||[])if(dsShopFix(s.name)===n&&s.seller)return s.seller;return""};
-const poIP=n=>/coraline|dr ?pepper|disney|marvel|nfl|nba|ncaa|stanley|starbucks|grinch|barbie|harry potter|taylor swift|hello kitty|pokemon|snoopy|peanuts|thundercats|lion-o|frosty the snowman|crimson tide|alabama|sanrio|kuromi|stitch|mickey|minnie|star wars|batman|spider-?man|sesame|busch|michelob|budweiser|coors|alani|monster energy|celsius|coca[- ]?cola|pepsi|zelda|nintendo|super mario|call of duty|gta ?(vi|6|v)\b|grand theft|vice city|stevie nicks|oogie|nightmare before|jack skellington|\blsu\b|tennessee|notre dame|fighting irish|college football|mascot|heat miser|snow miser|scooby|paw patrol|twilight|hunger games|wicked/i.test(n||"");
+const poIP=n=>/coraline|dr ?pepper|disney|marvel|nfl|nba|ncaa|stanley|starbucks|grinch|barbie|harry potter|taylor swift|hello kitty|pokemon|snoopy|peanuts|thundercats|lion-o|frosty the snowman|crimson tide|alabama|sanrio|kuromi|stitch|mickey|minnie|star wars|batman|spider-?man|sesame|busch|michelob|budweiser|coors|alani|monster energy|celsius|coca[- ]?cola|pepsi|zelda|nintendo|super mario|call of duty|gta ?(vi|6|v)\b|grand theft|vice city|stevie nicks|oogie|nightmare before|jack skellington|\blsu\b|tennessee|notre dame|fighting irish|college football|mascot|heat miser|snow miser|scooby|paw patrol|twilight|hunger games|wicked|ghostface|\bscream\b|michael myers|freddy krueger|jason voorhees|chucky|claw mark|mon x energy|drink logo|soda can/i.test(n||"");
 function poPeriod(rows){const td=today(),months=[...new Set(rows.map(r=>r.date.slice(0,7)))].sort().reverse();let k=S.poPer;
   if(!k||(k.startsWith("m:")&&!months.includes(k.slice(2))))k=months.includes(curMonth())||!months.length?"m:"+curMonth():"m:"+months[0];
   const opts=[["7d","7 ngày qua"],["30d","30 ngày qua"],...months.map(x=>["m:"+x,fmtM(x)]),["all","Tất cả"],["custom","Tuỳ chọn ngày…"]];let f,t;
