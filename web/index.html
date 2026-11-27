@@ -245,7 +245,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.27c", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.27d", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -1943,15 +1943,7 @@ function rdCard(x,tracked){const tt=String(x.name).replace(/^\[Hot đa sàn\]\s*
     ${note?(note.length>170?`<details><summary class="rd-n">${esc(short)} <b>Xem thêm</b></summary><div class="rd-n" style="margin-top:4px">${esc(note)}</div></details>`:`<div class="rd-n">${esc(note)}</div>`):""}
     <div class="rd-a">${x.category!=="Tin hot"?(tracked?`<span class="pill p-good">✓ Đang theo dõi</span>`:canResearch()?`<button class="btn sm" data-act="rdTrack" data-id="${esc(x._i)}">+ Theo dõi</button>`:""):""}
       <a class="btn sm ghost" href="https://www.tiktok.com/search?q=${q}" target="_blank" rel="noopener">Tìm trên TikTok</a>${x.category!=="Tin hot"?`<a class="btn sm ghost" href="https://www.etsy.com/search?q=${q}" target="_blank" rel="noopener">Etsy</a>`:""}</div></div></div>`}
-/* Mẫu đang bán chạy ở shop công ty (SimpleHub) – chỉ giám đốc thấy; dữ liệu lưu ở settings/shTop (không đưa lên kho GitHub công khai) */
-function rdCompany(){const D=S.shTop;if(S.staff||!D?.items?.length)return"";const KN={COC:"Cốc",THAM:"Thảm",DEP:"Dép",KHAC:"Khác"};
-  const it=D.items.slice(0,lim("rdco")),ipN=D.items.filter(x=>poIP(x.t)).reduce((a,x)=>a+x.q,0),all=D.items.reduce((a,x)=>a+x.q,0);
-  return`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 4px">📈 Shop công ty đang bán chạy · ${esc(D.src||"SimpleHub")} ngày ${fmtD(D.day)}</h3>
-  <p class="small muted" style="margin:0 0 8px">${int(D.n)} đơn${D.types?` (${Object.entries(D.types).map(([k,v])=>`${KN[k]||k} ${int(v)}`).join(" · ")})`:""}. <b style="color:${ipN/all>.5?"var(--bad)":"inherit"}">${Math.round(ipN/Math.max(1,all)*100)}% số đơn top là mẫu dính thương hiệu/nhân vật</b> – học <b>kiểu sản phẩm</b> (thảm cắt hình, tumbler in nổi 3D, dép lót lông…) và <b>ngách</b> (săn bắn, Noel, game…), làm chủ đề tự thiết kế.</p>
-  ${alTbl([["Mẫu"],["Loại"],["Đơn","n"],["Doanh thu","n"],["Đánh giá"]],it.map(x=>{const ip=poIP(x.t);return`<tr><td style="min-width:260px"><span style="white-space:normal">${esc(x.t)}</span>${x.sel?.length?`<div class="small muted">${esc(x.sel.join(", "))}</div>`:""}</td><td>${KN[x.k]||x.k}</td><td class="n"><b>${int(x.q)}</b></td><td class="n">${usd(x.rev||0,0)}</td>
-    <td>${ip?'<span class="pill p-bad">Dính thương hiệu</span><div class="small">Giữ kiểu dáng, đổi chủ đề riêng</div>':'<span class="pill p-good">Chủ đề an toàn</span><div class="small">Nhân thêm biến thể</div>'}</td></tr>`}).join(""),"Chưa có số.")}${moreBtn("rdco",it.length,D.items.length)}</div>`}
-function rsDayView(){if(!S.staff&&!S.shSub&&S.db){S.shSub=1;S.db.doc("settings/shTop").onSnapshot(s=>{S.shTop=s.exists?s.data():null;if(S.tab==="sanpham")render()},()=>{})}
-if(!S.staff&&!S.rsSub&&S.db){S.rsSub=1;S.db.doc("settings/research").onSnapshot(s=>{S.rsCfgDoc=s.exists?s.data():null;render()},()=>{})}
+function rsDayView(){if(!S.staff&&!S.rsSub&&S.db){S.rsSub=1;S.db.doc("settings/research").onSnapshot(s=>{S.rsCfgDoc=s.exists?s.data():null;render()},()=>{})}
   rdLoad(false);const F=S.rdFeed,items=(F?.items||[]).map((x,i)=>({...x,_i:String(i),day:String(x.day||F.date||"").slice(0,10)}));
   const days=[...new Set(items.map(x=>x.day).filter(Boolean))].sort().reverse(),R=S.rd;if(!days.includes(R.day))R.day=days[0]||"";
   const keys=new Set((V().research||[]).filter(x=>x.source!=="auto"||(x.status&&x.status!=="watch")||x.ownerId||x.pinned).map(x=>x.key||rsKey(x.link,x.name,x.shop)));
@@ -1963,7 +1955,6 @@ if(!S.staff&&!S.rsSub&&S.db){S.rsSub=1;S.db.doc("settings/research").onSnapshot(
   return`${rsViewTabs()}<div class="sec-h"><div><h2>Gợi ý sản phẩm theo ngày</h2><p>Claude cập nhật mỗi sáng 7:40 từ TikTok Shop, Amazon, Etsy, Walmart và tin hot nước Mỹ. Chọn ngày để xem lại; bấm “+ Theo dõi” để đưa sản phẩm vào danh sách theo dõi và giao bán thử.</p></div>
     <div class="actions"><button class="btn sm ghost" data-act="rdReload">Tải lại</button></div></div>
   ${S.rdErr?`<div class="panel" style="color:var(--bad)">${esc(S.rdErr)}</div>`:""}
-  ${rdCompany()}
   ${!F?`<div class="panel"><p class="small muted">Đang tải danh sách gợi ý…</p></div>`:`
   <div class="rd-days">${days.map(d=>`<button class="btn sm ${d===R.day?"pri":"ghost"}" data-act="rdDay" data-id="${d}">${rdDayLabel(d)} <span class="small">(${items.filter(x=>x.day===d).length})</span></button>`).join("")}</div>
   <div class="kpis">${RD_SECS.map(([k,lb])=>`<div class="kpi" style="cursor:pointer;${R.cat===k?"outline:2px solid var(--acc,#2563eb)":""}" data-act="rdCat" data-id="${esc(k)}"><span class="lb">${lb.replace(/^\S+\s/,"")}</span><span class="v">${cnt(k)}</span><span class="s">${R.cat===k?"đang lọc – bấm lại để bỏ":"bấm để lọc"}</span></div>`).join("")}</div>
