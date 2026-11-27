@@ -267,7 +267,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.27h", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.27i", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -3568,7 +3568,7 @@ function ffDesignOf(prod,sku){const D=S.ffMapDoc?.design||{},k=ffKey(prod);if(D[
   for(const[kk,v]of Object.entries(D))if(kk.startsWith("kw:")){try{if(new RegExp(kk.slice(3),"i").test(k))return v}catch(e){}}return""}
 /* Tính trạng thái từng đơn */
 function ffCompute(){if(S.staff)return null;ffNeedSub();if(typeof poRowsAll==="function")poRowsAll();const R=S.prDoc;if(!R?.o)return null;
-  const t=today(),from=addDays(t,-30),fac=S.po.fac||{},len=S.po.len||{},cg=S.cgDoc?.o||{},sent=S.ffSentDoc?.o||{},out=[],seen=new Set(),dd=+ST().dispatchDays||3;
+  const t=today(),from=addDays(t,-30),cotD=R.at?ymd(new Date(R.at)):t,cut=[addDays(t,-2),addDays(cotD,-1)].sort()[0],fac=S.po.fac||{},len=S.po.len||{},cg=S.cgDoc?.o||{},sent=S.ffSentDoc?.o||{},out=[],seen=new Set(),dd=+ST().dispatchDays||3;
   for(const[id,v]of Object.entries(R.o)){const c=String(v).split("|");if(!c[3])continue;const date=`20${c[3].slice(0,2)}-${c[3].slice(2,4)}-${c[3].slice(4,6)}`;if(date<from)continue;seen.add(id);
     const st=c[2],prod=String(R.prods?.[+c[5]]||"").replace(/^From Affiliate - [\d.]+%\s*/i,""),shop=R.shops?.[+c[4]]||"",src=[];
     if(fac[id])src.push(FF_FAC_CT);if(len[id])src.push("Lenful");{const cs=cg[id]?.[1]||"CompassUp";if(cg[id]&&!src.includes(cs))src.push(cs)}
@@ -3582,7 +3582,7 @@ function ffCompute(){if(S.staff)return null;ffNeedSub();if(typeof poRowsAll==="f
     else b="nosrc";
     out.push({id,date,age,st,stLb:PO_ST[st]||st,prod,shop,src,fac:src[0]||rule?.fac||"",kind:rule?.kind||"",design,b,ex,over:["map","design","label","ready","exported"].includes(b)&&age>=dd-1,dd})}
   for(const[id,f]of [...Object.entries(fac).map(([k,x])=>[k,{d:x.date,s:FF_FAC_CT,p:x.sku}]),...Object.entries(len).map(([k,x])=>[k,{d:x[2],s:"Lenful",p:""}]),...Object.entries(cg).map(([k,x])=>[k,{d:x[2]||"",s:"CompassUp",p:""}])]){
-    if(seen.has(id)||!f.d||f.d<from||f.d>addDays(t,-2))continue;seen.add(id);out.push({id,date:f.d,age:dayDiff(f.d,t),st:"",stLb:"–",prod:f.p||"",shop:"",src:[f.s],fac:f.s,b:"orphan"})}
+    if(seen.has(id)||!f.d||f.d<from||f.d>cut)continue;seen.add(id);out.push({id,date:f.d,age:dayDiff(f.d,t),st:"",stLb:"–",prod:f.p||"",shop:"",src:[f.s],fac:f.s,b:"orphan"})}
   return out.sort((a,b)=>b.over-a.over||a.date.localeCompare(b.date))}
 /* Panel trong tab Fulfillment */
 function ffPodPanel(){if(S.staff)return"";const L=ffCompute();
