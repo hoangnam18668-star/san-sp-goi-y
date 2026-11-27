@@ -228,6 +228,7 @@ td.n .sub,td.n .btn{font-family:var(--f-ui)}
 .hub-sbtn kbd{font-size:11px;background:var(--sunk);border-radius:4px;padding:1px 5px}
 .hub-r{display:flex;gap:10px;align-items:flex-start;padding:8px 6px;border-bottom:1px solid var(--line);color:inherit;text-decoration:none}.hub-r:hover{background:var(--sunk)}
 @media (max-width:760px){.hub-sbtn span,.hub-sbtn kbd{display:none}}
+.ff-flow{background:var(--sunk);border-radius:8px;padding:6px 10px;margin-top:8px;line-height:1.6}
 
 /* Trang đăng nhập và thanh tài khoản của bản web; dùng chung màu và chữ với css/app.css */
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -266,7 +267,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.27f", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.27g", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -279,7 +280,7 @@ window.APP_CONFIG = {
   const cfg = window.APP_CONFIG || {};
   const $id = id => document.getElementById(id);
   const ready = cfg.supabaseUrl && cfg.supabaseAnonKey && !/DIEN_|YOUR_/.test(cfg.supabaseUrl + cfg.supabaseAnonKey);
-  const APP_SCRIPTS = ["01-config", "02-demo", "03-calc", "04-data", "05-pages", "06-kpi", "07-actions", "08-import", "09-staff", "11-backup", "12-web", "13-research", "14-attendance", "15-shell", "16-dropsheet", "17-podlark", "18-autolink", "19-thuchi", "20-overview", "21-podorders", "22-alerts", "23-media", "24-hub", "10-boot"];
+  const APP_SCRIPTS = ["01-config", "02-demo", "03-calc", "04-data", "05-pages", "06-kpi", "07-actions", "08-import", "09-staff", "11-backup", "12-web", "13-research", "14-attendance", "15-shell", "16-dropsheet", "17-podlark", "18-autolink", "19-thuchi", "20-overview", "21-podorders", "22-alerts", "23-media", "24-hub", "25-ffpod", "10-boot"];
 
   /* ---------- Kho dữ liệu ---------- */
   function makeDb(sb) {
@@ -3535,6 +3536,137 @@ function hubPerf(){if(S.staff||typeof alOrders!=="function")return"";const t=tod
     <p class="hint">Lãi % chỉ tính đơn đủ số liệu (KPI seller ≥ ${KPI_MARGIN*100}%). Chậm gửi = chưa có tracking sau 3 ngày (Drop) / 4 ngày (POD). Huỷ tính trên tổng đơn.</p></details>`}
 
 </script>
+<script type="text/plain" id="src-25-ffpod">
+/* 25-ffpod.js · Điều phối đi đơn POD – học từ NOVA Fulfill (Sản xuất: Chờ Design / Chờ ghép / Chờ Label / Chờ sản xuất / Đã gửi / Lỗi / Cancel).
+   Giai đoạn 1 (không cần API mới, không lưu thông tin khách):
+   - Đối chiếu đơn POD trên Cotik với 3 nguồn xưởng đã có: bảng xưởng cốc/thảm (Google Sheets), Lenful (API), CompassUp (đọc mỗi tối).
+   - Xếp từng đơn vào 1 ô: Chờ ghép xưởng → Chờ design → Chờ label → Sẵn sàng gửi → Đã xuất file → Đã gửi; bắt lỗi Gửi trùng, Huỷ nhưng xưởng đã nhận, Xưởng chậm tracking.
+   - Ghép xưởng theo từ khoá + thư viện link design (settings/ffMap). Đã xuất file nào thì ghi settings/ffSent để không gửi trùng.
+   - File gửi xưởng: có thể ghép địa chỉ/label từ file Cotik tải về – dữ liệu khách CHỈ nằm trong trình duyệt, không lưu lên máy chủ. */
+S.ffMapDoc=null;S.ffSentDoc=null;S.ffSub=0;S.ff={b:"ready",q:"",fac:"",cot:null};
+const FF_FAC_CT="Xưởng cốc/thảm";
+const FF_DEF_RULES=[{kw:"tumbler|cup|mug|bottle",fac:FF_FAC_CT,kind:"Cốc"},{kw:"rug|doormat|door mat|bath mat|\\bmat\\b",fac:FF_FAC_CT,kind:"Thảm"},{kw:"clog|slipper|slide|shoe",fac:"Lenful",kind:"Dép"},{kw:"shirt|hoodie|sweater|sweatshirt|pajama|pant|legging|dress|jacket|\\bset\\b|cardigan|jersey",fac:"Xưởng áo (Lark)",kind:"Áo",nocheck:true}];
+const FF_B=[["map","Chờ ghép xưởng","p-warn","Sản phẩm chưa khớp quy tắc ghép xưởng nào – thêm từ khoá ở “Ghép xưởng & design”."],
+  ["design","Chờ design","p-warn","Chưa có link file in cho sản phẩm này – dán link Google Drive."],
+  ["label","Chờ label","p-acc","Đủ xưởng + design, Cotik báo “Chờ gửi hàng” (chưa tạo label). Tạo label trên Cotik/TikTok – đêm Cotik cập nhật sẽ tự chuyển sang Sẵn sàng."],
+  ["ready","Sẵn sàng gửi xưởng","p-good","Đủ xưởng + design + label, chưa có ở xưởng nào. Tải file gửi xưởng → đơn chuyển sang “Đã xuất file” để không gửi trùng."],
+  ["exported","Đã xuất file – chờ xưởng nhận","p-acc","Đã tải file gửi xưởng, chưa thấy đơn trong bảng/API của xưởng."],
+  ["dup","Gửi trùng 2 xưởng","p-bad","Đơn có ở 2 nguồn xưởng trở lên – kiểm tra và huỷ bớt 1 bên để không mất tiền 2 lần."],
+  ["cancel","Huỷ nhưng xưởng đã nhận","p-bad","Khách đã huỷ trên TikTok nhưng đơn đang ở xưởng – yêu cầu xưởng huỷ ngay."],
+  ["late","Xưởng chậm tracking","p-bad","Đã gửi xưởng ≥4 ngày chưa có tracking (chỉ kiểm tra được bảng xưởng cốc/thảm)."],
+  ["orphan","Có ở xưởng, không thấy trên Cotik","p-mute","Mã đơn có ở xưởng nhưng không có trong danh sách POD trên Cotik (sai mã, shop khác, hoặc Cotik chưa cập nhật)."],
+  ["nosrc","Đã giao, không thấy ở xưởng","p-mute","TikTok báo đã gửi/giao nhưng không thấy ở 3 nguồn xưởng – có thể đi tay hoặc xưởng khác."],
+  ["nocheck","Áo – chưa đối chiếu được","p-mute","Bảng áo trên Lark không ghi mã đơn nên chưa đối chiếu từng đơn."],
+  ["sent","Đã gửi đúng","p-mute","Có ở đúng 1 xưởng."]];
+function ffNeedSub(){if(S.staff||!S.db||S.ffSub)return;S.ffSub=1;
+  S.db.doc("settings/ffMap").onSnapshot(s=>{S.ffMapDoc=s.exists?s.data():null;if(["fulfill","canhbao","tongquan"].includes(S.tab))render()},()=>{});
+  S.db.doc("settings/ffSent").onSnapshot(s=>{S.ffSentDoc=s.exists?s.data():null;if(S.tab==="fulfill")render()},()=>{})}
+const ffRules=()=>S.ffMapDoc?.rules?.length?S.ffMapDoc.rules:FF_DEF_RULES;
+const ffKey=p=>String(p||"").toLowerCase().replace(/^from affiliate - [\d.]+%\s*/,"").replace(/\s+/g," ").trim().slice(0,90);
+function ffRuleOf(prod){const s=String(prod||"").toLowerCase();for(const r of ffRules()){try{if(r.kw&&new RegExp(r.kw,"i").test(s))return r}catch(e){}}return null}
+function ffDesignOf(prod,sku){const D=S.ffMapDoc?.design||{},k=ffKey(prod);if(D[k])return D[k];if(sku&&D["sku:"+String(sku).toLowerCase()])return D["sku:"+String(sku).toLowerCase()];
+  for(const[kk,v]of Object.entries(D))if(kk.startsWith("kw:")){try{if(new RegExp(kk.slice(3),"i").test(k))return v}catch(e){}}return""}
+/* Tính trạng thái từng đơn */
+function ffCompute(){if(S.staff)return null;ffNeedSub();if(typeof poRowsAll==="function")poRowsAll();const R=S.prDoc;if(!R?.o)return null;
+  const t=today(),from=addDays(t,-30),fac=S.po.fac||{},len=S.po.len||{},cg=S.cgDoc?.o||{},sent=S.ffSentDoc?.o||{},out=[],seen=new Set(),dd=+ST().dispatchDays||3;
+  for(const[id,v]of Object.entries(R.o)){const c=String(v).split("|");if(!c[3])continue;const date=`20${c[3].slice(0,2)}-${c[3].slice(2,4)}-${c[3].slice(4,6)}`;if(date<from)continue;seen.add(id);
+    const st=c[2],prod=String(R.prods?.[+c[5]]||"").replace(/^From Affiliate - [\d.]+%\s*/i,""),shop=R.shops?.[+c[4]]||"",src=[];
+    if(fac[id])src.push(FF_FAC_CT);if(len[id])src.push("Lenful");{const cs=cg[id]?.[1]||"CompassUp";if(cg[id]&&!src.includes(cs))src.push(cs)}
+    const rule=ffRuleOf(prod),design=ffDesignOf(prod,fac[id]?.sku),age=dayDiff(date,t),ex=sent[id];let b;
+    if(st==="U")continue;
+    if(st==="X"){if(!src.length)continue;b="cancel"}
+    else if(src.length>=2)b="dup";
+    else if(src.length===1)b=fac[id]&&!fac[id].track&&age>=4&&["S","L","H"].includes(st)?"late":"sent";
+    else if(rule?.nocheck)b="nocheck";
+    else if(["S","L","H"].includes(st)){b=ex?"exported":!rule?"map":!design&&!rule.hasDesign?"design":st==="S"?"label":"ready"}
+    else b="nosrc";
+    out.push({id,date,age,st,stLb:PO_ST[st]||st,prod,shop,src,fac:src[0]||rule?.fac||"",kind:rule?.kind||"",design,b,ex,over:["map","design","label","ready","exported"].includes(b)&&age>=dd-1,dd})}
+  for(const[id,f]of [...Object.entries(fac).map(([k,x])=>[k,{d:x.date,s:FF_FAC_CT,p:x.sku}]),...Object.entries(len).map(([k,x])=>[k,{d:x[2],s:"Lenful",p:""}]),...Object.entries(cg).map(([k,x])=>[k,{d:x[2]||"",s:"CompassUp",p:""}])]){
+    if(seen.has(id)||!f.d||f.d<from||f.d>addDays(t,-2))continue;seen.add(id);out.push({id,date:f.d,age:dayDiff(f.d,t),st:"",stLb:"–",prod:f.p||"",shop:"",src:[f.s],fac:f.s,b:"orphan"})}
+  return out.sort((a,b)=>b.over-a.over||a.date.localeCompare(b.date))}
+/* Panel trong tab Fulfillment */
+function ffPodPanel(){if(S.staff)return"";const L=ffCompute();
+  if(!L)return`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0">Điều phối đi đơn POD</h3><p class="small muted">Chưa có danh sách đơn POD từ Cotik (đọc mỗi tối 21:10). Khi có, web sẽ tự đối chiếu với xưởng.</p></div>`;
+  const cnt=k=>L.filter(x=>x.b===k).length,warnN=cnt("dup")+cnt("cancel")+cnt("late"),todo=["map","design","label","ready"].reduce((a,k)=>a+cnt(k),0);
+  const b=S.ff.b,q=S.ff.q.toLowerCase(),info=FF_B.find(x=>x[0]===b)||FF_B[3];
+  let list=L.filter(x=>x.b===b&&(!q||[x.id,x.prod,x.shop].join(" ").toLowerCase().includes(q)));if(S.ff.fac)list=list.filter(x=>x.fac===S.ff.fac);
+  const facs=[...new Set(L.filter(x=>x.b===b).map(x=>x.fac).filter(Boolean))];
+  const ts=x=>x?new Date(x).toLocaleString("vi-VN",{hour:"2-digit",minute:"2-digit",day:"2-digit",month:"2-digit"}):"chưa";
+  const srcLine=`Cotik POD: ${ts(S.prDoc?.at)} · Xưởng cốc/thảm: ${S.po.at?ts(S.po.at):"đang tải…"} · Lenful: ${S.po.lErr?`<span style="color:var(--bad)">${esc(S.po.lErr)}</span>`:ts(S.po.lAt)} · CompassUp: ${ts(S.cgDoc?.at)}`;
+  const chip=([k,lb,cl])=>{const n=cnt(k);if(!n&&!["map","design","label","ready"].includes(k)&&k!==b)return"";return`<button class="btn sm ${b===k?"pri":"ghost"}" data-act="ffB" data-id="${k}">${lb} <span class="pill ${cl}" style="margin-left:4px">${n}</span></button>`};
+  const rows=list.slice(0,lim("ffp")).map(x=>`<tr${x.over?' style="background:color-mix(in srgb,var(--bad) 7%,transparent)"':""}><td class="small">${fmtD(x.date).slice(0,5)}<div class="muted">${x.age} ngày${x.over?` · <b style="color:var(--bad)">sắp/quá hạn gửi</b>`:""}</div></td>
+    <td class="small"><b>${esc(x.id)}</b><div class="muted">${esc(x.shop)}</div></td><td class="small">${esc(String(x.prod).slice(0,90))}${poIP(x.prod)?' <span class="pill p-bad">⚠ thương hiệu</span>':""}</td>
+    <td class="small">${esc(x.stLb)}</td><td class="small">${x.src.length?x.src.map(esc).join(" + "):`<span class="muted">→ ${esc(x.fac||"chưa ghép")}</span>`}</td>
+    <td class="small">${x.design?`<a href="${esc(x.design)}" target="_blank" rel="noopener">File ↗</a>`:x.b==="design"?`<button class="btn sm" data-act="ffDesign" data-id="${esc(x.id)}">+ Link design</button>`:""}${x.b==="map"?`<button class="btn sm" data-act="ffMapAdd" data-id="${esc(x.id)}">Ghép xưởng</button>`:""}${x.b==="exported"?`<div class="muted">xuất ${ts(x.ex?.at)}</div><button class="btn sm ghost" data-act="ffUnsend" data-id="${esc(x.id)}">Bỏ đánh dấu</button>`:""}</td></tr>`).join("");
+  return`<div class="panel" style="margin-bottom:14px"><div class="sec-h"><div><h3 style="margin:0">Điều phối đi đơn POD <span class="small muted">· 30 ngày</span></h3>
+      <p class="small muted" style="margin:2px 0 0">${todo?`<b>${todo}</b> đơn chưa gửi xưởng`:"Không còn đơn chờ gửi"}${warnN?` · <b style="color:var(--bad)">${warnN} đơn cần kiểm tra gấp</b>`:""} · ${srcLine}</p></div>
+      <div class="actions"><button class="btn sm" data-act="ffMapOpen">Ghép xưởng & design</button><button class="btn sm ghost" data-act="ffReload">Tải lại xưởng</button></div></div>
+    <div class="ff-flow small muted">Đơn Cotik → <b>Ghép xưởng</b> → <b>Design</b> → <b>Label</b> → <b>Sẵn sàng</b> → Tải file gửi xưởng → <b>Đã xuất</b> → xưởng nhận → <b>Đã gửi</b></div>
+    <div class="actions" style="flex-wrap:wrap;gap:6px;margin:8px 0">${FF_B.map(chip).join("")}</div>
+    <p class="hint" style="margin:4px 0 8px">${info[3]}</p>
+    <div class="actions" style="flex-wrap:wrap;gap:6px;margin-bottom:6px"><input class="inp" id="ffQ" placeholder="Tìm mã đơn / sản phẩm (Enter)" value="${esc(S.ff.q)}" style="width:230px">
+      ${facs.length>1?`<select class="inp" id="ffFac" style="width:auto"><option value="">Mọi xưởng</option>${facs.map(f=>`<option ${S.ff.fac===f?"selected":""}>${esc(f)}</option>`).join("")}</select>`:""}
+      ${b==="ready"&&list.length?`<button class="btn sm pri" data-act="ffExport">⬇ Tải file gửi xưởng (${list.length} đơn)</button><label class="btn sm ghost" style="cursor:pointer">📎 Ghép địa chỉ/label từ file Cotik<input type="file" id="ffCot" accept=".csv,.xlsx,.xls" hidden></label>${S.ff.cot?`<span class="pill p-good">Đã ghép ${int(S.ff.cot.n)} đơn từ file Cotik (chỉ trong trình duyệt)</span>`:""}`:""}</div>
+    <div class="tbl"><table><thead><tr><th>Ngày</th><th>Mã đơn / Shop</th><th>Sản phẩm</th><th>Cotik</th><th>Xưởng</th><th>Design / Xử lý</th></tr></thead><tbody>${rows||'<tr><td colspan="6" class="muted">Không có đơn nào ở ô này.</td></tr>'}</tbody></table></div>${moreBtn("ffp",Math.min(lim("ffp"),list.length),list.length)}
+    <p class="hint">Đơn tự chuyển ô khi nguồn cập nhật: Cotik mỗi tối · bảng xưởng cốc/thảm & Lenful mỗi lần mở trang · CompassUp mỗi tối. Đơn mới trong ngày chỉ hiện sau lần đọc Cotik buổi tối. Hạn gửi tính theo Cài đặt (${+ST().dispatchDays||3} ngày).</p></div>`}
+/* Cấu hình ghép xưởng + thư viện design */
+function ffMapForm(prefill){const rules=JSON.parse(JSON.stringify(ffRules())),D={...(S.ffMapDoc?.design||{})};
+  if(prefill)rules.unshift({kw:prefill.kw,fac:"",kind:""});
+  const draw=m=>{m.querySelector("#ffRules").innerHTML=rules.map((r,i)=>`<tr data-i="${i}"><td><input class="inp r-kw" value="${esc(r.kw)}" placeholder="vd: tumbler|cup"></td><td><input class="inp r-fac" value="${esc(r.fac)}" list="ffFacs" placeholder="Tên xưởng"></td><td><input class="inp r-kind" value="${esc(r.kind||"")}" style="width:70px"></td>
+      <td style="text-align:center"><input type="checkbox" class="r-hd" ${r.hasDesign?"checked":""} title="Design đã lưu sẵn ở xưởng theo SKU"></td><td style="text-align:center"><input type="checkbox" class="r-nc" ${r.nocheck?"checked":""}></td><td><button class="btn sm ghost r-del" type="button">✕</button></td></tr>`).join("");
+    m.querySelectorAll(".r-del").forEach(b=>b.onclick=()=>{sync(m);rules.splice(+b.closest("tr").dataset.i,1);draw(m)})};
+  const sync=m=>m.querySelectorAll("#ffRules tr").forEach(tr=>{const r=rules[+tr.dataset.i];r.kw=tr.querySelector(".r-kw").value.trim();r.fac=tr.querySelector(".r-fac").value.trim();r.kind=tr.querySelector(".r-kind").value.trim();r.hasDesign=tr.querySelector(".r-hd").checked;r.nocheck=tr.querySelector(".r-nc").checked});
+  openModal(`<div><h2>Ghép xưởng & design</h2><p class="hint">Quy tắc xét từ trên xuống: tên sản phẩm chứa từ khoá (dùng | để ghi nhiều từ) → gửi xưởng đó. Giống mục “Ghép SKU” của NOVA.</p></div>
+    <datalist id="ffFacs">${[FF_FAC_CT,"Lenful","CompassUp","Xưởng áo (Lark)"].map(f=>`<option value="${f}">`).join("")}</datalist>
+    <div class="tbl"><table><thead><tr><th>Từ khoá trong tên SP</th><th>Xưởng</th><th>Loại</th><th title="Design có sẵn ở xưởng">Design ở xưởng</th><th title="Không đối chiếu từng đơn">Bỏ đối chiếu</th><th></th></tr></thead><tbody id="ffRules"></tbody></table></div>
+    <button class="btn sm" id="ffAddR" type="button" style="margin:6px 0 12px">+ Thêm quy tắc</button>
+    <label class="fld wide"><span>Thư viện link design – dán từ bảng: mỗi dòng “tên sản phẩm (hoặc sku:MÃ hoặc kw:từ khoá)” + Tab + link Google Drive</span><textarea id="ffDz" rows="6" placeholder="Deer Hunting Tumbler 40oz	https://drive.google.com/...">${esc(Object.entries(D).map(([k,v])=>k+"\t"+v).join("\n"))}</textarea><small>Hiện có ${Object.keys(D).length} link. Có thể copy 2 cột từ bảng design (Lark/Google Sheets) dán thẳng vào đây.</small></label>
+    <div class="mfoot"><div></div><div class="actions"><button class="btn" type="button" id="mCancel">Hủy</button><button class="btn pri" type="button" id="ffSave">Lưu</button></div></div>`,m=>{draw(m);
+    m.querySelector("#mCancel").onclick=closeModal;m.querySelector("#ffAddR").onclick=()=>{sync(m);rules.push({kw:"",fac:"",kind:""});draw(m)};
+    m.querySelector("#ffSave").onclick=async()=>{sync(m);const bad=rules.find(r=>{try{new RegExp(r.kw);return false}catch(e){return true}});if(bad)return toast("Từ khoá sai cú pháp: "+bad.kw);
+      const design={};m.querySelector("#ffDz").value.split(/\r?\n/).forEach(l=>{const p=l.split(/\t|\s{2,}|,(?=\s*https?:)/);if(p.length<2)return;const link=p.slice(1).join(" ").trim();if(!/^https?:\/\//i.test(link))return;let k=p[0].trim();if(!k)return;const mm=k.match(/^(sku|kw):\s*(.+)$/i);k=mm?mm[1].toLowerCase()+":"+mm[2].trim().toLowerCase():ffKey(k);design[k]=link.slice(0,400)});
+      if(!guardWrite())return;try{await S.db.doc("settings/ffMap").set({rules:rules.filter(r=>r.kw&&r.fac),design,at:Date.now()});toast(`Đã lưu ${rules.filter(r=>r.kw&&r.fac).length} quy tắc, ${Object.keys(design).length} link design.`);closeModal()}catch(e){toast("Không lưu được (dữ liệu quá lớn?)")}}})}
+/* File gửi xưởng */
+function ffCsv(rows){const q=v=>{const s=String(v??"");return/[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s};return"﻿"+rows.map(r=>r.map(q).join(",")).join("\r\n")}
+async function ffDownload(name,text){const blob=new Blob([text],{type:"text/csv"});const dl=await window.claude?.use?.("downloads");
+  if(dl){try{await dl.save({filename:name,data:blob});return true}catch(e){if(e?.code==="declined")return false}}
+  const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return true}
+async function ffCotRead(file){const isCsv=/\.csv$/i.test(file.name);if(!isCsv&&typeof XLSX==="undefined")return toast("Chưa tải được bộ đọc file Excel, thử tải lại trang hoặc dùng file .csv.");
+  try{let A;if(isCsv)A=poCsv((await file.text()).replace(/^\ufeff/,""));else{const wb=XLSX.read(await file.arrayBuffer(),{type:"array",raw:false}),ws=wb.Sheets[wb.SheetNames[0]];A=XLSX.utils.sheet_to_json(ws,{header:1,raw:false,defval:""})}
+    const hi=A.findIndex(r=>r.some(c=>/order/i.test(String(c))));if(hi<0)return toast("Không thấy cột mã đơn (Order ID) trong file.");const H=A[hi].map(h=>String(h).trim());
+    const idc=H.findIndex((h,i)=>A.slice(hi+1,hi+40).filter(r=>/^5\d{17}$/.test(String(r[i]).trim())).length>0);if(idc<0)return toast("Không thấy cột chứa mã đơn TikTok (18 số).");
+    const keep=H.map((h,i)=>i!==idc&&/name|recipient|buyer|address|street|city|state|province|zip|postal|post code|phone|country|sku|variation|variant|quantity|qty|label|tracking|personali|note|custom/i.test(h)?i:-1).filter(i=>i>=0);
+    const m={};A.slice(hi+1).forEach(r=>{const id=String(r[idc]).trim();if(/^5\d{17}$/.test(id)&&!m[id])m[id]=keep.map(i=>r[i])});
+    S.ff.cot={cols:keep.map(i=>H[i]),m,n:Object.keys(m).length};toast(`Đã ghép ${Object.keys(m).length} đơn, ${keep.length} cột (${keep.map(i=>H[i]).slice(0,6).join(", ")}…). Dữ liệu khách chỉ ở trong trình duyệt.`);render()}
+  catch(e){toast("Không đọc được file: "+e.message)}}
+Object.assign(ACT,{
+  ffB:k=>{S.ff.b=k;S.ff.fac="";S.lim.ffp=0;render()},ffReload:()=>{S.po.at=0;poLoad(true);toast("Đang tải lại bảng xưởng và Lenful…")},ffMapOpen:()=>ffMapForm(),
+  ffMapAdd:id=>{const x=(ffCompute()||[]).find(o=>o.id===id);const w=String(x?.prod||"").toLowerCase().match(/[a-z]{4,}/g)||[];ffMapForm({kw:w.slice(-2).join(" ")||""})},
+  ffDesign:id=>{const x=(ffCompute()||[]).find(o=>o.id===id);if(!x)return;openForm({title:"Link design",sub:x.prod,fields:[{k:"link",label:"Link file in (Google Drive…)",req:1,wide:1},{k:"scope",label:"Áp dụng cho",type:"select",options:[["prod","Mọi đơn cùng tên sản phẩm này"],["kw","Mọi sản phẩm chứa từ khoá bên dưới"]]},{k:"kw",label:"Từ khoá (nếu chọn từ khoá)",wide:1}],data:{scope:"prod"},
+    onSave:async o=>{if(!/^https?:\/\//i.test(o.link)){toast("Link phải bắt đầu bằng https://");return false}if(!guardWrite())return false;const D={...(S.ffMapDoc?.design||{})};D[o.scope==="kw"&&o.kw?"kw:"+o.kw.toLowerCase():ffKey(x.prod)]=o.link.slice(0,400);
+      try{await S.db.doc("settings/ffMap").set({...(S.ffMapDoc||{rules:FF_DEF_RULES}),design:D,at:Date.now()});return true}catch(e){toast("Không lưu được");return false}}})},
+  ffUnsend:async id=>{if(!guardWrite())return;const o={...(S.ffSentDoc?.o||{})};delete o[id];try{await S.db.doc("settings/ffSent").set({o,at:Date.now()})}catch(e){toast("Không lưu được")}},
+  ffExport:async()=>{if(!guardWrite())return;const L=(ffCompute()||[]).filter(x=>x.b==="ready"&&(!S.ff.fac||x.fac===S.ff.fac));if(!L.length)return;const C=S.ff.cot;
+    const by={};L.forEach(x=>(by[x.fac]=by[x.fac]||[]).push(x));let files=0;
+    for(const[f,xs]of Object.entries(by)){const head=["Factory","Order ID","Order date","Shop","Product","Design link","TikTok status",...(C?C.cols:[])];
+      const rows=[head,...xs.map(x=>[f,x.id,x.date,x.shop,x.prod,x.design,x.stLb,...(C?(C.m[x.id]||C.cols.map(()=>"")):[])])];
+      if(await ffDownload(`gui-xuong-${f.replace(/[^\w]+/g,"-").toLowerCase()}-${today()}.csv`,ffCsv(rows)))files++}
+    const o={...(S.ffSentDoc?.o||{})},lim45=addDays(today(),-45);for(const[k,v]of Object.entries(o))if((v.d||"")<lim45)delete o[k];
+    L.forEach(x=>o[x.id]={fac:x.fac,at:Date.now(),d:today()});try{await S.db.doc("settings/ffSent").set({o,at:Date.now()})}catch(e){}
+    const miss=C?L.filter(x=>!C.m[x.id]).length:L.length;toast(`Đã tải ${files} file (${L.length} đơn) → chuyển sang “Đã xuất file”.${miss?` ${miss} đơn chưa có địa chỉ/label – ${C?"không có trong file Cotik":"ghép file Cotik để điền tự động"}.`:""}`)}});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target?.id==="ffQ"){S.ff.q=e.target.value;render()}});
+document.addEventListener("change",e=>{if(e.target?.id==="ffFac"){S.ff.fac=e.target.value;render()}else if(e.target?.id==="ffCot"&&e.target.files?.[0])ffCotRead(e.target.files[0])});
+/* Đưa lỗi đi đơn vào trang Cảnh báo (nhóm Đơn hàng) */
+if(typeof alCompute==="function"){const _alc=alCompute;alCompute=function(){const A=_alc();try{const L=ffCompute();if(!L)return A;
+  const n=k=>L.filter(x=>x.b===k),add=(id,sev,title,detail)=>A.push({g:"order",id,sev,title,detail,tab:"fulfill",num:0});
+  const d=n("dup"),c=n("cancel"),od=L.filter(x=>x.over&&["map","design","label","ready"].includes(x.b)),ex=n("exported").filter(x=>x.ex&&Date.now()-x.ex.at>36e5*30);
+  if(d.length)add("ff:dup","bad",`${d.length} đơn POD gửi trùng 2 xưởng`,d.slice(0,5).map(x=>`${x.id} (${x.src.join(" + ")})`).join(" · "));
+  if(c.length)add("ff:cancel","bad",`${c.length} đơn đã huỷ nhưng xưởng đang làm`,`Yêu cầu xưởng huỷ: ${c.slice(0,5).map(x=>`${x.id} (${x.src[0]})`).join(" · ")}`);
+  if(od.length)add("ff:over",od.some(x=>x.age>=x.dd)?"bad":"warn",`${od.length} đơn POD sắp/quá hạn chưa gửi xưởng`,`Chờ ghép ${od.filter(x=>x.b==="map").length} · chờ design ${od.filter(x=>x.b==="design").length} · chờ label ${od.filter(x=>x.b==="label").length} · sẵn sàng ${od.filter(x=>x.b==="ready").length}`);
+  if(ex.length)add("ff:exp","warn",`${ex.length} đơn đã xuất file >30 giờ mà xưởng chưa có`,"Kiểm tra xưởng đã nhận file chưa");
+  }catch(e){}return A.sort((a,b)=>AL_SEV[b.sev][2]-AL_SEV[a.sev][2])}}
+
+</script>
 <script type="text/plain" id="src-10-boot">
 /* 10-boot.js · Vẽ trang, điều hướng tab và kết nối kho dữ liệu (giám đốc / nhân viên). Luôn tải file này cuối cùng */
 /* ============ Render ============ */
@@ -3553,7 +3685,7 @@ function doRender(){
     const drop=$("#drop");if(drop){drop.ondragover=e=>{e.preventDefault();drop.classList.add("over")};drop.ondragleave=()=>drop.classList.remove("over");drop.ondrop=e=>{e.preventDefault();drop.classList.remove("over");handleFile(e.dataTransfer.files[0])}}
     return}
   renderFilters();const AUTO_TABS=["media","tongquan","canhbao","dondrop","banhang","sanpham","chiphi","dongtien","caidat"];$(".filters").hidden=AUTO_TABS.includes(S.tab)||!oldHas();
-  const pg={canhbao:()=>pgAlerts(),tongquan:()=>pgAutoOverview()+oldBox(pgOverview(),"Báo cáo từ file TikTok"),banhang:()=>pgPodOrders()+`<details class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">Sản lượng & phí theo bảng Lark FULLFILLMENT CỐC <span class="small muted">(bấm để mở)</span></summary><div style="margin-top:10px">${podPanel()}</div></details>`+oldBox(pgSales(),"Nhập file đơn TikTok"),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel()+podProfitPanel()+oldBox(pgStock(),"Sản phẩm nhập tay"):pgStock()),sanpham:pgResearch,media:pgMedia,fulfill:()=>hubPerf()+ffAutoPanel()+oldBox(pgFulfill(),"Đối tác, ví, sự cố nhập tay"),nhaphang:pgPurch,caidat:()=>`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">Nguồn dữ liệu – phần nào tự động, phần nào chưa</h3>${ovSources()}</div>
+  const pg={canhbao:()=>pgAlerts(),tongquan:()=>pgAutoOverview()+oldBox(pgOverview(),"Báo cáo từ file TikTok"),banhang:()=>pgPodOrders()+`<details class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">Sản lượng & phí theo bảng Lark FULLFILLMENT CỐC <span class="small muted">(bấm để mở)</span></summary><div style="margin-top:10px">${podPanel()}</div></details>`+oldBox(pgSales(),"Nhập file đơn TikTok"),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel()+podProfitPanel()+oldBox(pgStock(),"Sản phẩm nhập tay"):pgStock()),sanpham:pgResearch,media:pgMedia,fulfill:()=>ffPodPanel()+hubPerf()+ffAutoPanel()+oldBox(pgFulfill(),"Đối tác, ví, sự cố nhập tay"),nhaphang:pgPurch,caidat:()=>`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">Nguồn dữ liệu – phần nào tự động, phần nào chưa</h3>${ovSources()}</div>
     <div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 6px">Gọn giao diện</h3>
       <p class="small">${(()=>{const h=TABS.filter(([k])=>tabEmpty(k));return h.length?`Trang đang ẩn vì chưa có dữ liệu: ${h.map(([k,l])=>`<a href="#${k}">${esc(l)}</a>`).join(" · ")}. Khi có dữ liệu (thêm nhân sự, chấm công, tài nguyên) trang sẽ tự hiện lại.`:"Không có trang nào đang ẩn."})()}</p>
       <p class="small">Phần nhập tay cũ (nhập file TikTok, chi phí/shop/đối tác nhập tay, thanh lọc kỳ cũ) ${oldHas()&&!S.showOld?"đang hiện vì còn dữ liệu cũ.":S.showOld?"đang bật hiện.":"đang ẩn vì không dùng – số liệu đã tự động."}</p>
