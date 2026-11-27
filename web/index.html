@@ -197,7 +197,7 @@ td.n .sub,td.n .btn{font-family:var(--f-ui)}
 .rd-sec{margin:16px 0 6px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 .rd-sec h3{margin:0}
 .rd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:10px}
-.rd-card{border:1px solid var(--line,#e6e6e6);border-radius:10px;padding:10px;background:var(--card,#fff);display:flex;gap:10px;min-width:0}
+.rd-card{border:1px solid var(--line,#e6e6e6);border-radius:10px;padding:10px;background:var(--surface);display:flex;gap:10px;min-width:0}
 .rd-card .rs-pic{flex:0 0 76px;width:76px;height:76px}
 .rd-card .rd-b{min-width:0;flex:1}
 .rd-card .rd-t{font-weight:600;line-height:1.3;word-break:break-word}
@@ -207,6 +207,16 @@ td.n .sub,td.n .btn{font-family:var(--f-ui)}
 .rd-card .rd-a{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .rd-news .rd-card .rs-pic{display:none}
 @media(max-width:520px){.rd-grid{grid-template-columns:1fr}}
+/* Media video */
+.md-board{display:grid;grid-template-columns:repeat(6,minmax(190px,1fr));gap:10px;overflow-x:auto;padding-bottom:6px}
+.md-col{background:var(--sunk);border-radius:10px;padding:8px;min-height:120px}
+.md-h{font-weight:600;font-size:13px;margin:2px 2px 8px}
+.md-card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px;margin-bottom:8px;font-size:13px}
+.md-t{font-weight:600;line-height:1.35;word-break:break-word}
+.md-scene{border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px}
+.md-prompt{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;background:var(--sunk);border-radius:6px;padding:8px;margin-top:6px;word-break:break-word}
+@media (max-width:760px){.md-board{grid-template-columns:repeat(6,82vw);scroll-snap-type:x mandatory}.md-col{scroll-snap-align:start}}
+.md-swipe{display:none;text-align:center;margin:4px 0}@media (max-width:760px){.md-swipe{display:block}}
 
 /* Trang đăng nhập và thanh tài khoản của bản web; dùng chung màu và chữ với css/app.css */
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -245,7 +255,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.27d", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.27e", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -258,7 +268,7 @@ window.APP_CONFIG = {
   const cfg = window.APP_CONFIG || {};
   const $id = id => document.getElementById(id);
   const ready = cfg.supabaseUrl && cfg.supabaseAnonKey && !/DIEN_|YOUR_/.test(cfg.supabaseUrl + cfg.supabaseAnonKey);
-  const APP_SCRIPTS = ["01-config", "02-demo", "03-calc", "04-data", "05-pages", "06-kpi", "07-actions", "08-import", "09-staff", "11-backup", "12-web", "13-research", "14-attendance", "15-shell", "16-dropsheet", "17-podlark", "18-autolink", "19-thuchi", "20-overview", "21-podorders", "22-alerts", "10-boot"];
+  const APP_SCRIPTS = ["01-config", "02-demo", "03-calc", "04-data", "05-pages", "06-kpi", "07-actions", "08-import", "09-staff", "11-backup", "12-web", "13-research", "14-attendance", "15-shell", "16-dropsheet", "17-podlark", "18-autolink", "19-thuchi", "20-overview", "21-podorders", "22-alerts", "23-media", "10-boot"];
 
   /* ---------- Kho dữ liệu ---------- */
   function makeDb(sb) {
@@ -481,7 +491,7 @@ window.APP_CONFIG = {
 <script type="text/plain" id="src-01-config">
 /* 01-config.js · Cấu hình chung: tab, vị trí & bộ KPI chuẩn, cấp thưởng seller, hạng mục, trạng thái và các hàm tiện ích */
 /* ============ Trạng thái & tiện ích ============ */
-const TABS=[["tongquan","Tổng quan"],["canhbao","Cảnh báo"],["pheduyet","Phê duyệt"],["banhang","Đơn POD"],["dondrop","Đơn Drop"],["fulfill","Fulfillment"],["kho","Sản phẩm & Kho"],["sanpham","Săn sản phẩm"],["nhaphang","Nhập hàng"],["chiphi","Chi phí"],["dongtien","Dòng tiền"],["congviec","Công việc"],["kpi","Nhân sự & KPI"],["chamcong","Chấm công"],["tainguyen","Tài nguyên"],["caidat","Cài đặt"]];
+const TABS=[["tongquan","Tổng quan"],["canhbao","Cảnh báo"],["pheduyet","Phê duyệt"],["banhang","Đơn POD"],["dondrop","Đơn Drop"],["fulfill","Fulfillment"],["kho","Sản phẩm & Kho"],["sanpham","Săn sản phẩm"],["media","Media video"],["nhaphang","Nhập hàng"],["chiphi","Chi phí"],["dongtien","Dòng tiền"],["congviec","Công việc"],["kpi","Nhân sự & KPI"],["chamcong","Chấm công"],["tainguyen","Tài nguyên"],["caidat","Cài đặt"]];
 const isFF=()=>ST().model!=="stock";
 /* Chấm công & Phê duyệt luôn hiện (giám đốc nối máy chấm công). Trang chưa có dữ liệu khác thì ẩn khỏi menu cho gọn (vẫn mở được từ Cài đặt › Trang đang ẩn) */
 const tabEmpty=k=>{try{const D=V(),noStaff=!(D.staff||[]).length;return !S.showOld&&(k==="tainguyen"?!(D.assets||[]).length:false)}catch(e){return false}};
@@ -489,12 +499,12 @@ const tabList=()=>TABS.filter(([k])=>(isFF()?k!=="nhaphang":k!=="fulfill")&&(S.t
 const ISSUE_T=["Gửi trễ / chưa gửi","Sai hàng / sai mẫu","Thiếu hàng","Hư hỏng / lỗi in","Mất hàng / thất lạc","Không có tracking","Đối tác hết hàng","Khác"];
 const ISTAT={open:["Đang xử lý","p-bad"],claim:["Đã khiếu nại đối tác","p-warn"],done:["Đã xong","p-good"]};
 const PTYPE=["Fulfillment (3PL)","In theo yêu cầu (POD)","Dropship","Khác"];
-const COLS=["shops","products","sales","expenses","purchases","cash","tasks","assets","staff","kpi","partners","ffbills","ffissues","reports","research","attendance","attreq"];
+const COLS=["shops","products","sales","expenses","purchases","cash","tasks","assets","staff","kpi","partners","ffbills","ffissues","reports","research","attendance","attreq","videos"];
 /* Bộ KPI chuẩn: [mã, tên, đơn vị, hướng (up = càng cao càng tốt), trọng số %, tự động?, mục tiêu gợi ý] */
 const OT=["ontime","Công việc hoàn thành đúng hạn","%","up",10,1,90];
 const ROLES={
   seller:{name:"Seller / Vận hành shop",kpis:[["gmv","Doanh thu GMV của shop","USD","up",35,1],["orders","Số đơn hàng","đơn","up",15,1],["cancel","Tỉ lệ hủy đơn","%","down",10,1,3],["ret","Tỉ lệ hoàn / trả hàng","%","down",10,1,5],["health","Điểm sức khỏe shop","điểm","up",10,0,95],["listing","Sản phẩm mới đăng / tối ưu","SP","up",10],OT]},
-  media:{name:"Media / Content (quay, dựng)",kpis:[["vorders","Đơn từ video của mình","đơn","up",40,0,350],["videos","Video đạt chuẩn (nguyên bản, không vi phạm)","video","up",20,0,450],["winvid","Video ra đơn (có từ 1 đơn)","video","up",20,0,60],["shoporders","Đơn các shop của seller đi cặp","đơn","up",10,1],["viol","Video bị TikTok báo vi phạm","lần","down",0,0,0],OT]},
+  media:{name:"Media / Content (quay, dựng)",kpis:[["vorders","Đơn từ video của mình","đơn","up",40,1,350],["videos","Video đạt chuẩn (nguyên bản, không vi phạm)","video","up",20,1,450],["winvid","Video ra đơn (có từ 1 đơn)","video","up",20,1,60],["shoporders","Đơn các shop của seller đi cặp","đơn","up",10,1],["viol","Video bị TikTok báo vi phạm","lần","down",0,0,0],OT]},
   live:{name:"Livestream / Host",kpis:[["lhours","Số giờ live","giờ","up",25],["lsess","Số phiên live","phiên","up",10],["lgmv","GMV từ live","USD","up",35],["lview","Người xem TB mỗi phiên","người","up",10],["lconv","Tỉ lệ chuyển đổi live","%","up",10,0,2],OT]},
   affiliate:{name:"Affiliate / Booking KOC",kpis:[["koc","KOC mới hợp tác","KOC","up",20],["samples","Mẫu gửi KOC","mẫu","up",10],["kvid","Video KOC đã đăng","video","up",25],["agmv","GMV affiliate","USD","up",35],OT]},
   ads:{name:"Quảng cáo (Ads)",kpis:[["roas","ROAS tổng (GMV ÷ chi ads)","x","up",40,1,4],["adgmv","GMV từ quảng cáo","USD","up",30],["cpa","Chi phí / đơn (CPA)","USD","down",20],OT]},
@@ -1053,6 +1063,7 @@ function onTime(s,m){if(!s?.id)return null;const t=today(),end=monthEnd(m);
   const due=V().tasks.filter(x=>taskOwnerId(x)===s.id&&x.due&&x.due.slice(0,7)===m&&(x.due<=t||x.status==="done"));
   if(!due.length)return null;const ok=due.filter(x=>x.status==="done"&&(x.doneAt||x.due)<=x.due).length;return ok/due.length*100}
 function autoVal(key,s,m,ctx){const from=m+"-01",to=[monthEnd(m),today()].sort()[0];if(from>today())return null;
+  if(["vorders","videos","winvid","viol"].includes(key))return typeof mdKpi==="function"?mdKpi(key,s,m):null;
   const shop=shopArg(s);const r=ctx.c[String(shop)+m]??=compute(from,to,shop);
   switch(key){case"shoporders":return shop!=="all"?r.orders:null;case"gmv":case"tgmv":return r.gmv;case"orders":return r.orders;case"tprofit":return r.profit;
     case"cancel":return r.hasSt?r.st.cancel/Math.max(1,r.orders+r.st.cancel)*100:null;
@@ -1501,7 +1512,7 @@ async function writeImport(){const I=S.imp,P=I.result;if(!guardWrite())return;I.
 <script type="text/plain" id="src-09-staff">
 /* 09-staff.js · Cổng nhân viên: việc của tôi, KPI của tôi, nộp số liệu */
 /* ============ Cổng nhân viên (chỉ thấy phần của mình) ============ */
-const STAFF_TABS=[["congviec","Việc của tôi"],["chamcong","Chấm công"],["kpi","KPI của tôi"],["nop","Nộp số liệu"],["sanpham","Săn sản phẩm"]];
+const STAFF_TABS=[["congviec","Việc của tôi"],["chamcong","Chấm công"],["kpi","KPI của tôi"],["nop","Nộp số liệu"],["sanpham","Săn sản phẩm"],["media","Media video"]];
 const TYPE_LB={sales:"Số liệu bán hàng",products:"Sản phẩm",expenses:"Chi phí",cash:"Thu chi",ffissues:"Sự cố đơn",ffbills:"Ví / hóa đơn đối tác",tasks:"Công việc",kpiact:"Số liệu KPI"};
 const TYPE_EDIT={sales:"saleEdit",products:"prodEdit",expenses:"expEdit",cash:"cashEdit",ffissues:"issueEdit",ffbills:"billEdit"};
 const ROLE_BTNS={seller:[["saleManual","+ Nhập tay một ngày"],["prodAdd","+ Sản phẩm / giá vốn"]],warehouse:[["issueAdd","+ Ghi sự cố đơn"],["billAdd","+ Nạp ví / thanh toán","topup"],["billAdd","+ Hóa đơn / trừ ví","charge"]],
@@ -1942,7 +1953,7 @@ function rdCard(x,tracked){const tt=String(x.name).replace(/^\[Hot đa sàn\]\s*
   return`<div class="rd-card">${pic}<div class="rd-b"><div class="rd-t">${nm}</div><div class="rd-m">${m}</div>
     ${note?(note.length>170?`<details><summary class="rd-n">${esc(short)} <b>Xem thêm</b></summary><div class="rd-n" style="margin-top:4px">${esc(note)}</div></details>`:`<div class="rd-n">${esc(note)}</div>`):""}
     <div class="rd-a">${x.category!=="Tin hot"?(tracked?`<span class="pill p-good">✓ Đang theo dõi</span>`:canResearch()?`<button class="btn sm" data-act="rdTrack" data-id="${esc(x._i)}">+ Theo dõi</button>`:""):""}
-      <a class="btn sm ghost" href="https://www.tiktok.com/search?q=${q}" target="_blank" rel="noopener">Tìm trên TikTok</a>${x.category!=="Tin hot"?`<a class="btn sm ghost" href="https://www.etsy.com/search?q=${q}" target="_blank" rel="noopener">Etsy</a>`:""}</div></div></div>`}
+      ${x.category!=="Tin hot"&&canMedia()?`<button class="btn sm ghost" data-act="mdFrom" data-id="${esc(x._i)}">🎬 Làm video</button>`:""}<a class="btn sm ghost" href="https://www.tiktok.com/search?q=${q}" target="_blank" rel="noopener">Tìm trên TikTok</a>${x.category!=="Tin hot"?`<a class="btn sm ghost" href="https://www.etsy.com/search?q=${q}" target="_blank" rel="noopener">Etsy</a>`:""}</div></div></div>`}
 function rsDayView(){if(!S.staff&&!S.rsSub&&S.db){S.rsSub=1;S.db.doc("settings/research").onSnapshot(s=>{S.rsCfgDoc=s.exists?s.data():null;render()},()=>{})}
   rdLoad(false);const F=S.rdFeed,items=(F?.items||[]).map((x,i)=>({...x,_i:String(i),day:String(x.day||F.date||"").slice(0,10)}));
   const days=[...new Set(items.map(x=>x.day).filter(Boolean))].sort().reverse(),R=S.rd;if(!days.includes(R.day))R.day=days[0]||"";
@@ -2229,10 +2240,11 @@ document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="attQ"
 const NAV_GROUPS=[
   ["Vận hành",["tongquan","canhbao","pheduyet","congviec"]],
   ["Bán hàng",["banhang","dondrop","fulfill","kho","sanpham"]],
+  ["Nội dung",["media"]],
   ["Tài chính",["chiphi","dongtien"]],
   ["Con người",["kpi","chamcong"]],
   ["Hệ thống",["tainguyen","caidat"]]];
-const STAFF_GROUPS=[["Của tôi",["congviec","chamcong","kpi","nop"]],["Bán hàng",["sanpham"]]];
+const STAFF_GROUPS=[["Của tôi",["congviec","chamcong","kpi","nop"]],["Bán hàng",["sanpham","media"]]];
 /* Biểu tượng nét mảnh 18px, vẽ bằng SVG để không phải tải thêm thư viện */
 const NAV_ICON={
   tongquan:'<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
@@ -2244,6 +2256,7 @@ const NAV_ICON={
   nhaphang:'<path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="1.6"/><circle cx="17.5" cy="18" r="1.6"/>',
   dondrop:'<rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="M3.5 9.5h17M3.5 15h17M9 4v16"/>',
   kho:'<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/>',
+  media:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/>',
   sanpham:'<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.4-4.4"/>',
   chiphi:'<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/>',
   dongtien:'<path d="M4 17 9.5 11.5l3.5 3.5L20 8"/><path d="M15 8h5v5"/>',
@@ -3266,6 +3279,182 @@ Object.assign(ACT,{goalEdit:m=>{m=m||today().slice(0,7);const g=S.goalDoc?.m?.[m
     onSave:async o=>{const M={...(S.goalDoc?.m||{})};M[m]={orders:+o.orders||0,rev:+o.rev||0,profit:+o.profit||0};const doc={m:M,at:new Date().toISOString()};await S.db.doc("settings/goals").set(doc);S.goalDoc=doc;render()}})}});
 
 </script>
+<script type="text/plain" id="src-23-media">
+/* 23-media.js · Media video – học từ NOVA AI Studio (novaglobal.vn/media) nhưng gắn với BÁN HÀNG:
+   - NOVA đếm "đã tạo bao nhiêu video". Nexa đếm thêm "video nào ra đơn" → kho prompt tự xếp hạng theo kết quả bán, không cần ai chấm tay.
+   - Collection "videos": mỗi video là 1 thẻ đi qua các bước Ý tưởng → Kịch bản → Đang làm → Đã đăng → Thắng/Dừng.
+   - Trình tạo kịch bản + prompt Veo/Grok chạy ngay trên web (mẫu soạn sẵn, không tốn tiền AI), có kiểm tra thương hiệu/nhân vật.
+   - Tài khoản AI (settings/mediaAcc): chỉ ghi ai dùng tài khoản nào, KHÔNG lưu mật khẩu. */
+S.md={view:"board",g:null,out:null,copy:{},q:"",who:""};S.mdAccDoc=null;S.mdAccSub=0;
+const canMedia=()=>!S.staff||["media","seller","manager"].includes(S.my?.role);
+const MD_ST=[["idea","Ý tưởng"],["script","Có kịch bản"],["making","Đang làm"],["posted","Đã đăng – chờ đo"],["win","Thắng – nhân bản"],["stop","Dừng"]];
+const MD_TOOL=[["veo","Veo 3.1 (Google Flow)"],["grok","Grok Imagine"],["real","Quay thật"],["capcut","CapCut / dựng ảnh"],["other","Khác"]];
+const MD_KPI={days:3,views:3000,ctr:1,atc:3,orders:3};
+const MD_CAT={
+  cup:{lb:"Cốc 30-40oz",en:"40oz stainless steel tumbler with handle and straw",sh:"tumbler",place:["in a car cup holder at golden hour","on a cozy kitchen counter next to a laptop","held in one hand during a morning walk"],tags:["#tumbler","#40oztumbler","#customtumbler"]},
+  rug:{lb:"Thảm",en:"plush velvet shaped area rug",sh:"rug",place:["on a hardwood living room floor","beside a bed in a cozy bedroom","in a rustic cabin den"],tags:["#rug","#customrug","#roomdecor"]},
+  clog:{lb:"Dép clog",en:"fuzzy fleece-lined clogs with all-over print",sh:"clogs",place:["worn on feet on a fluffy carpet","on a porch covered with autumn leaves","next to a warm fireplace"],tags:["#clogs","#cozyvibes","#slippers"]},
+  set:{lb:"Bộ hoodie + quần nỉ",en:"matching all-over print hoodie and sweatpants set",sh:"matching set",place:["worn on a couch with a blanket","in a bedroom mirror selfie","walking in a quiet street at dusk"],tags:["#matchingset","#hoodie","#loungewear"]},
+  flag:{lb:"Cờ / banner",en:"printed wall flag banner",sh:"flag",place:["hung on a garage wall","on a dorm room wall","on a front porch"],tags:["#flag","#mancave","#walldecor"]},
+  other:{lb:"Sản phẩm in khác",en:"custom printed product",sh:"gift",place:["on a clean table by a window","in a gift box","in everyday use at home"],tags:["#customgift","#personalized"]}};
+/* Mỗi kiểu video: 3 hook + 4 cảnh [tên cảnh, mô tả hình (EN), chữ trên màn hình (EN)] */
+const MD_FMT={
+  gift:{lb:"POV tặng quà (cảm xúc)",hooks:["POV: you finally found the perfect gift for {aud}","{aud} is going to lose it when they open this","The gift they will actually use every single day"],
+    sc:[["Mở quà","hands opening a gift box and revealing the {p}, {d}, {pl}","Best gift idea 🎁"],["Cận cảnh hình in","slow macro push-in on the {d} print of the {p}, crisp detail, warm light","Look at this detail 😍"],["Người nhận dùng thật","{aud} happily using the {p} {pl}, genuine smile, candid moment","They use it every day"],["Kêu gọi mua","the {p} displayed {pl}, camera slowly orbits around it","Tap the cart before it sells out"]]},
+  unbox:{lb:"Mở hộp + ASMR cận cảnh",hooks:["Unboxing the {sh} everyone keeps asking about","This {sh} is even better in person","ASMR unboxing: {d} {sh}"],
+    sc:[["Hộp kín","a sealed shipping package on a table, hands start cutting the tape","Unboxing time 📦"],["Lấy ra","hands pulling the {p} out of tissue paper, satisfying slow motion","Wait for it…"],["ASMR chi tiết","extreme close-up of fingers touching the {d} print and texture of the {p}, soft sounds","The quality 🤌"],["Đặt vào chỗ dùng","placing the {p} {pl}, final hero shot","Link in the cart 🛒"]]},
+  before:{lb:"Trước / Sau (biến hoá)",hooks:["My {sp} before vs after this {sh}","One small change, completely different vibe","Rate this glow-up from 1 to 10"],
+    sc:[["Trước","a plain, boring {sp} without decoration, flat lighting","Before 😐"],["Chuyển cảnh","quick whip-pan transition with motion blur","…"],["Sau","the same {sp} now featuring the {p}, {d}, cozy warm lighting","After 🤩"],["Cận cảnh","slow push-in on the {p} {pl}","Get yours today"]]},
+  problem:{lb:"Vấn đề → giải pháp",hooks:["Stop buying boring {sh}s","If you are tired of {pain}, watch this","I wish I found this {sh} sooner"],
+    sc:[["Vấn đề","a person looking annoyed by {pain}, realistic home setting","Tired of {pain}?"],["Giới thiệu","the {p} appears, {d}, clean reveal shot","Meet your new favorite"],["Lợi ích","person using the {p} {pl}, relaxed and happy","Problem solved ✅"],["Kêu gọi mua","hero shot of the {p}, gentle camera move","Grab it in the cart"]]},
+  custom:{lb:"Cá nhân hoá (tên, chữ)",hooks:["I put my name on a {sh} and it came out like this","Personalized {sh} with any name you want","Watch the name reveal 👀"],
+    sc:[["Đặt câu hỏi","close-up of a phone screen typing a name into a personalization box (no app logos)","Any name you want ✍️"],["Lộ diện","slow reveal of the {p} showing a custom name in the {d} design","The reveal 😍"],["Xoay sản phẩm","the {p} rotating slowly to show the print all around","Printed in full color"],["Kêu gọi mua","the {p} {pl}","Make yours now"]]},
+  trend:{lb:"Theo trend / tin hot (chủ đề chung)",hooks:["Everyone is talking about {tr} — so I got this","{tr} season is here 🔥","Made for anyone obsessed with {tr}"],
+    sc:[["Gắn trend","atmospheric scene inspired by {tr} (generic, no characters, no logos)","{tr} vibes"],["Sản phẩm","the {p} with a {d} design inspired by {tr}, {pl}","Had to get this"],["Dùng thật","person enjoying the {p} {pl}","Perfect for fans"],["Kêu gọi mua","hero shot, slow camera move","Limited drop 🛒"]]}};
+const MD_SPACE={cup:"desk setup",rug:"living room",clog:"cozy evening routine",set:"lounge outfit",flag:"garage wall",other:"room"};
+const MD_PAIN={cup:"lukewarm coffee by noon",rug:"cold, empty floors",clog:"freezing feet at home",set:"boring loungewear",flag:"blank walls",other:"boring gifts"};
+const MD_SUFFIX={veo:"vertical 9:16, photorealistic, smartphone UGC look, 8 seconds, natural motion, no text on screen, no logos, no brand names, no watermarks",grok:"vertical 9:16 video, realistic, smooth motion, no text, no logos, no brand names (tip: upload the product mockup image as the starting frame)",capcut:"vertical 9:16 still image for a slideshow, realistic product photo, no text, no logos",other:"vertical 9:16, realistic, no text, no logos"};
+const mdFill=(s,v)=>String(s).replace(/\{(\w+)\}/g,(_,k)=>v[k]??"");
+function mdGen(g){const c=MD_CAT[g.cat]||MD_CAT.other,f=MD_FMT[g.fmt]||MD_FMT.gift,len=+g.len||16,n=f.sc.length,per=Math.max(2,Math.round(len/n));
+  const d=g.design||"original custom",pl=c.place[(g.fmt.length+d.length)%c.place.length],v={p:`${c.en}${g.product?` (${g.product})`:""}`,sh:c.sh,d,pl,aud:g.aud||"your best friend",sp:MD_SPACE[g.cat]||"room",pain:MD_PAIN[g.cat]||"boring gifts",tr:g.trend||g.niche||"the holidays"};
+  const hooks=f.hooks.map(h=>mdFill(h,v)),real=g.tool==="real";
+  const scenes=f.sc.map(([nm,vis,txt],i)=>({nm,t:`${i*per}–${Math.min(len,(i+1)*per)}s`,txt:mdFill(txt,v),
+    prompt:real?`Quay: ${mdFill(vis,v)}`:`${mdFill(vis,v)}${g.niche&&!/transition/.test(vis)?`, ${g.niche} theme`:""}, ${MD_SUFFIX[g.tool]||MD_SUFFIX.veo}`}));
+  const nt=g.niche?"#"+String(g.niche).toLowerCase().replace(/[^a-z0-9]/g,""):"";
+  const cap=`${hooks[0]} ✨ ${d} ${c.sh}${g.cat==="cup"||g.cat==="rug"||g.custom?" – personalize it with any name":""} 👇\n${[...c.tags,nt,"#tiktokshop","#tiktokmademebuyit","#giftideas"].filter(Boolean).join(" ")}`;
+  const ip=[g.product,g.design,g.niche,g.trend].some(x=>x&&poIP(String(x)));
+  const all=[`HOOK (chọn 1, đọc/hiện chữ trong 1–3 giây đầu):`,...hooks.map((h,i)=>`${i+1}. ${h}`),"",`KỊCH BẢN ${len} giây – ${f.lb} – ${c.lb}:`,...scenes.map((s,i)=>`Cảnh ${i+1} (${s.t}) ${s.nm}\n  Chữ trên màn hình: ${s.txt}\n  ${real?"":"Prompt: "}${s.prompt}`),"","CAPTION:",cap].join("\n");
+  return{hooks,scenes,cap,ip,all,len,real,lb:`${f.lb} · ${c.lb}`}}
+/* ---------- Đánh giá video theo KPI test 3–4 ngày ---------- */
+function mdVerdict(x){if(!["posted","win","stop"].includes(x.status))return null;if(!x.postDate)return{k:"need",lb:"Thiếu ngày đăng",c:"p-mute"};
+  const d=dayDiff(x.postDate,today());if(x.views==null||x.views==="")return d<MD_KPI.days?{k:"wait",lb:`Chờ đo · còn ${MD_KPI.days-d} ngày`,c:"p-mute"}:{k:"need",lb:"Cần nhập số",c:"p-warn"};
+  const o=+x.orders||0,vw=+x.views||0,ok=o>=MD_KPI.orders||(vw>=MD_KPI.views&&(+x.ctr||0)>=MD_KPI.ctr&&(+x.atc||0)>=MD_KPI.atc);
+  if(ok)return{k:"win",lb:"Đạt KPI – nhân bản",c:"p-good"};if(d<MD_KPI.days)return{k:"wait",lb:`Đang đo · ngày ${d+1}`,c:"p-acc"};
+  return o>=1||vw>=MD_KPI.views/2?{k:"mid",lb:"Tạm được – thử hook khác",c:"p-warn"}:{k:"weak",lb:"Yếu – dừng/đổi kiểu",c:"p-bad"}}
+const mdAll=()=>(V().videos||[]);
+const mdMine=()=>{const L=mdAll();return S.staff?L.filter(x=>!S.my?.staffId||x.staffId===S.my.staffId):S.md.who?L.filter(x=>x.staffId===S.md.who):L};
+const mdStaff=()=>(V().staff||[]).filter(s=>s.status!=="off"&&["media","seller","manager"].includes(s.role));
+const mdName=id=>(V().staff||[]).find(s=>s.id===id)?.name||"";
+const mdWeek=()=>{const t=today();return addDays(t,-((toD(t).getDay()+6)%7))};
+function mdNeedSub(){if(!S.staff&&S.db&&!S.mdAccSub){S.mdAccSub=1;S.db.doc("settings/mediaAcc").onSnapshot(s=>{S.mdAccDoc=s.exists?s.data():null;if(S.tab==="media")render()},()=>{})}}
+function pgMedia(){mdNeedSub();if(!canMedia())return`<div class="panel"><p>Tab này dành cho Media, Seller và Quản lý.</p></div>`;
+  const tabs=[["board","Bảng sản xuất"],["gen","Tạo kịch bản & prompt"],["dash","Tổng quan"],["lib","Kho prompt thắng"],["tools","Công cụ & tài khoản"]];
+  const body={board:mdBoard,gen:mdGenView,dash:mdDash,lib:mdLib,tools:mdTools}[S.md.view]||mdBoard;
+  return`<div class="actions" style="flex-wrap:wrap;gap:6px;margin-bottom:12px">${tabs.map(([k,l])=>`<button class="btn sm ${S.md.view===k?"pri":"ghost"}" data-act="mdView" data-id="${k}">${l}</button>`).join("")}
+    ${!S.staff&&mdStaff().length?`<select class="inp" id="mdWho" style="width:auto;margin-left:auto" aria-label="Lọc nhân viên"><option value="">Cả team</option>${mdStaff().map(s=>`<option value="${esc(s.id)}" ${S.md.who===s.id?"selected":""}>${esc(s.name)}</option>`).join("")}</select>`:""}</div>${body()}`}
+/* ---------- Bảng sản xuất ---------- */
+function mdCard(x){const v=mdVerdict(x),tool=MD_TOOL.find(t=>t[0]===x.tool)?.[1]||"",nx=MD_ST[MD_ST.findIndex(s=>s[0]===x.status)+1];
+  const m=[x.cat?`<span class="pill p-mute">${esc(MD_CAT[x.cat]?.lb||x.cat)}</span>`:"",tool?`<span class="pill p-mute">${esc(tool)}</span>`:"",v?`<span class="pill ${v.c}">${v.lb}</span>`:"",x.ip?`<span class="pill p-bad">⚠ dính thương hiệu</span>`:""].join("");
+  const nums=x.views!=null&&x.views!==""?`<div class="small">👁 ${int(x.views)} · CTR ${x.ctr??"–"}% · Giỏ ${x.atc??"–"}% · <b>${int(x.orders)} đơn</b></div>`:"";
+  return`<div class="md-card"><div class="md-t">${x.tiktokLink&&rsUrl(x.tiktokLink)?`<a href="${esc(x.tiktokLink)}" target="_blank" rel="noopener">${esc(x.title||"(chưa đặt tên)")} ↗</a>`:esc(x.title||"(chưa đặt tên)")}</div>
+    <div class="small muted">${esc(x.product||"")}${x.staffId&&!S.staff?` · ${esc(mdName(x.staffId))}`:""}${x.postDate?` · đăng ${fmtD(x.postDate).slice(0,5)}`:""}</div><div class="rd-m">${m}</div>${nums}
+    <div class="actions" style="gap:4px;margin-top:6px"><button class="btn sm ghost" data-act="mdEdit" data-id="${esc(x.id)}">Sửa / nhập số</button>${nx&&x.status!=="win"&&x.status!=="stop"?`<button class="btn sm" data-act="mdNext" data-id="${esc(x.id)}">→ ${nx[1].split(" – ")[0]}</button>`:""}${v&&(v.k==="win"||v.k==="weak")&&x.status==="posted"?`<button class="btn sm ${v.k==="win"?"pri":""}" data-act="mdSettle" data-id="${esc(x.id)}">Chốt: ${v.k==="win"?"Thắng":"Dừng"}</button>`:""}${x.status==="win"?`<button class="btn sm" data-act="mdClone" data-id="${esc(x.id)}">+ Biến thể</button>`:""}</div></div>`}
+function mdBoard(){const L=mdMine(),q=S.md.q.toLowerCase(),list=q?L.filter(x=>[x.title,x.product,x.hook,x.niche].join(" ").toLowerCase().includes(q)):L;
+  const t30=addDays(today(),-30),need=L.filter(x=>mdVerdict(x)?.k==="need").length;
+  const cols=MD_ST.map(([k,lb])=>{let it=list.filter(x=>(x.status||"idea")===k);if(k==="stop"||k==="win")it=it.filter(x=>(x.postDate||x.made||"")>=t30||k==="win");
+    it.sort((a,b)=>String(b.postDate||b.made||"").localeCompare(String(a.postDate||a.made||"")));
+    return`<div class="md-col"><div class="md-h">${lb} <span class="muted">(${it.length})</span></div>${it.slice(0,40).map(mdCard).join("")||'<p class="small muted">Trống</p>'}</div>`}).join("");
+  return`<div class="panel"><div class="actions" style="flex-wrap:wrap;gap:6px;margin-bottom:8px"><button class="btn sm pri" data-act="mdNew">+ Video mới</button><button class="btn sm" data-act="mdView" data-id="gen">✨ Tạo kịch bản</button>
+    <input class="inp" id="mdQ" placeholder="Tìm video (Enter)" value="${esc(S.md.q)}" style="width:200px">${need?`<span class="pill p-warn">${need} video cần nhập số view/đơn</span>`:""}</div>
+    <div class="md-board">${cols}</div><p class="small muted md-swipe">← Vuốt ngang để xem các cột khác →</p>
+    <p class="hint">KPI test ${MD_KPI.days}–4 ngày sau khi đăng: ≥${int(MD_KPI.views)} view, CTR ≥${MD_KPI.ctr}%, thêm giỏ ≥${MD_KPI.atc}% hoặc ≥${MD_KPI.orders} đơn → <b>Thắng</b>: làm 3–5 biến thể (đổi hook, đổi cảnh đầu). Số lấy ở TikTok Shop → Analytics → Video. Cột Dừng chỉ hiện 30 ngày gần nhất.</p></div>`}
+function mdForm(x={}){const me=S.staff?S.my?.staffId:"";const st=mdStaff();
+  const fields=[{k:"title",label:"Tên video (để nhận ra)",req:1,wide:1},{k:"product",label:"Sản phẩm"},{k:"cat",label:"Nhóm",type:"select",options:Object.entries(MD_CAT).map(([k,c])=>[k,c.lb])},{k:"niche",label:"Ngách / chủ đề",hint:"vd: săn bắn, Noel, câu cá"},
+    {k:"fmt",label:"Kiểu video",type:"select",options:Object.entries(MD_FMT).map(([k,f])=>[k,f.lb])},{k:"status",label:"Bước",type:"select",options:MD_ST},{k:"tool",label:"Làm bằng",type:"select",options:MD_TOOL},
+    ...(S.staff?[]:[{k:"staffId",label:"Người làm",type:"select",options:[["","(chưa giao)"],...st.map(s=>[s.id,s.name])]}]),{k:"shopId",label:"Shop đăng",type:"select",options:shopOpts(true)},
+    {k:"postDate",label:"Ngày đăng",type:"date"},{k:"tiktokLink",label:"Link video TikTok",wide:1},
+    {k:"views",label:"View",type:"number",nullable:1},{k:"ctr",label:"CTR sản phẩm (%)",type:"number",nullable:1},{k:"atc",label:"Thêm giỏ (%)",type:"number",nullable:1},{k:"orders",label:"Đơn từ video",type:"number",nullable:1},
+    {k:"viol",label:"TikTok báo vi phạm?",type:"select",options:[["","Không"],["1","Có"]]},{k:"hook",label:"Hook (1–3 giây đầu)",type:"textarea",wide:1},{k:"prompt",label:"Kịch bản / prompt đã dùng",type:"textarea",wide:1},{k:"note",label:"Ghi chú",type:"textarea",wide:1}];
+  openForm({title:x.id?"Sửa video":"Video mới",sub:"Sau 3–4 ngày đăng, mở lại thẻ này để nhập View, CTR, Thêm giỏ, Đơn (TikTok Shop → Analytics → Video).",fields,data:{cat:"cup",fmt:"gift",status:"idea",tool:"veo",...x,viol:x.viol?"1":""},
+    onSave:async o=>{const rec={...rsCleanMd(x),...o,viol:o.viol==="1",staffId:S.staff?me:o.staffId||"",made:x.made||today()};rec.ip=[rec.title,rec.product,rec.niche,rec.hook,rec.prompt].some(s=>s&&poIP(String(s)));
+      if(rec.status==="posted"&&!rec.postDate)rec.postDate=today();if(rec.ip)toast("⚠ Có tên thương hiệu/nhân vật – dễ bị TikTok gỡ video, nên đổi sang chủ đề chung.");return save("videos",x.id,rec)},
+    onDelete:x.id?()=>remove("videos",x.id):null})}
+const rsCleanMd=x=>{const r={};for(const[k,v]of Object.entries(x||{}))if(!k.startsWith("_")&&k!=="id"&&k!=="at")r[k]=v;return r};
+/* ---------- Tạo kịch bản & prompt ---------- */
+function mdGenView(){const g=S.md.g||(S.md.g={cat:"cup",fmt:"gift",len:16,tool:"veo",product:"",design:"",niche:"",aud:"",trend:""}),o=S.md.out;
+  const sel=(id,opts,v)=>`<select class="inp" id="${id}">${opts.map(([k,l])=>`<option value="${esc(k)}" ${String(k)===String(v)?"selected":""}>${esc(l)}</option>`).join("")}</select>`;
+  const fl=(lb,h)=>`<label class="fld"><span>${lb}</span>${h}</label>`,inp=(id,v,ph)=>`<input class="inp" id="${id}" value="${esc(v)}" placeholder="${esc(ph)}">`;
+  const cp=(k,txt)=>{S.md.copy[k]=txt;return`<button class="btn sm ghost" data-act="mdCopy" data-id="${k}">Sao chép</button>`};
+  return`<div class="panel"><h3 style="margin:0 0 4px">Tạo kịch bản + prompt video</h3><p class="hint" style="margin-top:0">Chọn vài ô → bấm Tạo. Ra 3 hook, 4 cảnh có chữ trên màn hình, prompt tiếng Anh cho Veo/Grok và caption. Viết bằng tiếng Anh vì khách là người Mỹ.</p>
+    <div class="form">${fl("Nhóm sản phẩm",sel("md_cat",Object.entries(MD_CAT).map(([k,c])=>[k,c.lb]),g.cat))}${fl("Kiểu video",sel("md_fmt",Object.entries(MD_FMT).map(([k,f])=>[k,f.lb]),g.fmt))}
+      ${fl("Độ dài",sel("md_len",[[8,"8 giây (1 clip Veo)"],[16,"16 giây (2 clip)"],[24,"24 giây (3 clip)"]],g.len))}${fl("Làm bằng",sel("md_tool",MD_TOOL.filter(t=>t[0]!=="other"),g.tool))}
+      ${fl("Tên sản phẩm (tuỳ chọn)",inp("md_product",g.product,"vd: Deer hunting tumbler"))}${fl("Hình in / thiết kế (EN)",inp("md_design",g.design,"vd: realistic deer in a misty forest, camo border"))}
+      ${fl("Ngách",inp("md_niche",g.niche,"vd: deer hunting, Christmas, fishing"))}${fl("Người nhận / khán giả (EN)",inp("md_aud",g.aud,"vd: your dad who loves hunting"))}
+      ${g.fmt==="trend"?fl("Trend / tin hot (chủ đề chung)",inp("md_trend",g.trend,"vd: first snow day, Thanksgiving")):""}</div>
+    <div class="actions" style="margin-top:8px"><button class="btn pri" data-act="mdRun">✨ Tạo kịch bản</button>${o?`<button class="btn" data-act="mdSaveGen">Lưu thành thẻ video</button>${cp("all",o.all)}`:""}</div></div>
+  ${o?`${o.ip?`<div class="panel" style="border-color:#dc2626"><b style="color:#dc2626">⚠ Có tên thương hiệu / nhân vật / đội.</b> Video và sản phẩm dễ bị TikTok gỡ, shop bị phạt. Đổi sang chủ đề chung tự vẽ rồi tạo lại.</div>`:""}
+  <div class="panel"><div class="sec-h"><h3 style="margin:0">Hook – chọn 1</h3>${cp("hooks",o.hooks.join("\n"))}</div><ol style="margin:6px 0 0 18px">${o.hooks.map(h=>`<li>${esc(h)}</li>`).join("")}</ol></div>
+  <div class="panel"><h3 style="margin:0 0 8px">Kịch bản ${o.len} giây · ${esc(o.lb)}</h3>${o.scenes.map((s,i)=>`<div class="md-scene"><div class="sec-h"><b>Cảnh ${i+1} · ${s.t} · ${esc(s.nm)}</b>${cp("s"+i,s.prompt)}</div>
+    <div class="small">Chữ trên màn hình: <b>${esc(s.txt)}</b></div><div class="md-prompt">${esc(s.prompt)}</div></div>`).join("")}
+    <p class="hint">${o.real?"Quay bằng điện thoại, mỗi cảnh 2–4 giây, ánh sáng cửa sổ.":"Veo 3.1 tạo clip 8 giây: dán mỗi prompt tạo 1 clip, chọn bản đẹp, ghép trong CapCut và thêm chữ ở đây. Grok: tải ảnh mockup sản phẩm làm khung đầu rồi dán prompt."}</p></div>
+  <div class="panel"><div class="sec-h"><h3 style="margin:0">Caption + hashtag</h3>${cp("cap",o.cap)}</div><div class="md-prompt" style="white-space:pre-wrap">${esc(o.cap)}</div></div>
+  <div class="panel"><h3 style="margin:0 0 6px">Kiểm tra trước khi đăng</h3><ul class="small" style="margin:0 0 0 18px;line-height:1.7">
+    <li>Không có logo, tên hãng, nhân vật phim/game, tên đội/trường, ca sĩ – kể cả trong hình nền.</li>
+    <li>Video làm bằng AI: <b>bật nhãn “AI-generated content”</b> khi đăng (TikTok yêu cầu với hình ảnh AI giống thật).</li>
+    <li>Nhạc: chỉ dùng nhạc trong <b>Commercial Music Library</b> của TikTok (shop bán hàng không dùng nhạc bản quyền thường).</li>
+    <li>Sản phẩm trong video phải giống ảnh listing (màu, kích thước, hình in) – tránh khách khiếu nại “không đúng mô tả”.</li>
+    <li>Không hứa quá mức (“rẻ nhất”, “giữ lạnh 3 ngày”…) nếu chưa kiểm chứng.</li></ul></div>`:""}`}
+/* ---------- Tổng quan ---------- */
+function mdDash(){const L=mdMine(),t=today(),wk=mdWeek(),m=t.slice(0,7),P=L.filter(x=>x.postDate&&["posted","win","stop"].includes(x.status));
+  const inM=P.filter(x=>x.postDate.startsWith(m)),meas=inM.filter(x=>x.views!=null&&x.views!==""),winM=inM.filter(x=>mdVerdict(x)?.k==="win"||x.status==="win");
+  const kp=(lb,v,s)=>`<div class="kpi"><span class="lb">${lb}</span><span class="v">${v}</span><span class="s">${s||""}</span></div>`;
+  const ord=inM.reduce((a,x)=>a+(+x.orders||0),0),inPipe=L.filter(x=>["idea","script","making"].includes(x.status||"idea")).length;
+  const ppl=(S.staff?[{id:S.my?.staffId,name:S.my?.name||"Tôi"}]:mdStaff()).map(s=>{const p=P.filter(x=>x.staffId===s.id),pm=p.filter(x=>x.postDate.startsWith(m));
+    return{s,d:p.filter(x=>x.postDate===t).length,w:p.filter(x=>x.postDate>=wk).length,m:pm.length,sell:pm.filter(x=>+x.orders>=1).length,o:pm.reduce((a,x)=>a+(+x.orders||0),0),win:pm.filter(x=>mdVerdict(x)?.k==="win"||x.status==="win").length,last:p.map(x=>x.postDate).sort().pop()}});
+  const grp=(key,lab)=>{const g={};inM.forEach(x=>{const k=x[key]||"";const e=g[k]||(g[k]={n:0,o:0,w:0,m:0});e.n++;e.o+=+x.orders||0;if(x.views!=null&&x.views!=="")e.m++;if(mdVerdict(x)?.k==="win"||x.status==="win")e.w++});
+    return Object.entries(g).sort((a,b)=>b[1].o-a[1].o||b[1].n-a[1].n).map(([k,e])=>`<tr><td>${esc(lab(k)||"(chưa ghi)")}</td><td class="n">${e.n}</td><td class="n">${e.w}</td><td class="n">${e.m?Math.round(e.w/e.m*100)+"%":"–"}</td><td class="n"><b>${int(e.o)}</b></td></tr>`).join("")};
+  const need=L.filter(x=>mdVerdict(x)?.k==="need"),top=inM.filter(x=>+x.orders>0).sort((a,b)=>b.orders-a.orders).slice(0,5);
+  const th='<thead><tr><th></th><th class="n">Video</th><th class="n">Thắng</th><th class="n">Tỷ lệ</th><th class="n">Đơn</th></tr></thead>';
+  return`<div class="kpis">${kp("Đăng hôm nay",P.filter(x=>x.postDate===t).length)}${kp("Đăng tuần này",P.filter(x=>x.postDate>=wk).length,"từ thứ Hai")}${kp("Đăng tháng này",inM.length,`${inPipe} video đang làm`)}${kp("Đơn từ video",int(ord),fmtM(m))}${kp("Tỷ lệ thắng",meas.length?Math.round(winM.length/meas.length*100)+"%":"–",`${winM.length}/${meas.length} video đã đo`)}</div>
+  ${need.length?`<div class="panel"><b>📋 ${need.length} video đã đăng ≥${MD_KPI.days} ngày chưa có số:</b> ${need.slice(0,8).map(x=>`<a href="#" data-act="mdEdit" data-id="${esc(x.id)}">${esc(x.title)}</a>`).join(" · ")}</div>`:""}
+  <div class="panel"><h3>Theo nhân viên</h3><div class="tbl"><table><thead><tr><th>Nhân viên</th><th class="n">Hôm nay</th><th class="n">Tuần này</th><th class="n">Tháng này</th><th class="n">Video ra đơn</th><th class="n">Thắng</th><th class="n">Đơn</th><th>Đăng gần nhất</th></tr></thead><tbody>
+    ${ppl.map(r=>`<tr><td>${esc(r.s.name)}</td><td class="n">${r.d}</td><td class="n">${r.w}</td><td class="n">${r.m}</td><td class="n">${r.sell}</td><td class="n">${r.win}</td><td class="n"><b>${int(r.o)}</b></td><td class="small">${r.last?fmtD(r.last):"–"}</td></tr>`).join("")||'<tr><td colspan="8" class="muted">Chưa có nhân viên vị trí Media/Seller.</td></tr>'}</tbody></table></div>
+    <p class="hint">Đếm theo <b>ngày đăng</b> (video thật sự lên kênh), không đếm bản nháp. KPI Media “Video đạt chuẩn / Video ra đơn / Đơn từ video” tự lấy từ đây.</p></div>
+  <div class="grid2"><div class="panel"><h3>Kiểu video nào ra đơn – ${fmtM(m)}</h3><div class="tbl"><table>${th}<tbody>${grp("fmt",k=>MD_FMT[k]?.lb)||'<tr><td colspan="5" class="muted">Chưa có video đăng tháng này.</td></tr>'}</tbody></table></div></div>
+    <div class="panel"><h3>Theo công cụ AI</h3><div class="tbl"><table>${th}<tbody>${grp("tool",k=>MD_TOOL.find(x=>x[0]===k)?.[1])||'<tr><td colspan="5" class="muted">–</td></tr>'}</tbody></table></div></div></div>
+  <div class="grid2"><div class="panel"><h3>Theo nhóm sản phẩm</h3><div class="tbl"><table>${th}<tbody>${grp("cat",k=>MD_CAT[k]?.lb)||'<tr><td colspan="5" class="muted">–</td></tr>'}</tbody></table></div></div>
+    <div class="panel"><h3>Top video ra đơn</h3>${top.map(x=>`<div class="small" style="padding:4px 0;border-bottom:1px solid var(--line)"><b>${int(x.orders)} đơn</b> · ${esc(x.title)} <span class="muted">${esc(mdName(x.staffId))}</span></div>`).join("")||'<p class="small muted">Chưa có.</p>'}</div></div>`}
+/* ---------- Kho prompt thắng: xếp hạng theo đơn thật ---------- */
+function mdLib(){const L=mdMine().filter(x=>(x.hook||x.prompt)&&x.views!=null&&x.views!=="").sort((a,b)=>(+b.orders||0)-(+a.orders||0)||(+b.views||0)-(+a.views||0));
+  return`<div class="panel"><h3 style="margin:0 0 4px">Kho prompt thắng</h3><p class="hint" style="margin-top:0">Tự xếp hạng theo <b>đơn thật</b> rồi tới view – không cần ai chấm điểm. Bấm “Dùng lại” để tạo biến thể từ video đã thắng.</p>
+  ${L.slice(0,lim("mdl")).map((x,i)=>{const v=mdVerdict(x);return`<div class="md-scene"><div class="sec-h"><b>#${i+1} · ${esc(x.title)}</b><span>${v?`<span class="pill ${v.c}">${v.lb}</span>`:""} <span class="small">👁 ${int(x.views)} · ${int(x.orders)} đơn</span></span></div>
+    <div class="small muted">${esc(MD_FMT[x.fmt]?.lb||"")} ${esc(MD_CAT[x.cat]?.lb||"")} ${x.niche?"· "+esc(x.niche):""} · ${esc(MD_TOOL.find(t=>t[0]===x.tool)?.[1]||"")} · ${esc(mdName(x.staffId))}</div>
+    ${x.hook?`<div class="small" style="margin-top:4px">Hook: <b>${esc(x.hook)}</b></div>`:""}${x.prompt?`<details><summary class="small" style="cursor:pointer">Xem kịch bản / prompt</summary><div class="md-prompt" style="white-space:pre-wrap">${esc(x.prompt)}</div></details>`:""}
+    <div class="actions" style="margin-top:4px"><button class="btn sm" data-act="mdClone" data-id="${esc(x.id)}">Dùng lại → biến thể</button></div></div>`}).join("")||'<p class="small muted">Chưa có video nào có số liệu. Khi nhập View/Đơn cho video đã đăng, kho sẽ tự xếp hạng.</p>'}${moreBtn("mdl",Math.min(lim("mdl"),L.length),L.length)}</div>`}
+/* ---------- Công cụ & tài khoản ---------- */
+function mdTools(){const acc=S.mdAccDoc?.list||[];
+  const links=[["Google Flow (Veo 3.1)","https://labs.google/fx/tools/flow"],["Grok Imagine","https://grok.com/imagine"],["CapCut","https://www.capcut.com/"],["TikTok Studio","https://www.tiktok.com/tiktokstudio"],["TikTok Creative Center – nhạc thương mại","https://ads.tiktok.com/business/creativecenter/music/pc/en"],["TikTok Shop Analytics","https://seller-us.tiktok.com/compass/video-analysis"]];
+  return`<div class="panel"><h3>Mở nhanh</h3><div class="actions" style="flex-wrap:wrap;gap:6px">${links.map(([l,u])=>`<a class="btn sm ghost" href="${u}" target="_blank" rel="noopener">${l} ↗</a>`).join("")}</div></div>
+  <div class="panel"><div class="sec-h"><h3 style="margin:0">Tài khoản AI đã cấp</h3>${S.staff?"":`<button class="btn sm" data-act="mdAcc">+ Thêm</button>`}</div>
+    <div class="tbl"><table><thead><tr><th>Công cụ</th><th>Tài khoản (tên/email)</th><th>Người dùng</th><th>Hạn / ghi chú</th>${S.staff?"":"<th></th>"}</tr></thead><tbody>
+    ${acc.map((a,i)=>`<tr><td>${esc(MD_TOOL.find(t=>t[0]===a.tool)?.[1]||a.tool)}</td><td>${esc(a.label)}</td><td>${esc(mdName(a.staffId)||"Dùng chung")}</td><td class="small">${esc(a.note||"")}</td>${S.staff?"":`<td><button class="btn sm ghost" data-act="mdAcc" data-id="${i}">Sửa</button></td>`}</tr>`).join("")||`<tr><td colspan="5" class="muted">${S.staff?"Giám đốc chưa ghi tài khoản nào.":"Chưa ghi tài khoản nào."}</td></tr>`}</tbody></table></div>
+    <p class="hint">🔒 Chỉ ghi <b>tên tài khoản và ai dùng</b>. Không lưu mật khẩu ở đây – mật khẩu giữ trong trình quản lý mật khẩu của công ty.</p></div>`}
+Object.assign(ACT,{
+  mdView:k=>{S.md.view=k;render()},mdNew:()=>mdForm(),mdEdit:id=>{const x=mdAll().find(v=>v.id===id);if(x)mdForm(x)},
+  mdNext:async id=>{const x=mdAll().find(v=>v.id===id);if(!x)return;const i=MD_ST.findIndex(s=>s[0]===(x.status||"idea")),nx=MD_ST[i+1]?.[0];if(!nx)return;
+    if(nx==="posted")return mdForm({...x,status:"posted",postDate:x.postDate||today()});if(await save("videos",x.id,{...rsCleanMd(x),status:nx}))render()},
+  mdSettle:async id=>{const x=mdAll().find(v=>v.id===id),v=x&&mdVerdict(x);if(!v)return;if(await save("videos",x.id,{...rsCleanMd(x),status:v.k==="win"?"win":"stop"})){toast(v.k==="win"?"Đã chốt Thắng – làm thêm 3–5 biến thể nhé.":"Đã chuyển sang Dừng.");render()}},
+  mdClone:id=>{const x=mdAll().find(v=>v.id===id);if(!x)return;S.md.g={cat:x.cat||"cup",fmt:x.fmt||"gift",len:x.len||16,tool:x.tool==="real"?"real":x.tool||"veo",product:x.product||"",design:x.design||"",niche:x.niche||"",aud:x.aud||"",trend:x.trend||"",from:x.id};S.md.out=mdGen(S.md.g);S.md.view="gen";render();toast("Đã nạp video thắng – đổi hook/cảnh đầu rồi lưu thành biến thể mới.")},
+  mdRun:()=>{const g=S.md.g||{},r=k=>{const e=$("#md_"+k);return e?e.value.trim():g[k]||""};S.md.g={...g,cat:r("cat"),fmt:r("fmt"),len:+r("len")||16,tool:r("tool"),product:r("product"),design:r("design"),niche:r("niche"),aud:r("aud"),trend:r("trend")};S.md.out=mdGen(S.md.g);render()},
+  mdSaveGen:async()=>{const g=S.md.g,o=S.md.out;if(!g||!o)return;const c=MD_CAT[g.cat]||MD_CAT.other;
+    const rec={title:`${g.product||g.design||c.lb} – ${MD_FMT[g.fmt]?.lb.split(" (")[0]||""}`.slice(0,120),product:g.product,cat:g.cat,fmt:g.fmt,len:g.len,tool:g.tool,niche:g.niche,design:g.design,aud:g.aud,trend:g.trend,hook:o.hooks[0],prompt:o.all,status:"script",staffId:S.staff?S.my?.staffId||"":"",made:today(),ip:o.ip,...(g.from?{parent:g.from}:{})};
+    if(await save("videos",null,rec)){toast("Đã lưu vào Bảng sản xuất – cột “Có kịch bản”.");S.md.view="board";render()}},
+  mdCopy:k=>{const t=S.md.copy[k]||"";const ok=()=>toast("Đã sao chép.");if(navigator.clipboard?.writeText)navigator.clipboard.writeText(t).then(ok,()=>mdCopyFb(t));else mdCopyFb(t)},
+  mdFrom:i=>{const x=(S.rdFeed?.items||[])[+i];if(!x)return;const map={"Cốc 30-40oz":"cup","Thảm":"rug","Dép clog":"clog"},nm=String(x.name).replace(/^\[[^\]]*\]\s*/,"").slice(0,80);
+    S.md.g={cat:map[x.category]||"other",fmt:"gift",len:16,tool:"veo",product:nm,design:"",niche:"",aud:"",trend:""};S.md.out=null;S.md.view="gen";location.hash="media";toast("Điền thêm “Hình in” và “Ngách” rồi bấm Tạo kịch bản.")},
+  mdAcc:i=>{const list=[...(S.mdAccDoc?.list||[])],cur=i!=null&&i!==""?list[+i]:null;
+    openForm({title:cur?"Sửa tài khoản AI":"Thêm tài khoản AI",sub:"Không nhập mật khẩu ở đây.",fields:[{k:"tool",label:"Công cụ",type:"select",options:MD_TOOL},{k:"label",label:"Tên / email tài khoản",req:1},{k:"staffId",label:"Người dùng",type:"select",options:[["","Dùng chung"],...mdStaff().map(s=>[s.id,s.name])]},{k:"note",label:"Hạn gói / ghi chú"}],data:cur||{tool:"veo"},
+      onSave:async o=>{if(/pass|mật khẩu|mat khau|pwd/i.test(o.note+o.label)){toast("Không lưu mật khẩu ở đây.");return false}if(cur)list[+i]=o;else list.push(o);if(!guardWrite())return false;try{await S.db.doc("settings/mediaAcc").set({list,at:Date.now()});return true}catch(e){toast("Không lưu được.");return false}},
+      onDelete:cur?async()=>{list.splice(+i,1);try{await S.db.doc("settings/mediaAcc").set({list,at:Date.now()});return true}catch(e){return false}}:null})}});
+function mdCopyFb(t){const a=document.createElement("textarea");a.value=t;document.body.append(a);a.select();try{document.execCommand("copy");toast("Đã sao chép.")}catch(e){toast("Không sao chép được – bôi đen rồi Ctrl+C.")}a.remove()}
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target?.id==="mdQ"){S.md.q=e.target.value;render()}});
+document.addEventListener("change",e=>{if(e.target?.id==="mdWho"){S.md.who=e.target.value;render()}else if(e.target?.id==="md_fmt"&&S.md.g){S.md.g.fmt=e.target.value;S.md.out=null;const r=k=>$("#md_"+k)?.value?.trim()??S.md.g[k];Object.assign(S.md.g,{cat:r("cat"),len:+r("len")||16,tool:r("tool"),product:r("product"),design:r("design"),niche:r("niche"),aud:r("aud")});render()}});
+/* KPI Media tự động từ bảng video */
+function mdKpi(key,s,m){const P=(V().videos||[]).filter(x=>x.staffId===s.id&&x.postDate&&x.postDate.startsWith(m)&&["posted","win","stop"].includes(x.status));
+  if(!(V().videos||[]).some(x=>x.staffId===s.id))return null;
+  switch(key){case"vorders":return P.reduce((a,x)=>a+(+x.orders||0),0);case"videos":return P.filter(x=>!x.viol&&!x.ip).length;case"winvid":return P.filter(x=>+x.orders>=1).length;case"viol":return P.filter(x=>x.viol).length}return null}
+
+</script>
 <script type="text/plain" id="src-10-boot">
 /* 10-boot.js · Vẽ trang, điều hướng tab và kết nối kho dữ liệu (giám đốc / nhân viên). Luôn tải file này cuối cùng */
 /* ============ Render ============ */
@@ -3277,13 +3466,13 @@ let raf;function render(){cancelAnimationFrame(raf);raf=requestAnimationFrame(do
 function doRender(){
   if(S.staff){$(".filters").hidden=true;$("#who").textContent=S.my?`${S.my.name} · ${ROLES[S.my.role]?.name||""}`:"Cổng nhân viên";
     if(!STAFF_TABS.some(t=>t[0]===S.tab))S.tab="congviec";
-    if(S.tab==="sanpham"&&!canResearch())S.tab="congviec";
-    const stl=STAFF_TABS.filter(t=>t[0]!=="sanpham"||canResearch());$("#tabs").innerHTML=S.my?navHtml(stl,STAFF_GROUPS):"";setPageTitle(stl);
-    const g=staffGate();$("#main").innerHTML=g||({congviec:pgTasks,chamcong:pgStaffAtt,kpi:pgStaffKPI,nop:pgStaffSubmit,sanpham:pgResearch}[S.tab]||pgTasks)();
+    if((S.tab==="sanpham"&&!canResearch())||(S.tab==="media"&&!canMedia()))S.tab="congviec";
+    const stl=STAFF_TABS.filter(t=>(t[0]!=="sanpham"||canResearch())&&(t[0]!=="media"||canMedia()));$("#tabs").innerHTML=S.my?navHtml(stl,STAFF_GROUPS):"";setPageTitle(stl);
+    const g=staffGate();$("#main").innerHTML=g||({congviec:pgTasks,chamcong:pgStaffAtt,kpi:pgStaffKPI,nop:pgStaffSubmit,sanpham:pgResearch,media:pgMedia}[S.tab]||pgTasks)();
     const drop=$("#drop");if(drop){drop.ondragover=e=>{e.preventDefault();drop.classList.add("over")};drop.ondragleave=()=>drop.classList.remove("over");drop.ondrop=e=>{e.preventDefault();drop.classList.remove("over");handleFile(e.dataTransfer.files[0])}}
     return}
-  renderFilters();const AUTO_TABS=["tongquan","canhbao","dondrop","banhang","sanpham","chiphi","dongtien","caidat"];$(".filters").hidden=AUTO_TABS.includes(S.tab)||!oldHas();
-  const pg={canhbao:()=>pgAlerts(),tongquan:()=>pgAutoOverview()+oldBox(pgOverview(),"Báo cáo từ file TikTok"),banhang:()=>pgPodOrders()+`<details class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">Sản lượng & phí theo bảng Lark FULLFILLMENT CỐC <span class="small muted">(bấm để mở)</span></summary><div style="margin-top:10px">${podPanel()}</div></details>`+oldBox(pgSales(),"Nhập file đơn TikTok"),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel()+podProfitPanel()+oldBox(pgStock(),"Sản phẩm nhập tay"):pgStock()),sanpham:pgResearch,fulfill:()=>ffAutoPanel()+oldBox(pgFulfill(),"Đối tác, ví, sự cố nhập tay"),nhaphang:pgPurch,caidat:()=>`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">Nguồn dữ liệu – phần nào tự động, phần nào chưa</h3>${ovSources()}</div>
+  renderFilters();const AUTO_TABS=["media","tongquan","canhbao","dondrop","banhang","sanpham","chiphi","dongtien","caidat"];$(".filters").hidden=AUTO_TABS.includes(S.tab)||!oldHas();
+  const pg={canhbao:()=>pgAlerts(),tongquan:()=>pgAutoOverview()+oldBox(pgOverview(),"Báo cáo từ file TikTok"),banhang:()=>pgPodOrders()+`<details class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">Sản lượng & phí theo bảng Lark FULLFILLMENT CỐC <span class="small muted">(bấm để mở)</span></summary><div style="margin-top:10px">${podPanel()}</div></details>`+oldBox(pgSales(),"Nhập file đơn TikTok"),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel()+podProfitPanel()+oldBox(pgStock(),"Sản phẩm nhập tay"):pgStock()),sanpham:pgResearch,media:pgMedia,fulfill:()=>ffAutoPanel()+oldBox(pgFulfill(),"Đối tác, ví, sự cố nhập tay"),nhaphang:pgPurch,caidat:()=>`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">Nguồn dữ liệu – phần nào tự động, phần nào chưa</h3>${ovSources()}</div>
     <div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 6px">Gọn giao diện</h3>
       <p class="small">${(()=>{const h=TABS.filter(([k])=>tabEmpty(k));return h.length?`Trang đang ẩn vì chưa có dữ liệu: ${h.map(([k,l])=>`<a href="#${k}">${esc(l)}</a>`).join(" · ")}. Khi có dữ liệu (thêm nhân sự, chấm công, tài nguyên) trang sẽ tự hiện lại.`:"Không có trang nào đang ẩn."})()}</p>
       <p class="small">Phần nhập tay cũ (nhập file TikTok, chi phí/shop/đối tác nhập tay, thanh lọc kỳ cũ) ${oldHas()&&!S.showOld?"đang hiện vì còn dữ liệu cũ.":S.showOld?"đang bật hiện.":"đang ẩn vì không dùng – số liệu đã tự động."}</p>
@@ -3306,8 +3495,8 @@ setTab();
 /* ============ Kết nối kho dữ liệu ============ */
 const stable=o=>JSON.stringify(o,(k,v)=>v&&typeof v==="object"&&!Array.isArray(v)?Object.fromEntries(Object.keys(v).sort().map(x=>[x,v[x]])):v);
 /* Mỗi vị trí chỉ được nộp những loại số liệu này; loại khác bị bỏ qua khi gộp */
-const ROLE_TYPES={seller:["sales","products","research"],warehouse:["ffissues","ffbills","cash"],account:["expenses","cash","ffbills","sales"],ads:["expenses"],affiliate:["expenses"],
-  manager:["sales","products","expenses","cash","ffissues","ffbills","research"],media:[],live:[],cs:["ffissues"],other:[]};
+const ROLE_TYPES={seller:["sales","products","research","videos"],warehouse:["ffissues","ffbills","cash"],account:["expenses","cash","ffbills","sales"],ads:["expenses"],affiliate:["expenses"],
+  manager:["sales","products","expenses","cash","ffissues","ffbills","research","videos"],media:["videos"],live:[],cs:["ffissues"],other:[]};
 const allowedTypes=role=>new Set([...(ROLE_TYPES[role]||[]),"tasks","kpiact","attendance","attreq"]);
 /* Giám đốc: gộp dữ liệu chính với những gì nhân viên đã nộp (bản mới hơn được dùng) */
 function rebuild(){const out={},kact={};const staff=S.main.staff||[];
@@ -3321,6 +3510,8 @@ function rebuild(){const out={},kact={};const staff=S.main.staff||[];
       /* Chấm công: nhân viên chỉ ghi được dòng của chính mình; bản giám đốc nhập/sửa (file, phê duyệt) luôn thắng */
       if(it.type==="attendance"){if(it.id!==st.id+"__"+data?.date||data?.staffId!==st.id||(cur&&!cur._inbox))continue;data={...data,source:"web"}}
       /* Giải trình: chỉ của chính mình, đã được duyệt/từ chối thì nhân viên không sửa lại được */
+      /* Video: nhân viên chỉ ghi thẻ video của chính mình */
+      if(it.type==="videos"){if(data?.staffId!==st.id||(cur&&cur.staffId!==st.id))continue}
       if(it.type==="attreq"){if(data?.staffId!==st.id||(cur&&cur.status&&cur.status!=="pending"))continue;data={...data,status:"pending"}}
       if(!cur||(+cur.at||0)<(+it.at||0))m.set(it.id,{...data,id:it.id,at:it.at,_inbox:"inbox/"+uid+"/items/"+it._doc,_by:st.name})}}
   S.data=Object.fromEntries(COLS.map(c=>[c,[...out[c].values()]]));
@@ -3346,6 +3537,7 @@ async function publish(){if(pubBusy){schedulePublish();return}pubBusy=true;
       const kpi={};for(const m of[cm,pm]){const e=evalKPI(s,m,ctx);if(e.doc)kpi[m]={rows:e.rows.map(r=>({key:r.key,label:r.label,unit:r.unit,dir:r.dir,weight:+r.weight||0,auto:!!r.auto,target:r.target,actual:r.actual??null})),note:e.doc.note||""}}
       const my={staffId:s.id,name:s.name,role:s.role,shopId:s.shopId||"",tasks,kpi};
       Object.assign(my,attForStaff(s,D));
+      if(["media","seller","manager"].includes(s.role))my.videos=(D.videos||[]).filter(x=>x.staffId===s.id).sort((a,b)=>String(b.made||"").localeCompare(String(a.made||""))).slice(0,150).map(x=>{const{_e,_inbox,_mine,_by,...r}=x;return JSON.parse(JSON.stringify(r))});
       if(["seller","manager"].includes(s.role)){my.research=(D.research||[]).map(x=>{const{_e,_inbox,_mine,...r}=x;return JSON.parse(JSON.stringify(r))});my.rsCfg=Object.fromEntries(Object.keys(RS_DEF).map(k=>[k,(S.rsCfgDoc||{})[k]??RS_DEF[k]]))}
       if(stable(my)!==stable(S.myDocs[s.uid]||{}))await S.db.doc("my/"+s.uid).set(my)}}
   catch(e){}finally{pubBusy=false}}
@@ -3358,7 +3550,7 @@ async function publish(){if(pubBusy){schedulePublish();return}pubBusy=true;
   if(!owner){/* ---------- Nhân viên ---------- */
     S.staff=true;S.demo=false;S.uid=await user.id();if(!S.uid){S.noId=true;render();return}
     {const h=location.hash.slice(1);S.tab=STAFF_TABS.some(t=>t[0]===h)?h:"congviec"}S.inboxMine=[];
-    const mapMine=()=>{const cat=S.catalog||{};const base={shops:cat.shops||[],products:cat.products||[],partners:cat.partners||[],staff:cat.staff||[],research:S.my?.research||[],attendance:S.my?.att||[],attreq:S.my?.attReq||[]};
+    const mapMine=()=>{const cat=S.catalog||{};const base={shops:cat.shops||[],products:cat.products||[],partners:cat.partners||[],staff:cat.staff||[],research:S.my?.research||[],videos:S.my?.videos||[],attendance:S.my?.att||[],attreq:S.my?.attReq||[]};
       const d=Object.fromEntries(COLS.map(k=>[k,[...(base[k]||[])]]));
       d.tasks=(S.my?.tasks||[]).map(x=>({...x}));
       for(const it of S.inboxMine){const arr=d[it.type];if(!arr||!it.id)continue;const i=arr.findIndex(x=>x.id===it.id);
