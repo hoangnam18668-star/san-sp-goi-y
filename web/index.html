@@ -217,6 +217,17 @@ td.n .sub,td.n .btn{font-family:var(--f-ui)}
 .md-prompt{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;background:var(--sunk);border-radius:6px;padding:8px;margin-top:6px;word-break:break-word}
 @media (max-width:760px){.md-board{grid-template-columns:repeat(6,82vw);scroll-snap-type:x mandatory}.md-col{scroll-snap-align:start}}
 .md-swipe{display:none;text-align:center;margin:4px 0}@media (max-width:760px){.md-swipe{display:block}}
+/* Thẻ bộ phận + tìm nhanh */
+.hub-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px}
+.hub-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.hub-h{display:flex;justify-content:space-between;align-items:center}
+.hub-n{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
+.hub-n .v{display:block;font-size:19px;font-weight:700;line-height:1.2}.hub-n .lb{display:block;font-size:11.5px;color:var(--muted)}
+.hub-a{border-top:1px dashed var(--line);padding-top:8px;display:flex;flex-direction:column;gap:4px}
+.hub-sbtn{margin-left:auto;display:inline-flex;align-items:center;gap:6px;color:var(--muted);border:1px solid var(--line)!important}
+.hub-sbtn kbd{font-size:11px;background:var(--sunk);border-radius:4px;padding:1px 5px}
+.hub-r{display:flex;gap:10px;align-items:flex-start;padding:8px 6px;border-bottom:1px solid var(--line);color:inherit;text-decoration:none}.hub-r:hover{background:var(--sunk)}
+@media (max-width:760px){.hub-sbtn span,.hub-sbtn kbd{display:none}}
 
 /* Trang đăng nhập và thanh tài khoản của bản web; dùng chung màu và chữ với css/app.css */
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -255,7 +266,7 @@ img{max-width:100%}
 window.APP_CONFIG = {
   supabaseUrl: "https://hcubziuqxgnfgxxixnam.supabase.co",
   supabaseAnonKey: "sb_publishable_-96LA7syIP-8numUZEApVA_22Vv81bi",
-  version: "2026.11.27e", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
+  version: "2026.11.27f", feedUrl: "https://raw.githubusercontent.com/hoangnam18668-star/san-sp-goi-y/main/feed.json"
 };
 
 </script>
@@ -268,7 +279,7 @@ window.APP_CONFIG = {
   const cfg = window.APP_CONFIG || {};
   const $id = id => document.getElementById(id);
   const ready = cfg.supabaseUrl && cfg.supabaseAnonKey && !/DIEN_|YOUR_/.test(cfg.supabaseUrl + cfg.supabaseAnonKey);
-  const APP_SCRIPTS = ["01-config", "02-demo", "03-calc", "04-data", "05-pages", "06-kpi", "07-actions", "08-import", "09-staff", "11-backup", "12-web", "13-research", "14-attendance", "15-shell", "16-dropsheet", "17-podlark", "18-autolink", "19-thuchi", "20-overview", "21-podorders", "22-alerts", "23-media", "10-boot"];
+  const APP_SCRIPTS = ["01-config", "02-demo", "03-calc", "04-data", "05-pages", "06-kpi", "07-actions", "08-import", "09-staff", "11-backup", "12-web", "13-research", "14-attendance", "15-shell", "16-dropsheet", "17-podlark", "18-autolink", "19-thuchi", "20-overview", "21-podorders", "22-alerts", "23-media", "24-hub", "10-boot"];
 
   /* ---------- Kho dữ liệu ---------- */
   function makeDb(sb) {
@@ -2238,9 +2249,9 @@ document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="attQ"
 <script type="text/plain" id="src-15-shell">
 /* 15-shell.js · Khung giao diện: menu dọc bên trái chia nhóm (giống phần mềm nhân sự), tiêu đề trang, menu trượt trên điện thoại */
 const NAV_GROUPS=[
-  ["Vận hành",["tongquan","canhbao","pheduyet","congviec"]],
-  ["Bán hàng",["banhang","dondrop","fulfill","kho","sanpham"]],
-  ["Nội dung",["media"]],
+  ["Điều hành",["tongquan","canhbao","pheduyet","congviec"]],
+  ["Bán hàng",["sanpham","media","banhang","dondrop"]],
+  ["Vận hành",["fulfill","nhaphang","kho"]],
   ["Tài chính",["chiphi","dongtien"]],
   ["Con người",["kpi","chamcong"]],
   ["Hệ thống",["tainguyen","caidat"]]];
@@ -2978,7 +2989,7 @@ function pgAutoOverview(){alNeedDrop();if(!S.tcDoc&&typeof tcLarkSync==="functio
   const AL=typeof alCompute==="function"?alSplit(alCompute()).active:[];
   return`<div class="sec-h"><div><h2>Tổng quan công ty</h2><p>Tự động gom từ bảng Drop, bảng POD, bảng Thu chi và Tiền về shop. Không cần nhập file. Bấm vào một ô để xem chi tiết.</p></div>
     <div class="actions"><select class="inp" id="ovM" style="width:auto">${months.map(x=>`<option value="${x}" ${x===m?"selected":""}>${fmtM(x)}</option>`).join("")}</select></div></div>
-  ${typeof ovBrief==="function"?ovBrief()+ovGoalPanel(m):""}
+  ${typeof ovBrief==="function"?ovBrief():""}${typeof hubDepts==="function"?hubDepts({spent:tcTr(spentQ),tk:usd(tkU,0),pl:P?(P.pl>=0?"+":"−")+tcTr(Math.abs(P.pl)):"–",plc:P?(P.pl>=0?"var(--good)":"var(--bad)"):""}):""}${typeof ovBrief==="function"?ovGoalPanel(m):""}
   ${P?`<div class="panel" style="margin-bottom:14px">${tcSay(`Từ ${fmtM(P.from).toLowerCase()} tới nay công ty đang <b style="color:${col(P.pl)}">${P.pl>=0?"LÃI":"LỖ"} ${tcTr(Math.abs(P.pl))}</b> (đã tính tiền còn trên shop sống).
     ${P.dieU?`Nếu ${usd(P.dieU)} kẹt ở shop die về đủ thì ${P.plD>=0?"lãi":"lỗ"} <b style="color:${col(P.plD)}">${tcTr(Math.abs(P.plD))}</b>.`:""}
     <a href="#dongtien" class="small">Xem cách tính →</a>`)}
@@ -3455,6 +3466,75 @@ function mdKpi(key,s,m){const P=(V().videos||[]).filter(x=>x.staffId===s.id&&x.p
   switch(key){case"vorders":return P.reduce((a,x)=>a+(+x.orders||0),0);case"videos":return P.filter(x=>!x.viol&&!x.ip).length;case"winvid":return P.filter(x=>+x.orders>=1).length;case"viol":return P.filter(x=>x.viol).length}return null}
 
 </script>
+<script type="text/plain" id="src-24-hub">
+/* 24-hub.js · Học cách sắp xếp của NOVA (novaglobal.vn: Điều hành + ứng dụng HR / Media / Fulfill), làm gọn cho công ty 8 người:
+   1) Tổng quan có "Thẻ bộ phận": Bán hàng · Vận hành · Media · Nhân sự · Tài chính – mỗi thẻ 4 số chính + điều cần chú ý + nút Mở.
+   2) Tìm nhanh (Ctrl+K hoặc nút 🔍 trên đầu trang): gõ mã đơn, tracking, SKU, tên sản phẩm, việc, video, nhân viên.
+   3) Hiệu suất seller & nguồn hàng (tab Fulfillment) – giống "Hiệu suất xưởng & seller" của NOVA, tính từ đơn Drop + POD. */
+/* ---------- 1) Thẻ bộ phận ---------- */
+function hubDepts(o={}){if(S.staff)return"";const t=today(),A=typeof alCompute==="function"?alSplit(alCompute()).active:[];
+  const O=typeof alOrders==="function"?alOrders():[],live=O.filter(r=>!r.bad);
+  const lastD=live.filter(r=>r.date<t).map(r=>r.date).sort().pop()||addDays(t,-1);
+  const nOn=(f)=>new Set(live.filter(f).map(r=>r.src+r.order)).size,rv=f=>live.filter(f).reduce((a,r)=>a+(+r.rev||0),0);
+  const d7=nOn(r=>r.date>addDays(lastD,-7)&&r.date<=lastD),d7b=nOn(r=>r.date>addDays(lastD,-14)&&r.date<=addDays(lastD,-7));
+  const lateD=nOn(r=>r.src==="Drop"&&!r.track&&r.date>=addDays(t,-30)&&dayDiff(r.date,t)>=3),lateP=nOn(r=>r.src==="POD"&&!r.track&&r.date>=addDays(t,-30)&&dayDiff(r.date,t)>=4);
+  const noCost=nOn(r=>r.nocost&&r.date.startsWith(t.slice(0,7)));
+  /* Media */
+  const V2=(V().videos||[]),P=V2.filter(x=>x.postDate&&["posted","win","stop"].includes(x.status)),wk=typeof mdWeek==="function"?mdWeek():addDays(t,-6);
+  const vNeed=typeof mdVerdict==="function"?V2.filter(x=>mdVerdict(x)?.k==="need").length:0,vOrd=P.filter(x=>x.postDate.startsWith(t.slice(0,7))).reduce((a,x)=>a+(+x.orders||0),0);
+  /* Nhân sự */
+  let pres="–",late="–";try{const rows=attRows(t.slice(0,7),{upto:t}).filter(r=>r.date===t);if(rows.length){pres=rows.filter(r=>["ok","late","early"].includes(r.status)).length+"/"+rows.length;late=rows.filter(r=>r.status==="late").length}}catch(e){}
+  const tasks=(V().tasks||[]),od=tasks.filter(x=>x.status!=="done"&&x.due&&x.due<t).length,open=tasks.filter(x=>x.status!=="done").length;
+  const kpiLow=A.filter(a=>a.g==="kpi").length;
+  const g=(gs)=>A.filter(a=>gs.includes(a.g)).sort((a,b)=>AL_SEV[b.sev][2]-AL_SEV[a.sev][2]).slice(0,2);
+  const pct=(a,b)=>b?` <b style="font-size:12px;color:${a>=b?"var(--good)":"var(--bad)"}">${a>=b?"▲":"▼"}${Math.abs(Math.round((a-b)/b*100))}%</b>`:"";
+  const card=(ic,title,tab,nums,notes,emptyNote)=>`<div class="hub-card"><div class="hub-h"><b>${ic} ${title}</b><a href="#${tab}" class="small">Mở →</a></div>
+    <div class="hub-n">${nums.map(([lb,v,c])=>`<div><span class="v" style="${c?`color:${c}`:""}">${v}</span><span class="lb">${lb}</span></div>`).join("")}</div>
+    <div class="hub-a">${notes.length?notes.map(a=>`<div class="small"><span class="pill ${AL_SEV[a.sev][1]}">${AL_SEV[a.sev][0]}</span> ${esc(a.title)}</div>`).join(""):`<div class="small muted">✓ ${emptyNote}</div>`}</div></div>`;
+  const extra=[];if(vNeed)extra.push({sev:"warn",title:`${vNeed} video đã đăng ≥3 ngày chưa nhập số`});
+  if(od)extra.push({sev:od>=5?"bad":"warn",title:`${od} việc quá hạn`});
+  return`<div class="hub-grid">
+    ${card("🛒","Bán hàng","dondrop",[["Đơn ngày "+fmtD(lastD).slice(0,5),int(nOn(r=>r.date===lastD))],["Đơn 7 ngày",int(d7)+pct(d7,d7b)],["Doanh thu 7 ngày",usd(rv(r=>r.date>addDays(lastD,-7)&&r.date<=lastD),0)],["Seller dưới KPI",kpiLow,kpiLow?"var(--bad)":""]],g(["shop","kpi","ip"]),"Doanh thu các shop ổn định")}
+    ${card("📦","Vận hành","fulfill",[["Drop chưa tracking ≥3 ngày",lateD,lateD?"var(--bad)":""],["POD chưa tracking ≥4 ngày",lateP,lateP?"var(--warn)":""],["Đơn thiếu giá vốn (tháng)",noCost,noCost?"var(--warn)":""],["Nguồn dữ liệu lỗi",A.filter(a=>a.g==="data").length]],g(["order","data"]),"Đơn đi đúng hạn")}
+    ${card("🎬","Media","media",[["Video đăng hôm nay",P.filter(x=>x.postDate===t).length],["Đăng tuần này",P.filter(x=>x.postDate>=wk).length],["Đơn từ video (tháng)",int(vOrd)],["Cần nhập số",vNeed,vNeed?"var(--warn)":""]],extra.filter(x=>/video/.test(x.title)),V2.length?"Video đều có số liệu":"Chưa có video nào – mở tab Media video")}
+    ${card("👥","Nhân sự","chamcong",[["Có mặt hôm nay",pres],["Đi muộn hôm nay",late,late>0?"var(--warn)":""],["Chờ duyệt",attPendingCount(),attPendingCount()?"var(--warn)":""],["Việc đang mở / quá hạn",`${open} / <span style="color:${od?"var(--bad)":"inherit"}">${od}</span>`]],[...g(["task"]),...extra.filter(x=>/việc/.test(x.title))].slice(0,2),"Không có việc trễ")}
+    ${card("💰","Tài chính","dongtien",[["Đã chi tháng này",o.spent??"–"],["TikTok trả về tháng này",o.tk??"–"],["Lãi/lỗ từ đầu",o.pl??"–",o.plc],["Cảnh báo tiền",A.filter(a=>a.g==="money").length]],g(["money"]),"Không có khoản bất thường")}
+  </div>`}
+/* ---------- 2) Tìm nhanh ---------- */
+function hubSearchBtn(){if(S.staff||$("#hubSearch"))return;const bar=$(".top .bar");if(!bar)return;const b=document.createElement("button");b.id="hubSearch";b.type="button";b.className="btn ghost hub-sbtn";
+  b.innerHTML=`<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.4-4.4"/></svg><span>Tìm mã đơn, SKU…</span><kbd>Ctrl K</kbd>`;
+  b.onclick=hubOpen;bar.append(b)}
+function hubOpen(){if(S.staff)return;openModal(`<div><h2>Tìm nhanh</h2><p class="hint">Mã đơn, tracking, SKU, tên sản phẩm, shop, việc, video, nhân viên.</p></div><input class="inp" id="hubQ" placeholder="Gõ ít nhất 3 ký tự…" autocomplete="off" style="width:100%"><div id="hubR" style="margin-top:10px;max-height:60vh;overflow:auto"></div>`,m=>{
+  const q=m.querySelector("#hubQ");q.focus();let tm;q.oninput=()=>{clearTimeout(tm);tm=setTimeout(()=>{m.querySelector("#hubR").innerHTML=hubFind(q.value)},150)}})}
+function hubFind(qs){const q=String(qs||"").trim().toLowerCase();if(q.length<3)return'<p class="small muted">Gõ ít nhất 3 ký tự.</p>';const R=[],has=(...a)=>a.some(x=>x&&String(x).toLowerCase().includes(q));
+  const seen=new Set();for(const r of (S.ds.rows||[])){if(!has(r.order,r.track,r.shop,r.prod,r.sku))continue;const k="D"+r.order;if(seen.has(k))continue;seen.add(k);
+    R.push(["Đơn Drop",`<b>${esc(r.order)}</b> · ${esc(r.shop||"")} · ${fmtD(r.date)}`,`${r.prod?esc(String(r.prod).slice(0,70))+" · ":""}${r.bad?'<span class="pill p-bad">Huỷ</span>':""} ${r.track?`tracking ${esc(r.track)}`:'<span class="pill p-warn">chưa tracking</span>'} · ${usd(r.rev||0)}`,"dondrop"])}
+  const po=typeof poRowsAll==="function"&&S.prDoc?poRowsAll():[];for(const r of po){if(!has(r.order,r.track,r.shop,r.prod,r.sku))continue;
+    R.push(["Đơn POD",`<b>${esc(r.order)}</b> · ${esc(r.shop)} · ${fmtD(r.date)}`,`${esc(String(r.prod).slice(0,70))} · ${esc(r.status||"")} · ${r.track?`tracking ${esc(r.track)}`:'<span class="pill p-warn">chưa tracking</span>'} · ${usd(r.rev||0)}${r.cost?` · vốn ${usd(r.cost)}`:""}${poIP(r.prod)?' <span class="pill p-bad">⚠ thương hiệu</span>':""}`,"banhang"])}
+  const D=V();
+  (D.tasks||[]).filter(x=>has(x.title,x.owner)).forEach(x=>R.push(["Việc",esc(x.title),`${esc(x.owner||"")} · ${x.due?"hạn "+fmtD(x.due):""} · ${x.status==="done"?"xong":"đang làm"}`,"congviec"]));
+  (D.videos||[]).filter(x=>has(x.title,x.product,x.hook,x.tiktokLink)).forEach(x=>R.push(["Video",esc(x.title),`${esc(x.product||"")} · ${x.orders?int(x.orders)+" đơn":""}`,"media"]));
+  (D.research||[]).filter(x=>has(x.name,x.shop)).forEach(x=>R.push(["Săn SP",esc(x.name),esc(x.shop||""),"sanpham"]));
+  (D.staff||[]).filter(x=>has(x.name,x.attCode)).forEach(x=>R.push(["Nhân viên",esc(x.name),esc(ROLES[x.role]?.name||""),"kpi"]));
+  if(!R.length)return'<p class="small muted">Không tìm thấy. Đơn chỉ tìm được sau khi bảng Drop/POD đã tải (mở tab Đơn Drop/Đơn POD một lần).</p>';
+  return`<p class="small muted">${R.length>60?"60 / ":""}${R.length} kết quả</p>`+R.slice(0,60).map(([k,a,b,tab])=>`<a class="hub-r" href="#${tab}" onclick="closeModal()"><span class="pill p-mute">${k}</span><div><div>${a}</div><div class="small muted">${b}</div></div></a>`).join("")}
+document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"&&!S.staff&&S.db){e.preventDefault();hubOpen()}});
+/* ---------- 3) Hiệu suất seller & nguồn hàng ---------- */
+function hubPerf(){if(S.staff||typeof alOrders!=="function")return"";const t=today(),from=addDays(t,-30),O=alOrders().filter(r=>r.date>=from);if(!O.length)return"";
+  const agg=(keyf)=>{const g={};for(const r of O){const k=keyf(r)||"(chưa rõ)";const e=g[k]||(g[k]={o:new Set(),bad:new Set(),late:new Set(),tr:new Set(),rev:0,revV:0,p:0,full:0,nc:new Set()});const id=r.src+r.order;e.o.add(id);
+      if(r.bad){e.bad.add(id);continue}if(r.track)e.tr.add(id);else if(dayDiff(r.date,t)>=(r.src==="Drop"?3:4))e.late.add(id);e.rev+=+r.rev||0;if(r.full){e.revV+=+r.revV||0;e.p+=+r.profit||0}if(r.nocost)e.nc.add(id)}
+    return Object.entries(g).sort((a,b)=>b[1].o.size-a[1].o.size)};
+  const row=([k,e])=>{const n=e.o.size,live=n-e.bad.size,mg=e.revV?e.p/e.revV:null;return`<tr><td>${esc(k)}</td><td class="n">${int(n)}</td><td class="n">${usd(e.rev,0)}</td>
+    <td class="n" style="color:${mg==null?"inherit":mg>=KPI_MARGIN?"var(--good)":"var(--bad)"}">${mg==null?"–":Math.round(mg*100)+"%"}</td><td class="n">${live?Math.round(e.tr.size/live*100):0}%</td>
+    <td class="n" style="color:${e.late.size?"var(--bad)":"inherit"}">${e.late.size}</td><td class="n">${n?Math.round(e.bad.size/n*100):0}%</td><td class="n" style="color:${e.nc.size?"var(--warn)":"inherit"}">${e.nc.size}</td></tr>`};
+  const th=f=>`<thead><tr><th>${f}</th><th class="n">Đơn</th><th class="n">Doanh thu</th><th class="n">Lãi %</th><th class="n">Có tracking</th><th class="n">Chậm gửi</th><th class="n">Huỷ</th><th class="n">Thiếu vốn</th></tr></thead>`;
+  const src=r=>r.src==="Drop"?"Drop (mua hộ)":r.kind==="dep"||/clog|slipper/i.test(r.prod||"")?"POD · Dép":/rug|mat\b|doormat/i.test(r.prod||"")?"POD · Thảm":/tumbler|mug|cup/i.test(r.prod||"")?"POD · Cốc":"POD · Khác";
+  return`<details class="panel" open style="margin-bottom:14px"><summary style="cursor:pointer"><b>Hiệu suất seller & nguồn hàng</b> <span class="small muted">· 30 ngày gần nhất, Drop + POD</span></summary>
+    <div class="tbl" style="margin-top:10px"><table>${th("Seller")}<tbody>${agg(r=>r.seller).map(row).join("")}</tbody></table></div>
+    <div class="tbl" style="margin-top:10px"><table>${th("Nguồn hàng")}<tbody>${agg(src).map(row).join("")}</tbody></table></div>
+    <p class="hint">Lãi % chỉ tính đơn đủ số liệu (KPI seller ≥ ${KPI_MARGIN*100}%). Chậm gửi = chưa có tracking sau 3 ngày (Drop) / 4 ngày (POD). Huỷ tính trên tổng đơn.</p></details>`}
+
+</script>
 <script type="text/plain" id="src-10-boot">
 /* 10-boot.js · Vẽ trang, điều hướng tab và kết nối kho dữ liệu (giám đốc / nhân viên). Luôn tải file này cuối cùng */
 /* ============ Render ============ */
@@ -3464,6 +3544,7 @@ function renderFilters(){const fs=$("#fShop");const cur=S.shop;fs.innerHTML=`<op
   const tl=tabList();$("#tabs").innerHTML=navHtml(tl,NAV_GROUPS,{pheduyet:attPendingCount(),canhbao:typeof alCount==="function"?alCount():0});setPageTitle(tl)}
 let raf;function render(){cancelAnimationFrame(raf);raf=requestAnimationFrame(doRender)}
 function doRender(){
+  if(S.staff)$("#hubSearch")?.remove();else if(S.db&&typeof hubSearchBtn==="function")hubSearchBtn();
   if(S.staff){$(".filters").hidden=true;$("#who").textContent=S.my?`${S.my.name} · ${ROLES[S.my.role]?.name||""}`:"Cổng nhân viên";
     if(!STAFF_TABS.some(t=>t[0]===S.tab))S.tab="congviec";
     if((S.tab==="sanpham"&&!canResearch())||(S.tab==="media"&&!canMedia()))S.tab="congviec";
@@ -3472,7 +3553,7 @@ function doRender(){
     const drop=$("#drop");if(drop){drop.ondragover=e=>{e.preventDefault();drop.classList.add("over")};drop.ondragleave=()=>drop.classList.remove("over");drop.ondrop=e=>{e.preventDefault();drop.classList.remove("over");handleFile(e.dataTransfer.files[0])}}
     return}
   renderFilters();const AUTO_TABS=["media","tongquan","canhbao","dondrop","banhang","sanpham","chiphi","dongtien","caidat"];$(".filters").hidden=AUTO_TABS.includes(S.tab)||!oldHas();
-  const pg={canhbao:()=>pgAlerts(),tongquan:()=>pgAutoOverview()+oldBox(pgOverview(),"Báo cáo từ file TikTok"),banhang:()=>pgPodOrders()+`<details class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">Sản lượng & phí theo bảng Lark FULLFILLMENT CỐC <span class="small muted">(bấm để mở)</span></summary><div style="margin-top:10px">${podPanel()}</div></details>`+oldBox(pgSales(),"Nhập file đơn TikTok"),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel()+podProfitPanel()+oldBox(pgStock(),"Sản phẩm nhập tay"):pgStock()),sanpham:pgResearch,media:pgMedia,fulfill:()=>ffAutoPanel()+oldBox(pgFulfill(),"Đối tác, ví, sự cố nhập tay"),nhaphang:pgPurch,caidat:()=>`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">Nguồn dữ liệu – phần nào tự động, phần nào chưa</h3>${ovSources()}</div>
+  const pg={canhbao:()=>pgAlerts(),tongquan:()=>pgAutoOverview()+oldBox(pgOverview(),"Báo cáo từ file TikTok"),banhang:()=>pgPodOrders()+`<details class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">Sản lượng & phí theo bảng Lark FULLFILLMENT CỐC <span class="small muted">(bấm để mở)</span></summary><div style="margin-top:10px">${podPanel()}</div></details>`+oldBox(pgSales(),"Nhập file đơn TikTok"),dondrop:pgDrop,kho:()=>(isFF()?prodAutoPanel()+podProfitPanel()+oldBox(pgStock(),"Sản phẩm nhập tay"):pgStock()),sanpham:pgResearch,media:pgMedia,fulfill:()=>hubPerf()+ffAutoPanel()+oldBox(pgFulfill(),"Đối tác, ví, sự cố nhập tay"),nhaphang:pgPurch,caidat:()=>`<div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 8px">Nguồn dữ liệu – phần nào tự động, phần nào chưa</h3>${ovSources()}</div>
     <div class="panel" style="margin-bottom:14px"><h3 style="margin:0 0 6px">Gọn giao diện</h3>
       <p class="small">${(()=>{const h=TABS.filter(([k])=>tabEmpty(k));return h.length?`Trang đang ẩn vì chưa có dữ liệu: ${h.map(([k,l])=>`<a href="#${k}">${esc(l)}</a>`).join(" · ")}. Khi có dữ liệu (thêm nhân sự, chấm công, tài nguyên) trang sẽ tự hiện lại.`:"Không có trang nào đang ẩn."})()}</p>
       <p class="small">Phần nhập tay cũ (nhập file TikTok, chi phí/shop/đối tác nhập tay, thanh lọc kỳ cũ) ${oldHas()&&!S.showOld?"đang hiện vì còn dữ liệu cũ.":S.showOld?"đang bật hiện.":"đang ẩn vì không dùng – số liệu đã tự động."}</p>
