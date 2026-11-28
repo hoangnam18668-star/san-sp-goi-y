@@ -16,6 +16,11 @@
      "sold": 1400,
      "price": 22.0,
      "rating": 5.0
+    },
+    "2026-11-28": {
+     "sold": 1400,
+     "price": 22.0,
+     "rating": 5.0
     }
    }
   },
@@ -25,6 +30,11 @@
    "firstSeen": "2026-11-27",
    "h": {
     "2026-11-27": {
+     "sold": 1300,
+     "price": 12.16,
+     "rating": 4.7
+    },
+    "2026-11-28": {
      "sold": 1300,
      "price": 12.16,
      "rating": 4.7
@@ -40,6 +50,11 @@
      "sold": 306,
      "price": 27.87,
      "rating": 4.7
+    },
+    "2026-11-28": {
+     "sold": 306,
+     "price": 27.87,
+     "rating": 4.7
     }
    }
   },
@@ -49,6 +64,11 @@
    "firstSeen": "2026-11-27",
    "h": {
     "2026-11-27": {
+     "sold": 276,
+     "price": 22.5,
+     "rating": 4.8
+    },
+    "2026-11-28": {
      "sold": 276,
      "price": 22.5,
      "rating": 4.8
@@ -64,6 +84,11 @@
      "sold": 81,
      "price": 20.0,
      "rating": 4.9
+    },
+    "2026-11-28": {
+     "sold": 81,
+     "price": 20.0,
+     "rating": 4.9
     }
    }
   },
@@ -73,6 +98,11 @@
    "firstSeen": "2026-11-27",
    "h": {
     "2026-11-27": {
+     "sold": 70,
+     "price": 15.0,
+     "rating": 4.9
+    },
+    "2026-11-28": {
      "sold": 70,
      "price": 15.0,
      "rating": 4.9
@@ -88,6 +118,11 @@
      "sold": 43,
      "price": 18.0,
      "rating": 4.4
+    },
+    "2026-11-28": {
+     "sold": 43,
+     "price": 18.0,
+     "rating": 4.4
     }
    }
   },
@@ -97,6 +132,11 @@
    "firstSeen": "2026-11-27",
    "h": {
     "2026-11-27": {
+     "sold": 34,
+     "price": 30.0,
+     "rating": 5.0
+    },
+    "2026-11-28": {
      "sold": 34,
      "price": 30.0,
      "rating": 5.0
@@ -112,6 +152,11 @@
      "sold": 52,
      "price": 17.25,
      "rating": 4.0
+    },
+    "2026-11-28": {
+     "sold": 52,
+     "price": 17.25,
+     "rating": 4.0
     }
    }
   },
@@ -121,6 +166,11 @@
    "firstSeen": "2026-11-27",
    "h": {
     "2026-11-27": {
+     "sold": 37,
+     "price": 16.99,
+     "rating": 4.9
+    },
+    "2026-11-28": {
      "sold": 37,
      "price": 16.99,
      "rating": 4.9
@@ -136,6 +186,11 @@
      "sold": 36,
      "price": 15.0,
      "rating": 3.7
+    },
+    "2026-11-28": {
+     "sold": 36,
+     "price": 15.0,
+     "rating": 3.7
     }
    }
   },
@@ -145,6 +200,11 @@
    "firstSeen": "2026-11-27",
    "h": {
     "2026-11-27": {
+     "sold": 19,
+     "price": 13.29,
+     "rating": 4.9
+    },
+    "2026-11-28": {
      "sold": 19,
      "price": 13.29,
      "rating": 4.9
@@ -160,6 +220,11 @@
      "sold": 12,
      "price": 32.0,
      "rating": 5.0
+    },
+    "2026-11-28": {
+     "sold": 12,
+     "price": 32.0,
+     "rating": 5.0
     }
    }
   },
@@ -169,6 +234,11 @@
    "firstSeen": "2026-11-27",
    "h": {
     "2026-11-27": {
+     "sold": 11,
+     "price": 19.9,
+     "rating": 5.0
+    },
+    "2026-11-28": {
      "sold": 11,
      "price": 19.9,
      "rating": 5.0
@@ -184,6 +254,11 @@
      "sold": 10,
      "price": 19.99,
      "rating": 5.0
+    },
+    "2026-11-28": {
+     "sold": 10,
+     "price": 19.99,
+     "rating": 5.0
     }
    }
   },
@@ -196,6 +271,11 @@
      "sold": 10,
      "price": 9.98,
      "rating": 4.5
+    },
+    "2026-11-28": {
+     "sold": 10,
+     "price": 9.98,
+     "rating": 4.5
     }
    }
   },
@@ -205,6 +285,11 @@
    "firstSeen": "2026-11-27",
    "h": {
     "2026-11-27": {
+     "sold": 8,
+     "price": 10.0,
+     "rating": 5.0
+    },
+    "2026-11-28": {
      "sold": 8,
      "price": 10.0,
      "rating": 5.0
@@ -232,6 +317,11 @@
      "sold": 378,
      "price": 27.3,
      "rating": 4.6
+    },
+    "2026-11-28": {
+     "sold": 378,
+     "price": 27.3,
+     "rating": 4.6
     }
    }
   },
@@ -242,6 +332,11 @@
    "h": {
     "2026-11-27": {
      "sold": 70,
+     "price": 12.06,
+     "rating": 5.0
+    },
+    "2026-11-28": {
+     "sold": 73,
      "price": 12.06,
      "rating": 5.0
     }
@@ -280,6 +375,11 @@
      "sold": 10,
      "price": 19.99,
      "rating": 5.0
+    },
+    "2026-11-28": {
+     "sold": 17,
+     "price": 19.99,
+     "rating": 5.0
     }
    }
   },
@@ -289,6 +389,11 @@
    "firstSeen": "2026-11-27",
    "h": {
     "2026-11-27": {
+     "sold": 10,
+     "price": 19.9,
+     "rating": 4.0
+    },
+    "2026-11-28": {
      "sold": 10,
      "price": 19.9,
      "rating": 4.0
@@ -304,6 +409,227 @@
      "sold": 6,
      "price": 9.99,
      "rating": null
+    },
+    "2026-11-28": {
+     "sold": 6,
+     "price": 9.99,
+     "rating": null
+    }
+   }
+  },
+  "https://shop.tiktok.com/us/pdp/custom-clear-foam-cups-for-events-parties-riah-d-i-y/1732502833383707065": {
+   "title": "CUSTOM Personalized Clear Cups",
+   "page": "custom-cups",
+   "firstSeen": "2026-11-28",
+   "h": {
+    "2026-11-28": {
+     "sold": 56,
+     "price": 1.25,
+     "rating": 5.0
+    }
+   }
+  },
+  "https://shop.tiktok.com/us/pdp/1732502819061600697": {
+   "title": "CUSTOM Personalized Foam Cups",
+   "page": "custom-cups",
+   "firstSeen": "2026-11-28",
+   "h": {
+    "2026-11-28": {
+     "sold": 24,
+     "price": 1.0,
+     "rating": null
+    }
+   }
+  },
+  "https://shop.tiktok.com/us/pdp/custom-tumbler-22-oz-with-photo-personalized-drinkware-premium-stainless-steel/1732301268960776953": {
+   "title": "Custom Tumbler 22 oz with Photo",
+   "page": "custom-cups",
+   "firstSeen": "2026-11-28",
+   "h": {
+    "2026-11-28": {
+     "sold": 9,
+     "price": 25.0,
+     "rating": 5.0
+    }
+   }
+  },
+  "https://shop.tiktok.com/us/pdp/customizable-mug-for-business-personal-use-unique-design-option/1731321015477243994": {
+   "title": "Design Your Own Mug",
+   "page": "custom-cups",
+   "firstSeen": "2026-11-28",
+   "h": {
+    "2026-11-28": {
+     "sold": 23,
+     "price": 5.0,
+     "rating": null
+    }
+   }
+  },
+  "https://shop.tiktok.com/us/pdp/sublimation-skinny-tumbler-agh-25pcs-20oz-stainless-steel/1731033966206947441": {
+   "title": "AGH 25pcs 20oz Sublimation Skinny Tumbler",
+   "page": "custom-cups",
+   "firstSeen": "2026-11-28",
+   "h": {
+    "2026-11-28": {
+     "sold": 222,
+     "price": 72.0,
+     "rating": 4.9
+    }
+   }
+  },
+  "https://shop.tiktok.com/us/pdp/20-oz-custom-made-insulated-skinny-tumbler-with-lid-straw/1730787609624351066": {
+   "title": "Custom Design Order 20 oz Tumbler",
+   "page": "custom-cups",
+   "firstSeen": "2026-11-28",
+   "h": {
+    "2026-11-28": {
+     "sold": 19,
+     "price": 20.0,
+     "rating": 5.0
+    }
+   }
+  },
+  "https://shop.tiktok.com/us/pdp/kansas-city-chiefs-20-oz-tumbler-game-day-fan-cup-made-to-order/1732587572561350860": {
+   "title": "Kansas City Chiefs 20 oz Tumbler (IP)",
+   "page": "custom-cups",
+   "firstSeen": "2026-11-28",
+   "h": {
+    "2026-11-28": {
+     "sold": 28,
+     "price": 19.99,
+     "rating": 5.0
+    }
+   }
+  },
+  "https://shop.tiktok.com/us/pdp/fastsub-20-oz-sublimation-snow-globe-tumbler-25-pack-set/1732268263595020596": {
+   "title": "FASTSUB 20oz Snow Globe Tumbler 25pc",
+   "page": "custom-cups",
+   "firstSeen": "2026-11-28",
+   "h": {
+    "2026-11-28": {
+     "sold": 65,
+     "price": 132.99,
+     "rating": 5.0
+    }
+   }
+  },
+  "https://shop.tiktok.com/us/pdp/personalized-custom-tumbler-30oz-40oz-stainless-steel-mug/1732472509550858367": {
+   "title": "Personalized Custom Tumbler 30oz/40oz photo",
+   "page": "custom-cups",
+   "firstSeen": "2026-11-28",
+   "h": {
+    "2026-11-28": {
+     "sold": 7,
+     "price": 25.34,
+     "rating": 5.0
+    }
+   }
+  },
+  "https://shop.tiktok.com/us/pdp/custom-40oz-tumbler-with-bow-pearl-design-insulated-mug/1732380845064491856": {
+   "title": "Custom 40oz Tumbler Bow & Pearl",
+   "page": "custom-cups",
+   "firstSeen": "2026-11-28",
+   "h": {
+    "2026-11-28": {
+     "sold": 7,
+     "price": 54.99,
+     "rating": 5.0
+    }
+   }
+  },
+  "https://shop.tiktok.com/us/pdp/funny-doormat-by-unknown-hold-on-partner-cowboy-frog-with-durable-coir/1730849677004083881": {
+   "title": "Cowboy Frog Funny Doormat",
+   "page": "doormatmom",
+   "firstSeen": "2026-11-28",
+   "h": {
+    "2026-11-28": {
+     "sold": 2,
+     "price": 17.49,
+     "rating": null
+    }
+   }
+  },
+  "https://shop.tiktok.com/us/pdp/griswold-christmas-doormat-anti-slip-eco-friendly-durable/1732833993104724193": {
+   "title": "Griswold Christmas Doormat (IP)",
+   "page": "doormatmom",
+   "firstSeen": "2026-11-28",
+   "h": {
+    "2026-11-28": {
+     "sold": 3,
+     "price": 28.57,
+     "rating": null
+    }
+   }
+  },
+  "https://shop.tiktok.com/us/pdp/sublimatable-skinny-tumbler-bundle-20oz-hogg-insulated-drinkware-bpa-free-double-wall-vacuum-clear-lid-straw/1729954325638976416": {
+   "title": "20oz Sublimatable Skinny Bundle 48u",
+   "page": "custom-stainless-steel-tumblers",
+   "firstSeen": "2026-11-28",
+   "h": {
+    "2026-11-28": {
+     "sold": 104,
+     "price": 171.6,
+     "rating": 5.0
+    }
+   }
+  },
+  "https://shop.tiktok.com/us/pdp/custom-stainless-steel-tumbler-16oz-with-lid-straw-handmade/1732384654878675942": {
+   "title": "Custom Stainless Steel Tumbler 16oz handmade",
+   "page": "custom-stainless-steel-tumblers",
+   "firstSeen": "2026-11-28",
+   "h": {
+    "2026-11-28": {
+     "sold": 17,
+     "price": 36.99,
+     "rating": 5.0
+    }
+   }
+  },
+  "https://shop.tiktok.com/us/pdp/custom-20oz-stainless-steel-insulated-tumbler-personalized-coffee-mug/1732859870804021757": {
+   "title": "20oz Insulated Tumbler Personalized Coffee Mug",
+   "page": "custom-stainless-steel-tumblers",
+   "firstSeen": "2026-11-28",
+   "h": {
+    "2026-11-28": {
+     "sold": 63,
+     "price": 29.0,
+     "rating": null
+    }
+   }
+  },
+  "https://shop.tiktok.com/us/pdp/live-brand-20-oz-tumbler-customizable-stainless-steel/1729392854047298317": {
+   "title": "Live Brand 20 Oz Tumbler custom",
+   "page": "custom-stainless-steel-tumblers",
+   "firstSeen": "2026-11-28",
+   "h": {
+    "2026-11-28": {
+     "sold": 1700,
+     "price": 15.0,
+     "rating": 5.0
+    }
+   }
+  },
+  "https://shop.tiktok.com/us/pdp/20oz-thermal-mug-for-couples-customizable-romance-gift/1732775594187592213": {
+   "title": "20/40oz couple romantic tumbler",
+   "page": "custom-stainless-steel-tumblers",
+   "firstSeen": "2026-11-28",
+   "h": {
+    "2026-11-28": {
+     "sold": 44,
+     "price": 12.99,
+     "rating": 5.0
+    }
+   }
+  },
+  "https://shop.tiktok.com/us/pdp/custom-design-stainless-steel-tumbler-with-straw-lid/1731359752510410858": {
+   "title": "Choose your design Custom 20oz Tumbler",
+   "page": "custom-stainless-steel-tumblers",
+   "firstSeen": "2026-11-28",
+   "h": {
+    "2026-11-28": {
+     "sold": 11,
+     "price": 20.0,
+     "rating": 5.0
     }
    }
   }
